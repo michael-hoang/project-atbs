@@ -24,7 +24,7 @@ class DataBase(tk.Toplevel):
         self.iconphoto(False, lock_img)
 
         self.createCanvas()
-        self.resizable(width=False, height=False)
+        self.resizable(width=False, height=True)
 
         # Center settings window to root screen
         self.update_idletasks()
@@ -45,7 +45,7 @@ class DataBase(tk.Toplevel):
         self.focus_force()
 
         self.protocol('WM_DELETE_WINDOW', lambda: self.on_closing(root))
-    
+
     def on_closing(self, root):
         """Enable root window on closing DataBase TopLevel window."""
         root.attributes('-disabled', 0)
@@ -93,11 +93,11 @@ class DataBase(tk.Toplevel):
         password.insert(0, 'Password')
         password.config(state='disabled', font=FONT)
 
-        button = tk.Entry(master=self.headerFrame,
-                          disabledbackground=BG_COLOR, disabledforeground=GOLD_COLOR)
-        button.grid(column=4, row=0)
-        button.insert(0, '   --')
-        button.config(state='disabled', font=FONT)
+        blank = tk.Entry(master=self.headerFrame,
+                         disabledbackground=BG_COLOR, disabledforeground=GOLD_COLOR)
+        blank.grid(column=4, row=0)
+        blank.insert(0, '   --')
+        blank.config(state='disabled', font=FONT)
 
         self.edc = EnDeCrypt()
         self.rowDict = {}
@@ -121,9 +121,10 @@ class DataBase(tk.Toplevel):
         with open(file='data.json', mode='w') as f:
             json.dump(data, f, indent=4)
 
+        # self.headerFrame.destroy()
         self.canvas.destroy()
         self.scrollbar.destroy()
-        self.headerFrame.destroy()
+        self.update
         self.createCanvas()
 
     def display_login_info(self):
@@ -174,6 +175,8 @@ class DataBase(tk.Toplevel):
                     master=scrollableframe, text='Delete', command=partial(self.delete, key=k), bg=DARK_RED_COLOR, fg='white', activebackground='red', activeforeground='white')
                 delete_button.grid(column=4, row=entryRow)
 
+                scrollableframe.bind("<Configure>", lambda event: self.canvas.configure(
+                    scrollregion=self.canvas.bbox("all")))
                 self.rowDict[k] = scrollableframe
                 number += 1
                 entryRow += 1
