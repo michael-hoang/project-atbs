@@ -65,10 +65,10 @@ m_but.grid(column=0, row=2, sticky='EW')
 lock_img_open = Image.open(fp='img/lock_icon.png')
 lock_img_resized = lock_img_open.resize(size=(50, 50))
 lock_img = ImageTk.PhotoImage(lock_img_resized)
-m_but = tk.Button(text='  Password', image=lock_img, compound='left', font=FONT,
+pm_but = tk.Button(text='  Password', image=lock_img, compound='left', font=FONT,
                 fg=FG_COLOR, bg=BG_COLOR, command=open_PasswordManager, anchor='w', 
                 padx=10, pady=5, width=207)
-m_but.grid(column=0, row=3, sticky='EW')
+pm_but.grid(column=0, row=3, sticky='EW')
 
 # Center window to screen
 root.update_idletasks()
