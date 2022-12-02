@@ -20,7 +20,19 @@ class Authenticator:
         """Initialize encryption, GUI, and check credentials."""
         self.endecrypt = EnDeCrypt()
         self.root = tk.Tk()
-        self.root.title('Enter Pin')
+        self.root.title('Verification')
+        self.root.withdraw()
+
+        self.instructLabel = tk.Label(
+            self.root, text='Enter your PIN or secret phrase.')
+        self.instructLabel.grid(column=0, row=0)
+        self.enterKeyLabel = tk.Label(self.root, text='PIN/Phrase: ')
+        self.enterKeyLabel.grid(column=0, row=2)
+        self.keyEntry = tk.Entry(self.root)
+        self.keyEntry.grid(column=1, row=2)
+        self.okButton = tk.Button(
+            self.root, text='OK', command=self.confirmation)
+        self.okButton.grid(column=1, row=3)
 
         self.secretKey = ''
         self.shiftNum = ''
@@ -60,7 +72,10 @@ class Authenticator:
     def _start(self):
         """Start authentication or prompt user to create secret key."""
         if self.cred:
-            self._authenticate()
+            self.root.deiconify()
+            # decryptedKey = self._decrypt_token()
+            # self._verify_entered_key(stored_key=decryptedKey)
+
         else:
             self._generate_token()
             self.shiftNum = str(random.choice(range(85)))
@@ -101,61 +116,50 @@ class Authenticator:
         with open('cred/auth.key', 'w') as f:
             f.write(tokenPiece2)
 
-    def _authenticate(self):
-        """If credential exists, prompt user to enter secret key."""
+    def _get_token(self) -> str:
+        """Get token from data.json and auth.key"""
+        with open('data/data.json', 'r') as f:
+            data = json.load(f)
+            tokenPiece1 = data['key']
 
-        def _get_token() -> str:
-            """Get token from data.json and auth.key"""
-            with open('data/data.json', 'r') as f:
-                data = json.load(f)
-                tokenPiece1 = data['key']
+        with open('cred/auth.key', 'r') as f:
+            tokenPiece2 = f.read()
 
-            with open('cred/auth.key', 'r') as f:
-                tokenPiece2 = f.read()
+        token = tokenPiece1 + tokenPiece2
+        return token
 
-            token = tokenPiece1 + tokenPiece2
-            return token
+    def _decrypt_token(self) -> str:
+        """Decrypt token to get secret key."""
+        token = self._get_token()
+        splitToken = token.split('::')
+        shiftNum = splitToken[-1]
+        encryptedKeyLength = int(splitToken[0])
+        bareToken = splitToken[1]
+        decryptedToken = self.endecrypt.decrypt(
+            encryptedMessage=bareToken, shiftNum=shiftNum)
+        encryptedKey = decryptedToken[75:76+encryptedKeyLength]
+        decryptedKey = self.endecrypt.decrypt(
+            encryptedMessage=encryptedKey, shiftNum=shiftNum)
+        return decryptedKey
 
-        def _decrypt_token() -> str:
-            """Decrypt token to get secret key."""
-            token = _get_token()
-            splitToken = token.split('::')
-            shiftNum = splitToken[-1]
-            encryptedKeyLength = int(splitToken[0])
-            bareToken = splitToken[1]
-            decryptedToken = self.endecrypt.decrypt(
-                encryptedMessage=bareToken, shiftNum=shiftNum)
-            encryptedKey = decryptedToken[75:76+encryptedKeyLength]
-            decryptedKey = self.endecrypt.decrypt(
-                encryptedMessage=encryptedKey, shiftNum=shiftNum)
-            return decryptedKey
+    def _verify_entered_key(self, stored_key):
+        """If entered key matches the stored key inside the token, open Password Manager."""
+        entered_key = self.keyEntry.get()
+        if entered_key == stored_key:
+            pass
+            # pm = PasswordManager()
+            # self.root.withdraw()
+            # Return verified_user = True to main.py. Then open Password Manager from main.py, not this script.
+            
+        else:
+            messagebox.showerror(
+                title='Error', message='Invalid PIN or phrase.')
+            print(stored_key)
 
-        def _verify_entered_key(stored_key):
-            """If entered key matches the stored key inside the token, open Password Manager."""
-            entered_key = keyEntry.get()
-            if entered_key == stored_key:
-                pm = PasswordManager()
-                authWin.destroy()
-            else:
-                messagebox.showerror(title='Error', message='Invalid PIN or phrase.')
-                print(stored_key)
-
-        def confirmation():
-            """Confirm if user can access Password Manager through authentication."""
-            decryptedKey = _decrypt_token()
-            _verify_entered_key(stored_key=decryptedKey)
-
-        authWin = tk.Toplevel(self.root)
-        authWin.title('Verification')
-        instructLabel = tk.Label(
-            authWin, text='Enter your PIN or secret phrase.')
-        instructLabel.grid(column=0, row=0)
-        enterKeyLabel = tk.Label(authWin, text='PIN/Phrase: ')
-        enterKeyLabel.grid(column=0, row=2)
-        keyEntry = tk.Entry(authWin)
-        keyEntry.grid(column=1, row=2)
-        okButton = tk.Button(authWin, text='OK', command=confirmation)
-        okButton.grid(column=1, row=3)
+    def confirmation(self):
+        """Confirm if user can access Password Manager through authentication."""
+        decryptedKey = self._decrypt_token()
+        self._verify_entered_key(stored_key=decryptedKey)
 
     def _create_secretkey(self):
         """Prompt user to create a secret key."""
