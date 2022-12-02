@@ -5,6 +5,7 @@ from tkinter import messagebox
 import random
 import json
 import os
+from pwManager import PasswordManager
 
 from myEncryption import EnDeCrypt
 
@@ -67,10 +68,12 @@ class Authenticator:
 
     def _encrypt_token(self) -> str:
         """Encrypt and embed secret key inside token. Attach unencrypted shift number at the end of encrypted token."""
-        encryptedKey = self.endecrypt.encrypt(message=self.secretKey, shiftNum=self.shiftNum)
+        encryptedKey = self.endecrypt.encrypt(
+            message=self.secretKey, shiftNum=self.shiftNum)
         embeddedToken = self.token[:75] + encryptedKey + self.token[75:]
         encryptedKeyLen = len(encryptedKey)
-        encryptedToken = str(encryptedKeyLen) + "::" + self.endecrypt.encrypt(message=embeddedToken, shiftNum=self.shiftNum) + "::" + self.shiftNum
+        encryptedToken = str(encryptedKeyLen) + "::" + self.endecrypt.encrypt(
+            message=embeddedToken, shiftNum=self.shiftNum) + "::" + self.shiftNum
         return encryptedToken
 
     def _export_token(self, token: str):
@@ -98,45 +101,61 @@ class Authenticator:
         with open('cred/auth.key', 'w') as f:
             f.write(tokenPiece2)
 
-
     def _authenticate(self):
         """If credential exists, prompt user to enter secret key."""
 
-        def _get_token():
+        def _get_token() -> str:
             """Get token from data.json and auth.key"""
             with open('data/data.json', 'r') as f:
                 data = json.load(f)
                 tokenPiece1 = data['key']
-            
+
             with open('cred/auth.key', 'r') as f:
                 tokenPiece2 = f.read()
-            
+
             token = tokenPiece1 + tokenPiece2
             return token
 
-        def _decrypt_token():
-            """Extract PIN and shfit number from encrypted token."""
+        def _decrypt_token() -> str:
+            """Decrypt token to get secret key."""
             token = _get_token()
             splitToken = token.split('::')
             shiftNum = splitToken[-1]
             encryptedKeyLength = int(splitToken[0])
-            decryptedToken = self.endecrypt.decrypt(encryptedMessage=token, shiftNum=shiftNum)
-            encryptedPin = decryptedToken[75:76+encryptedKeyLength]
-            decryptedPin = self.endecrypt.decrypt(encryptedMessage=encryptedPin, shiftNum=shiftNum)
+            bareToken = splitToken[1]
+            decryptedToken = self.endecrypt.decrypt(
+                encryptedMessage=bareToken, shiftNum=shiftNum)
+            encryptedKey = decryptedToken[75:76+encryptedKeyLength]
+            decryptedKey = self.endecrypt.decrypt(
+                encryptedMessage=encryptedKey, shiftNum=shiftNum)
+            return decryptedKey
 
+        def _verify_entered_key(stored_key):
+            """If entered key matches the stored key inside the token, open Password Manager."""
+            entered_key = keyEntry.get()
+            if entered_key == stored_key:
+                pm = PasswordManager()
+                authWin.destroy()
+            else:
+                messagebox.showerror(title='Error', message='Invalid PIN or phrase.')
+                print(stored_key)
+
+        def confirmation():
+            """Confirm if user can access Password Manager through authentication."""
+            decryptedKey = _decrypt_token()
+            _verify_entered_key(stored_key=decryptedKey)
 
         authWin = tk.Toplevel(self.root)
         authWin.title('Verification')
-        instructLabel = tk.Label(authWin, text='Enter your PIN or secret phrase.')
+        instructLabel = tk.Label(
+            authWin, text='Enter your PIN or secret phrase.')
         instructLabel.grid(column=0, row=0)
         enterKeyLabel = tk.Label(authWin, text='PIN/Phrase: ')
         enterKeyLabel.grid(column=0, row=2)
         keyEntry = tk.Entry(authWin)
         keyEntry.grid(column=1, row=2)
-        okButton = tk.Button(authWin, text='OK')
+        okButton = tk.Button(authWin, text='OK', command=confirmation)
         okButton.grid(column=1, row=3)
-        _decrypt_token()
-
 
     def _create_secretkey(self):
         """Prompt user to create a secret key."""
