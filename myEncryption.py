@@ -123,7 +123,7 @@ class EnDeCrypt:
                       ' ': '.e',
                       '=': 'qL',
                       '<': 'i#',
-                      '>': '(?',}
+                      '>': '(?', }
         self.key_s = 'O2H\m{)M\'h,u(?GyaT;B34i:f8gEvzRq[V/ZPr0}1-Q6%K5Xx&^!tJ]U*@+sCp#n|Y$_b7Aw9c.eNDj~dlkIW"`SoLF =<>'
 
     def mirror(self, message: str) -> str:
@@ -174,7 +174,7 @@ class EnDeCrypt:
             char1 = message[index1]
             char2 = message[index2]
             value = char1 + char2
-            for k, v in self.key_d.items(): 
+            for k, v in self.key_d.items():
                 if v == value:
                     decryptedMessage += k
 
