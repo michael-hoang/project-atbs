@@ -125,7 +125,6 @@ class EnDeCrypt:
                       '<': 'i#',
                       '>': '(?',}
         self.key_s = 'O2H\m{)M\'h,u(?GyaT;B34i:f8gEvzRq[V/ZPr0}1-Q6%K5Xx&^!tJ]U*@+sCp#n|Y$_b7Aw9c.eNDj~dlkIW"`SoLF =<>'
-        self.shift = 5
 
     def mirror(self, message: str) -> str:
         """Returns a mirror of a string."""
@@ -137,17 +136,17 @@ class EnDeCrypt:
 
         return mirrorMessage
 
-    def caesar(self, message: str, cipher=1) -> str:
+    def caesar(self, message: str, cipher=1, shift=5) -> str:
         """Returns string with Caesar Cipher encryption."""
-        self.shift = abs(self.shift)
+        shift = abs(int(shift))
         if cipher == -1:
-            self.shift *= -1
+            shift *= -1
 
         encryptedMessage = ''
         for char in message:
             charIndex = self.key_s.index(char)
 
-            newCharIndex = charIndex + self.shift
+            newCharIndex = charIndex + shift
 
             if newCharIndex > len(self.key_s) - 1:
                 newCharIndex = newCharIndex % len(self.key_s)
@@ -175,25 +174,26 @@ class EnDeCrypt:
             char1 = message[index1]
             char2 = message[index2]
             value = char1 + char2
-            keyList = [k for k, v in self.key_d.items() if v == value]
-            key = keyList[0]
-            decryptedMessage += key
+            for k, v in self.key_d.items(): 
+                if v == value:
+                    decryptedMessage += k
+
             index1 += 2
             index2 += 2
 
         return decryptedMessage
 
-    def encrypt(self, message):
+    def encrypt(self, message, shiftNum):
         """Encrypt message using my secret algorithm."""
         stage1 = self.mirror(message)
-        stage2 = self.caesar(stage1)
+        stage2 = self.caesar(stage1, shift=shiftNum)
         stage3 = self.substitution(stage2)
         return stage3
 
-    def decrypt(self, encryptedMessage):
+    def decrypt(self, encryptedMessage, shiftNum):
         """Decrypt message using my secret algorithm."""
         stage1 = self.revSubstitution(encryptedMessage)
-        stage2 = self.caesar(stage1, -1)
+        stage2 = self.caesar(stage1, -1, shift=shiftNum)
         stage3 = self.mirror(stage2)
         return stage3
 
