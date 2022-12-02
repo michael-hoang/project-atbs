@@ -66,12 +66,11 @@ class Authenticator:
             self._create_secretkey()
 
     def _encrypt_token(self) -> str:
-        """Encrypt and embed secret key and shift number inside token. Return encrypted token."""
-        encryptedKey = self.endecrypt.encrypt(self.secretKey)
-        encryptedShiftNum = self.endecrypt.encrypt(self.shiftNum)
-        embeddedToken = self.token[:24] + encryptedKey + \
-            self.token[24:49] + encryptedShiftNum + self.token[49:]
-        encryptedToken = self.endecrypt.encrypt(embeddedToken)
+        """Encrypt and embed secret key inside token. Attach unencrypted shift number at the end of encrypted token."""
+        encryptedKey = self.endecrypt.encrypt(message=self.secretKey, shiftNum=self.shiftNum)
+        embeddedToken = self.token[:75] + encryptedKey + self.token[75:]
+        encryptedKeyLen = len(encryptedKey)
+        encryptedToken = str(encryptedKeyLen) + "::" + self.endecrypt.encrypt(message=embeddedToken, shiftNum=self.shiftNum) + "::" + self.shiftNum
         return encryptedToken
 
     def _export_token(self, token: str):
@@ -99,10 +98,45 @@ class Authenticator:
         with open('cred/auth.key', 'w') as f:
             f.write(tokenPiece2)
 
-        print(token)
 
     def _authenticate(self):
         """If credential exists, prompt user to enter secret key."""
+
+        def _get_token():
+            """Get token from data.json and auth.key"""
+            with open('data/data.json', 'r') as f:
+                data = json.load(f)
+                tokenPiece1 = data['key']
+            
+            with open('cred/auth.key', 'r') as f:
+                tokenPiece2 = f.read()
+            
+            token = tokenPiece1 + tokenPiece2
+            return token
+
+        def _decrypt_token():
+            """Extract PIN and shfit number from encrypted token."""
+            token = _get_token()
+            splitToken = token.split('::')
+            shiftNum = splitToken[-1]
+            encryptedKeyLength = int(splitToken[0])
+            decryptedToken = self.endecrypt.decrypt(encryptedMessage=token, shiftNum=shiftNum)
+            encryptedPin = decryptedToken[75:76+encryptedKeyLength]
+            decryptedPin = self.endecrypt.decrypt(encryptedMessage=encryptedPin, shiftNum=shiftNum)
+
+
+        authWin = tk.Toplevel(self.root)
+        authWin.title('Verification')
+        instructLabel = tk.Label(authWin, text='Enter your PIN or secret phrase.')
+        instructLabel.grid(column=0, row=0)
+        enterKeyLabel = tk.Label(authWin, text='PIN/Phrase: ')
+        enterKeyLabel.grid(column=0, row=2)
+        keyEntry = tk.Entry(authWin)
+        keyEntry.grid(column=1, row=2)
+        okButton = tk.Button(authWin, text='OK')
+        okButton.grid(column=1, row=3)
+        _decrypt_token()
+
 
     def _create_secretkey(self):
         """Prompt user to create a secret key."""
@@ -144,7 +178,7 @@ class Authenticator:
         okButton = tk.Button(createKeyWin, text='OK', command=_verifySecretKey)
         okButton.grid(column=1, row=3)
 
-    def _generate_token(self, size=100):
+    def _generate_token(self, size=150):
         """Generate a random token of default size 100."""
         characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&\'()*+,-./:;<=>?@"[]^_`{|}~'
         token = ''
