@@ -30,12 +30,17 @@ def open_MapSearch():
 def open_PasswordManager():
     """Instantiate Password Manager in a new TopLevel window."""
     a = Authenticator()
-    while True:
-        if a.isVerfied:
-            a.root.destroy()
-            a.root.protocol('WM_DELETE_WINDOW', PasswordManager())
-            break
-    
+
+    _check_isVerified_flag(a)
+
+
+def _check_isVerified_flag(authenticator):
+    """Recursively checks isVerified flag to signal instantiation of Password Manager object."""
+    if not authenticator.isVerified:
+        root.after(50, _check_isVerified_flag, authenticator)
+    else:
+        authenticator.top.destroy()
+        pm = PasswordManager()
 
 
 root = tk.Tk()

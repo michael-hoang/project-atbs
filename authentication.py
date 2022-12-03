@@ -19,29 +19,27 @@ class Authenticator:
     def __init__(self):
         """Initialize encryption, GUI, and check credentials."""
         self.endecrypt = EnDeCrypt()
-        self.root = tk.Tk()
-        self.root.title('Verification')
-        self.root.withdraw()
+        self.top = tk.Toplevel()
+        self.top.title('Verification')
+        self.top.withdraw()
 
         self.instructLabel = tk.Label(
-            self.root, text='Enter your PIN or secret phrase.')
+            self.top, text='Enter your PIN or secret phrase.')
         self.instructLabel.grid(column=0, row=0)
-        self.enterKeyLabel = tk.Label(self.root, text='PIN/Phrase: ')
+        self.enterKeyLabel = tk.Label(self.top, text='PIN/Phrase: ')
         self.enterKeyLabel.grid(column=0, row=2)
-        self.keyEntry = tk.Entry(self.root)
+        self.keyEntry = tk.Entry(self.top)
         self.keyEntry.grid(column=1, row=2)
         self.okButton = tk.Button(
-            self.root, text='OK', command=self.confirmation)
+            self.top, text='OK', command=self.confirmation)
         self.okButton.grid(column=1, row=3)
 
         self.secretKey = ''
         self.shiftNum = ''
         self.token = ''
-        self.isVerfied = False
+        self.isVerified = False
         self.cred = ''
         self._authenticate()
-
-        self.root.mainloop()
 
     def _check_for_existing_credential(self) -> bool:
         """Check for existing crendential (data.json and auth.key)."""
@@ -74,7 +72,7 @@ class Authenticator:
         """Start authentication or prompt user to create secret key."""
         self.cred = self._check_for_existing_credential()
         if self.cred:
-            self.root.deiconify()
+            self.top.deiconify()
 
         else:
             self._generate_token()
@@ -146,9 +144,9 @@ class Authenticator:
         """If entered key matches the stored key inside the token, open Password Manager."""
         entered_key = self.keyEntry.get()
         if entered_key == stored_key:
-            self.isVerfied = True
-            print(self.isVerfied)
-            
+            self.isVerified = True
+            print(self.isVerified)
+
         else:
             messagebox.showerror(
                 title='Error', message='Invalid PIN or phrase.')
@@ -182,7 +180,7 @@ class Authenticator:
             ' your secret key.\nKeep it safe. You will not be able'\
             ' to recover\nyour saved accounts and passwords if you lose'\
             ' it.'
-        createKeyWin = tk.Toplevel(self.root)
+        createKeyWin = tk.Toplevel(self.top)
         createKeyWin.title('Create PIN/Phrase')
         warningLabel = tk.Label(
             createKeyWin, text=warning_message, justify='left', font=FONT)
@@ -200,7 +198,7 @@ class Authenticator:
         okButton = tk.Button(createKeyWin, text='OK', command=_verifySecretKey)
         okButton.grid(column=1, row=3)
 
-        createKeyWin.protocol('WM_DELETE_WINDOW', self.root.destroy)
+        createKeyWin.protocol('WM_DELETE_WINDOW', self.top.destroy)
 
     def _generate_token(self, size=150):
         """Generate a random token of default size 100."""
