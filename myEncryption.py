@@ -136,7 +136,7 @@ class EnDeCrypt:
 
         return mirrorMessage
 
-    def caesar(self, message: str, cipher=1, shift=5) -> str:
+    def caesar(self, message: str, shift, cipher=1) -> str:
         """Returns string with Caesar Cipher encryption."""
         shift = abs(int(shift))
         if cipher == -1:
@@ -183,17 +183,17 @@ class EnDeCrypt:
 
         return decryptedMessage
 
-    def encrypt(self, message, shiftNum):
+    def encrypt(self, message, shiftNum=5):
         """Encrypt message using my secret algorithm."""
         stage1 = self.mirror(message)
         stage2 = self.caesar(stage1, shift=shiftNum)
         stage3 = self.substitution(stage2)
         return stage3
 
-    def decrypt(self, encryptedMessage, shiftNum):
+    def decrypt(self, encryptedMessage, shiftNum=5):
         """Decrypt message using my secret algorithm."""
         stage1 = self.revSubstitution(encryptedMessage)
-        stage2 = self.caesar(stage1, -1, shift=shiftNum)
+        stage2 = self.caesar(stage1, cipher=-1, shift=shiftNum)
         stage3 = self.mirror(stage2)
         return stage3
 
