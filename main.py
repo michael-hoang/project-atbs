@@ -4,26 +4,39 @@ from wudCalc import WrapUpDateCalculator
 from cpForm import CardPayment
 from mapSearch import Map
 from pwManager import PasswordManager
+from authentication import Authenticator
+
 
 FONT = ('Serif', 14, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
 
+
 def open_WrapUpDateCalculator():
     """Instantiate WrapUpDateCalculator object in a new TopLevel window."""
     top = WrapUpDateCalculator()
+
 
 def open_CardPaymentForm():
     """Instantiate CardPayment object in a new TopLevel window."""
     top = CardPayment()
 
+
 def open_MapSearch():
     """Instantiate Map object in a new TopLevel window."""
     top = Map()
 
+
 def open_PasswordManager():
     """Instantiate Password Manager in a new TopLevel window."""
-    top = PasswordManager()
+    a = Authenticator()
+    while True:
+        if a.isVerfied:
+            a.root.destroy()
+            a.root.protocol('WM_DELETE_WINDOW', PasswordManager())
+            break
+    
+
 
 root = tk.Tk()
 root.withdraw()
@@ -39,8 +52,8 @@ cc_img_open = Image.open(fp='img/cc_icon.png')
 cc_img_resized = cc_img_open.resize(size=(50, 50))
 cc_img = ImageTk.PhotoImage(cc_img_resized)
 cp_but = tk.Button(text='  Payment', image=cc_img, compound='left',
-                    font=FONT, fg=FG_COLOR, bg=BG_COLOR, command=open_CardPaymentForm,
-                    anchor='w', padx=10, pady=5, width=208)
+                   font=FONT, fg=FG_COLOR, bg=BG_COLOR, command=open_CardPaymentForm,
+                   anchor='w', padx=10, pady=5, width=208)
 cp_but.grid(column=0, row=0, sticky='EW')
 
 # Wrap up date calculator
@@ -57,8 +70,8 @@ map_img_open = Image.open(fp='img/map_icon.png')
 map_img_resized = map_img_open.resize(size=(50, 50))
 map_img = ImageTk.PhotoImage(map_img_resized)
 m_but = tk.Button(text='  Map', image=map_img, compound='left', font=FONT,
-                fg=FG_COLOR, bg=BG_COLOR, command=open_MapSearch, anchor='w', 
-                padx=10, pady=5, width=207)
+                  fg=FG_COLOR, bg=BG_COLOR, command=open_MapSearch, anchor='w',
+                  padx=10, pady=5, width=207)
 m_but.grid(column=0, row=2, sticky='EW')
 
 # Password Manager
@@ -66,8 +79,8 @@ lock_img_open = Image.open(fp='img/lock_icon.png')
 lock_img_resized = lock_img_open.resize(size=(50, 50))
 lock_img = ImageTk.PhotoImage(lock_img_resized)
 pm_but = tk.Button(text='  Password', image=lock_img, compound='left', font=FONT,
-                fg=FG_COLOR, bg=BG_COLOR, command=open_PasswordManager, anchor='w', 
-                padx=10, pady=5, width=207)
+                   fg=FG_COLOR, bg=BG_COLOR, command=open_PasswordManager, anchor='w',
+                   padx=10, pady=5, width=207)
 pm_but.grid(column=0, row=3, sticky='EW')
 
 # Center window to screen

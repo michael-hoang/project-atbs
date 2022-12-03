@@ -16,7 +16,7 @@ FONT = ('Bahnschrift Light', 12, 'normal')
 class Authenticator:
     """This class provides verification for users to access various apps."""
 
-    def __init__(self, function=''):
+    def __init__(self):
         """Initialize encryption, GUI, and check credentials."""
         self.endecrypt = EnDeCrypt()
         self.root = tk.Tk()
@@ -37,8 +37,9 @@ class Authenticator:
         self.secretKey = ''
         self.shiftNum = ''
         self.token = ''
-        self.cred = self._check_for_existing_credential()
-        self._start()
+        self.isVerfied = False
+        self.cred = ''
+        self._authenticate()
 
         self.root.mainloop()
 
@@ -69,12 +70,11 @@ class Authenticator:
             print("'cred/auth.key' missing.\n'data/data.json' missing.")
             return False
 
-    def _start(self):
+    def _authenticate(self):
         """Start authentication or prompt user to create secret key."""
+        self.cred = self._check_for_existing_credential()
         if self.cred:
             self.root.deiconify()
-            # decryptedKey = self._decrypt_token()
-            # self._verify_entered_key(stored_key=decryptedKey)
 
         else:
             self._generate_token()
@@ -142,14 +142,12 @@ class Authenticator:
             encryptedMessage=encryptedKey, shiftNum=shiftNum)
         return decryptedKey
 
-    def _verify_entered_key(self, stored_key):
+    def _verify_entered_key(self, stored_key) -> bool:
         """If entered key matches the stored key inside the token, open Password Manager."""
         entered_key = self.keyEntry.get()
         if entered_key == stored_key:
-            pass
-            # pm = PasswordManager()
-            # self.root.withdraw()
-            # Return verified_user = True to main.py. Then open Password Manager from main.py, not this script.
+            self.isVerfied = True
+            print(self.isVerfied)
             
         else:
             messagebox.showerror(
@@ -174,6 +172,7 @@ class Authenticator:
                                     ' created. Don\'t lose it!')
                 encryptedToken = self._encrypt_token()
                 self._export_token(token=encryptedToken)
+                self._authenticate()
                 createKeyWin.destroy()
             else:
                 messagebox.showerror(title='Error', message='Your secret key did not'
@@ -200,6 +199,8 @@ class Authenticator:
         verifyKeyEntry.grid(column=1, row=2)
         okButton = tk.Button(createKeyWin, text='OK', command=_verifySecretKey)
         okButton.grid(column=1, row=3)
+
+        createKeyWin.protocol('WM_DELETE_WINDOW', self.root.destroy)
 
     def _generate_token(self, size=150):
         """Generate a random token of default size 100."""
