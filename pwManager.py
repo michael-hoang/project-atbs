@@ -367,7 +367,7 @@ class PasswordManager:
         }
 
         try:
-            with open('data.json', 'r') as f:
+            with open('data/data.json', 'r') as f:
                 data = json.load(f)
                 if not website or not username or not password:
                     messagebox.showwarning(
@@ -394,7 +394,7 @@ class PasswordManager:
 
             data = loginInfo
 
-        with open('data.json', 'w') as f:
+        with open('data/data.json', 'w') as f:
             json.dump(obj=data, fp=f, indent=4)
 
         self._clear_all(event)
@@ -405,7 +405,7 @@ class PasswordManager:
         enWebsite = self.EnDeCrypt.encrypt(website.lower())
 
         try:
-            with open(file='data.json', mode='r') as f:
+            with open(file='data/data.json', mode='r') as f:
                 data = json.load(fp=f)
                 if enWebsite in data:
                     self._show_login(data=data, website=enWebsite, event=event)

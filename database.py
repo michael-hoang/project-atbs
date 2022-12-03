@@ -114,11 +114,11 @@ class DataBase(tk.Toplevel):
         else:
             return
 
-        with open(file='data.json', mode='r') as f:
+        with open(file='data/data.json', mode='r') as f:
             data = json.load(f)
             del data[key]
 
-        with open(file='data.json', mode='w') as f:
+        with open(file='data/data.json', mode='w') as f:
             json.dump(data, f, indent=4)
 
         # self.headerFrame.destroy()
@@ -129,13 +129,14 @@ class DataBase(tk.Toplevel):
 
     def display_login_info(self):
         """Display login info from database."""
-        with open(file='data.json', mode='r') as f:
+        with open(file='data/data.json', mode='r') as f:
             data = json.load(f)
 
             number = 1
             entryRow = 1
             x = 0
             y = 23
+            removeKey = data.pop('key')
             for k, v in data.items():
                 scrollableframe = tk.Frame(
                     self.canvas, bg=BG_COLOR, highlightthickness=0)
