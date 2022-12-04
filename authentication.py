@@ -146,6 +146,12 @@ class Authenticator:
             keyEntry.config(show='*')
             verifyKeyEntry.config(show='*')
 
+        def clearEntry(event):
+            """Delete all entries."""
+            keyEntry.delete(0, END)
+            verifyKeyEntry.delete(0, END)
+            keyEntry.focus()
+
         warning_message = 'Create a PIN or phrase.\n\nWARNING: This will be'\
             ' your secret key. Keep it safe. You will not be able'\
             ' to recover your saved accounts and passwords if you lose'\
@@ -189,6 +195,7 @@ class Authenticator:
         eyeButton.bind('<ButtonRelease-1>', hideSecretKey)
 
         createKeyWin.bind('<Return>', _verifySecretKey)
+        createKeyWin.bind('<Delete>', clearEntry)
         createKeyWin.protocol('WM_DELETE_WINDOW', self.top.destroy)
         # Center window to screen
         createKeyWin.update_idletasks()
