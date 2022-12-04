@@ -25,6 +25,9 @@ class Authenticator:
         self.top = tk.Toplevel(bg=BG_COLOR, padx=25, pady=20)
         self.top.title('Authentication')
         self.top.withdraw()
+        self.authentication_icon = tk.PhotoImage(
+            file='img/authentication_icon.png')
+        self.top.iconphoto(False, self.authentication_icon)
 
         self.instructLabel = tk.Label(
             self.top, text='Enter your PIN/Phrase.', bg=BG_COLOR, fg='white', font=('Bahnschrift Light', 14, 'normal'))
@@ -143,8 +146,9 @@ class Authenticator:
             ' to recover your saved accounts and passwords if you lose'\
             ' it.'
         createKeyWin = tk.Toplevel(self.top, padx=20, pady=20, bg=BG_COLOR)
-        createKeyWin.title('Create PIN/Phrase')
+        createKeyWin.title('Setup PIN/Phrase')
         createKeyWin.withdraw()
+        createKeyWin.iconphoto(False, self.authentication_icon)
         # Pin/Phrase creation window jumps to the front.
         createKeyWin.lift()
         createKeyWin.attributes('-topmost', True)
@@ -264,14 +268,12 @@ class Authenticator:
         entered_key = self.keyEntry.get()
         if entered_key == stored_key:
             self.isVerified = True
-            print(self.isVerified)
 
         else:
             messagebox.showerror(parent=self.top,
                                  title='Error', message='Invalid PIN/Phrase. Please try again.')
             self.keyEntry.delete(0, END)
             self.keyEntry.focus()
-            print(stored_key)
 
 
 if __name__ == '__main__':
