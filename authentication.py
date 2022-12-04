@@ -9,6 +9,10 @@ from myEncryption import EnDeCrypt
 
 
 FONT = ('Bahnschrift Light', 12, 'normal')
+BG_COLOR = '#30323D'
+GOLD_COLOR = '#E9D985'
+BUTTON_COLOR = '#4D5061'
+LIGHT_GRAY = '#999999'
 
 
 class Authenticator:
@@ -89,7 +93,7 @@ class Authenticator:
     def _create_secretkey(self):
         """Prompt user to create a secret key."""
 
-        def _verifySecretKey():
+        def _verifySecretKey(event):
             """Verify if user re-enters secret key correctly."""
             key1 = keyEntry.get()
             key2 = verifyKeyEntry.get()
@@ -105,32 +109,35 @@ class Authenticator:
                 messagebox.showerror(title='Error', message='Your secret key did not'
                                      ' match. Please try again.')
 
-        warning_message = 'Create a secret PIN or phrase.\n\nWARNING: This will be'\
-            ' your secret key.\nKeep it safe. You will not be able'\
-            ' to recover\nyour saved accounts and passwords if you lose'\
+        warning_message = 'Create a PIN or phrase.\n\nWARNING: This will be'\
+            ' your secret key. Keep it safe. You will not be able'\
+            ' to recover your saved accounts and passwords if you lose'\
             ' it.'
-        createKeyWin = tk.Toplevel(self.top)
+        createKeyWin = tk.Toplevel(self.top, padx=20, pady=20, bg=BG_COLOR)
         createKeyWin.title('Create PIN/Phrase')
         # Pin/Phrase creation window jumps to the front.
         createKeyWin.lift()
         createKeyWin.attributes('-topmost', True)
         createKeyWin.attributes('-topmost', False)
         warningLabel = tk.Label(
-            createKeyWin, text=warning_message, justify='left', font=FONT)
-        warningLabel.grid(column=0, row=0, columnspan=2, sticky='EW')
+            createKeyWin, text=warning_message, justify='left', font=FONT, wraplength=400, bg=BG_COLOR, fg='white')
+        warningLabel.grid(column=0, row=0, columnspan=2,
+                          sticky='EW', padx=10, pady=(0, 10))
         enterKeyLabel = tk.Label(
-            createKeyWin, text='Enter PIN/Phrase: ', font=FONT)
-        enterKeyLabel.grid(column=0, row=1, sticky='E')
+            createKeyWin, text='Enter PIN/Phrase: ', font=FONT, bg=BG_COLOR, fg='white')
+        enterKeyLabel.grid(column=0, row=1, sticky='E', pady=(10))
         keyEntry = tk.Entry(createKeyWin, font=FONT)
-        keyEntry.grid(column=1, row=1)
+        keyEntry.grid(column=1, row=1, pady=(10, 5))
         verifyKeyLabel = tk.Label(
-            createKeyWin, text='Re-Enter PIN/Phrase: ', font=FONT)
+            createKeyWin, text='Re-Enter PIN/Phrase: ', font=FONT, bg=BG_COLOR, fg='white')
         verifyKeyLabel.grid(column=0, row=2, sticky='E')
         verifyKeyEntry = tk.Entry(createKeyWin, font=FONT)
-        verifyKeyEntry.grid(column=1, row=2)
-        okButton = tk.Button(createKeyWin, text='OK', command=_verifySecretKey)
-        okButton.grid(column=1, row=3)
+        verifyKeyEntry.grid(column=1, row=2, pady=(0, 10))
+        okButton = tk.Button(createKeyWin, text='OK',
+                             font=FONT, width=10, bg=BUTTON_COLOR, fg='white', borderwidth=0, activebackground=GOLD_COLOR, command=lambda: _verifySecretKey('event'))
+        okButton.grid(column=1, row=3, pady=(10, 0))
 
+        createKeyWin.bind('<Return>', _verifySecretKey)
         createKeyWin.protocol('WM_DELETE_WINDOW', self.top.destroy)
 
     def _encrypt_token(self) -> str:
