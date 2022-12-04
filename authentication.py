@@ -2,6 +2,7 @@
 
 import tkinter as tk
 from tkinter import messagebox
+from PIL import Image, ImageTk
 import random
 import json
 import os
@@ -108,6 +109,17 @@ class Authenticator:
             else:
                 messagebox.showerror(title='Error', message='Your secret key did not'
                                      ' match. Please try again.')
+                verifyKeyEntry.focus()
+
+        def showSecretKey(event):
+            """Reveal PIN/Phrase to user."""
+            keyEntry.config(show='')
+            verifyKeyEntry.config(show='')
+
+        def hideSecretKey(event):
+            """Hide PIN/Phrase from user."""
+            keyEntry.config(show='*')
+            verifyKeyEntry.config(show='*')
 
         warning_message = 'Create a PIN or phrase.\n\nWARNING: This will be'\
             ' your secret key. Keep it safe. You will not be able'\
@@ -115,6 +127,7 @@ class Authenticator:
             ' it.'
         createKeyWin = tk.Toplevel(self.top, padx=20, pady=20, bg=BG_COLOR)
         createKeyWin.title('Create PIN/Phrase')
+        createKeyWin.withdraw()
         # Pin/Phrase creation window jumps to the front.
         createKeyWin.lift()
         createKeyWin.attributes('-topmost', True)
@@ -126,19 +139,41 @@ class Authenticator:
         enterKeyLabel = tk.Label(
             createKeyWin, text='Enter PIN/Phrase: ', font=FONT, bg=BG_COLOR, fg='white')
         enterKeyLabel.grid(column=0, row=1, sticky='E', pady=(10))
-        keyEntry = tk.Entry(createKeyWin, font=FONT)
+        keyEntry = tk.Entry(createKeyWin, font=FONT, show='*')
+        keyEntry.focus()
         keyEntry.grid(column=1, row=1, pady=(10, 5))
         verifyKeyLabel = tk.Label(
             createKeyWin, text='Re-Enter PIN/Phrase: ', font=FONT, bg=BG_COLOR, fg='white')
         verifyKeyLabel.grid(column=0, row=2, sticky='E')
-        verifyKeyEntry = tk.Entry(createKeyWin, font=FONT)
+        verifyKeyEntry = tk.Entry(createKeyWin, font=FONT, show='*')
         verifyKeyEntry.grid(column=1, row=2, pady=(0, 10))
         okButton = tk.Button(createKeyWin, text='OK',
                              font=FONT, width=10, bg=BUTTON_COLOR, fg='white', borderwidth=0, activebackground=GOLD_COLOR, command=lambda: _verifySecretKey('event'))
         okButton.grid(column=1, row=3, pady=(10, 0))
+        # Eye button
+        createKeyWin.eyeImage_open = Image.open('img/eye.png')
+        createKeyWin.eyeImage_resized = createKeyWin.eyeImage_open.resize(
+            (25, 25))
+        createKeyWin.eyeImage = ImageTk.PhotoImage(
+            createKeyWin.eyeImage_resized)
+        eyeButton = tk.Button(createKeyWin, image=createKeyWin.eyeImage,
+                               bg=BG_COLOR, activebackground=BG_COLOR, borderwidth=0)
+        eyeButton.grid(column=2, row=1, rowspan=2)
+        eyeButton.bind('<ButtonPress-1>', showSecretKey)
+        eyeButton.bind('<ButtonRelease-1>', hideSecretKey)
 
         createKeyWin.bind('<Return>', _verifySecretKey)
         createKeyWin.protocol('WM_DELETE_WINDOW', self.top.destroy)
+        # Center window to screen
+        createKeyWin.update_idletasks()
+        win_width = createKeyWin.winfo_reqwidth()
+        win_height = createKeyWin.winfo_reqheight()
+        screen_width = createKeyWin.winfo_screenwidth()
+        screen_height = createKeyWin.winfo_screenheight()
+        x = int(screen_width/2 - win_width/2)
+        y = int(screen_height/2 - win_width/2)
+        createKeyWin.geometry(f"{win_width}x{win_height}+{x}+{y}")
+        createKeyWin.deiconify()
 
     def _encrypt_token(self) -> str:
         """Encrypt and embed secret key inside token. Attach unencrypted shift number at the end of encrypted token."""
