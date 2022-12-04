@@ -1,7 +1,7 @@
 """This module contains a class that represents an authenticator."""
 
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, END
 from PIL import Image, ImageTk
 import random
 import json
@@ -22,20 +22,31 @@ class Authenticator:
     def __init__(self):
         """Initialize encryption, GUI, and check credentials."""
         self.endecrypt = EnDeCrypt()
-        self.top = tk.Toplevel()
-        self.top.title('Verification')
+        self.top = tk.Toplevel(bg=BG_COLOR, padx=25, pady=20)
+        self.top.title('Authentication')
         self.top.withdraw()
 
         self.instructLabel = tk.Label(
-            self.top, text='Enter your PIN or secret phrase.')
-        self.instructLabel.grid(column=0, row=0)
-        self.enterKeyLabel = tk.Label(self.top, text='PIN/Phrase: ')
-        self.enterKeyLabel.grid(column=0, row=2)
-        self.keyEntry = tk.Entry(self.top)
-        self.keyEntry.grid(column=1, row=2)
+            self.top, text='Enter your PIN/Phrase.', bg=BG_COLOR, fg='white', font=('Bahnschrift Light', 14, 'normal'))
+        self.instructLabel.grid(column=0, row=0, columnspan=2, pady=(0, 10))
+        # self.enterKeyLabel = tk.Label(
+        #     self.top, text='PIN/Phrase: ', bg=BG_COLOR, fg='white', font=FONT)
+        # self.enterKeyLabel.grid(column=0, row=2)
+        self.keyEntry = tk.Entry(self.top, font=FONT, width=24, show='*')
+        self.keyEntry.grid(column=0, row=2)
         self.okButton = tk.Button(
-            self.top, text='OK', command=self.confirmation)
-        self.okButton.grid(column=1, row=3)
+            self.top, text='OK', command=lambda: self.confirmation('event'), width=10, font=FONT, bg=BUTTON_COLOR, fg='white', borderwidth=0, activebackground=GOLD_COLOR)
+        self.okButton.grid(column=0, row=3, pady=(15, 0))
+
+        # Center window to screen
+        self.top.update_idletasks()
+        win_width = self.top.winfo_reqwidth()
+        win_height = self.top.winfo_reqheight()
+        screen_width = self.top.winfo_screenwidth()
+        screen_height = self.top.winfo_screenheight()
+        x = int(screen_width/2 - win_width/2)
+        y = int(screen_height/2 - win_width/2)
+        self.top.geometry(f"{win_width}x{win_height}+{x}+{y}")
 
         self.secretKey = ''
         self.shiftNum = ''
@@ -44,11 +55,15 @@ class Authenticator:
         self.cred = ''
         self._authenticate()
 
+        self.top.bind('<Return>', self.confirmation)
+
     def _authenticate(self):
         """Start authentication or prompt user to create secret key."""
         self.cred = self._check_for_existing_credential()
         if self.cred:
             self.top.deiconify()
+            self.keyEntry.focus()
+            self.top.attributes('-topmost', True)
         else:
             self._generate_token()
             self.shiftNum = str(random.choice(range(85)))
@@ -78,7 +93,6 @@ class Authenticator:
             print("'cred/auth.key' missing.\n'data/data.json' verified.")
             return
         else:
-            print("'cred/auth.key' missing.\n'data/data.json' missing.")
             return False
 
     def _generate_token(self, size=150):
@@ -98,16 +112,19 @@ class Authenticator:
             """Verify if user re-enters secret key correctly."""
             key1 = keyEntry.get()
             key2 = verifyKeyEntry.get()
-            if key1 == key2:
+            if key1 == '' and key2 == '':
+                messagebox.showerror(parent=createKeyWin, title='Error',
+                                     message='Authentication is required to use Password Manager.')
+            elif key1 == key2:
                 self.secretKey = key1
-                messagebox.showinfo(title='Success', message='Your secret key has been'
-                                    ' created. Don\'t lose it!')
+                messagebox.showinfo(parent=createKeyWin, title='Success', message='Your PIN/Phrase has been'
+                                    ' created. This will be your secret key to access Password Manager. Don\'t lose it!')
                 encryptedToken = self._encrypt_token()
                 self._export_token(token=encryptedToken)
                 self._authenticate()
                 createKeyWin.destroy()
             else:
-                messagebox.showerror(title='Error', message='Your secret key did not'
+                messagebox.showerror(parent=createKeyWin, title='Error', message='Your PIN/Phrase did not'
                                      ' match. Please try again.')
                 verifyKeyEntry.focus()
 
@@ -132,6 +149,7 @@ class Authenticator:
         createKeyWin.lift()
         createKeyWin.attributes('-topmost', True)
         createKeyWin.attributes('-topmost', False)
+        #
         warningLabel = tk.Label(
             createKeyWin, text=warning_message, justify='left', font=FONT, wraplength=400, bg=BG_COLOR, fg='white')
         warningLabel.grid(column=0, row=0, columnspan=2,
@@ -140,7 +158,6 @@ class Authenticator:
             createKeyWin, text='Enter PIN/Phrase: ', font=FONT, bg=BG_COLOR, fg='white')
         enterKeyLabel.grid(column=0, row=1, sticky='E', pady=(10))
         keyEntry = tk.Entry(createKeyWin, font=FONT, show='*')
-        keyEntry.focus()
         keyEntry.grid(column=1, row=1, pady=(10, 5))
         verifyKeyLabel = tk.Label(
             createKeyWin, text='Re-Enter PIN/Phrase: ', font=FONT, bg=BG_COLOR, fg='white')
@@ -157,7 +174,7 @@ class Authenticator:
         createKeyWin.eyeImage = ImageTk.PhotoImage(
             createKeyWin.eyeImage_resized)
         eyeButton = tk.Button(createKeyWin, image=createKeyWin.eyeImage,
-                               bg=BG_COLOR, activebackground=BG_COLOR, borderwidth=0)
+                              bg=BG_COLOR, activebackground=BG_COLOR, borderwidth=0)
         eyeButton.grid(column=2, row=1, rowspan=2)
         eyeButton.bind('<ButtonPress-1>', showSecretKey)
         eyeButton.bind('<ButtonRelease-1>', hideSecretKey)
@@ -174,6 +191,7 @@ class Authenticator:
         y = int(screen_height/2 - win_width/2)
         createKeyWin.geometry(f"{win_width}x{win_height}+{x}+{y}")
         createKeyWin.deiconify()
+        keyEntry.focus()
 
     def _encrypt_token(self) -> str:
         """Encrypt and embed secret key inside token. Attach unencrypted shift number at the end of encrypted token."""
@@ -210,7 +228,7 @@ class Authenticator:
         with open('cred/auth.key', 'w') as f:
             f.write(tokenPiece2)
 
-    def confirmation(self):
+    def confirmation(self, event):
         """Confirm if user can access Password Manager through authentication."""
         decryptedKey = self._decrypt_token()
         self._verify_entered_key(stored_key=decryptedKey)
@@ -249,8 +267,10 @@ class Authenticator:
             print(self.isVerified)
 
         else:
-            messagebox.showerror(
-                title='Error', message='Invalid PIN or phrase.')
+            messagebox.showerror(parent=self.top,
+                                 title='Error', message='Invalid PIN/Phrase. Please try again.')
+            self.keyEntry.delete(0, END)
+            self.keyEntry.focus()
             print(stored_key)
 
 
