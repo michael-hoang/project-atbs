@@ -31,7 +31,7 @@ class PasswordManager:
         self.top = tk.Toplevel()
         self.top.withdraw()  # Hides top window from screen.
         self.top.title('Password Manager')
-        self.top.config(bg=BG_COLOR, padx=20)
+        self.top.config(bg=BG_COLOR, padx=25, pady=10)
         self.top.resizable(width=False, height=False)
         self.lock_icon = tk.PhotoImage(file="img/lock_icon.png")
         self.top.iconphoto(False, self.lock_icon)
