@@ -89,12 +89,17 @@ class Authenticator:
         if cred1 and cred2:
             return True
         elif cred1 and not cred2:
-            # ask if user wants to overwrite existing file and create new credential.
-            print("'cred/auth.key' verified.\n'data/data.json' missing.")
-            return
+            message = "Path 'cred/auth.key' was detected, but path 'data/data.json' is missing."\
+                "\n\nBoth paths are needed to access stored data. Setting up a new Pin/Phrase"\
+                " will overwrite any existing data. Proceed with caution!"
+            messagebox.showwarning(parent=self.top, title='Missing File', message=message)
+            return False
         elif not cred1 and cred2:
-            print("'cred/auth.key' missing.\n'data/data.json' verified.")
-            return
+            message = "Path 'data/data.json' was detected, but path 'cred/auth.key' is missing."\
+                "\n\nBoth paths are needed to access stored data. Setting up a new Pin/Phrase"\
+                " will overwrite any existing data. Proceed with caution!"
+            messagebox.showwarning(parent=self.top, title='Missing File', message=message)
+            return False
         else:
             return False
 
