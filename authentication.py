@@ -111,6 +111,10 @@ class Authenticator:
             ' it.'
         createKeyWin = tk.Toplevel(self.top)
         createKeyWin.title('Create PIN/Phrase')
+        # Pin/Phrase creation window jumps to the front.
+        createKeyWin.lift()
+        createKeyWin.attributes('-topmost', True)
+        createKeyWin.attributes('-topmost', False)
         warningLabel = tk.Label(
             createKeyWin, text=warning_message, justify='left', font=FONT)
         warningLabel.grid(column=0, row=0, columnspan=2, sticky='EW')
