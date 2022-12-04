@@ -212,4 +212,7 @@ class Authenticator:
 
 
 if __name__ == '__main__':
+    root = tk.Tk()
     a = Authenticator()
+
+    root.mainloop()
