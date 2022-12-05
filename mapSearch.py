@@ -9,6 +9,7 @@ BG_COLOR3 = '#5C80BC'
 BUTTON_BG_COLOR = '#4D5061'
 FONT = ('Bahnschrift Light', 16, 'normal')
 GOLD_COLOR = '#E9D985'
+DARK_GOLD_COLOR = '#8B7536'
 
 
 class Map:
@@ -28,7 +29,8 @@ class Map:
         self.alwaysTopVar = tk.IntVar()
         self.always_top_cb = tk.Checkbutton(self.top, text='Always on top',
                                             variable=self.alwaysTopVar, onvalue=1, offvalue=0,
-                                            bg=BG_COLOR, fg=FG_COLOR, font=('Bahnschrift Light', 11, 'normal'),
+                                            bg=BG_COLOR, fg=FG_COLOR, font=(
+                                                'Bahnschrift Light', 11, 'normal'),
                                             activebackground=BG_COLOR, activeforeground=FG_COLOR,
                                             selectcolor=BG_COLOR, command=self.always_top)
         self.always_top_cb.grid(column=0, row=0, sticky='E')
@@ -40,7 +42,6 @@ class Map:
         self.address_t = tk.Text(self.top, bg=FG_COLOR, fg=BG_COLOR,
                                  font=FONT, width=25, height=3)
         self.address_t.grid(column=0, row=1, pady=(10, 15))
-       
 
         # Get Direction Button
         self.calculate_b = tk.Button(self.top, text='Search (Shift + Enter)', bg=BUTTON_BG_COLOR,
@@ -68,6 +69,9 @@ class Map:
         self.uciAddress = 'UCI+Medical+Center,+101+The+City+Dr+S,+Orange,+CA+92868/'
         self.destination = ''
 
+        self.calculate_b.bind('<Enter>', self.pointerEnter)
+        self.calculate_b.bind('<Leave>', self.pointerLeave)
+
     def get_direction(self, even=None):
         """Get destination from user."""
         destination = self.address_t.get(index1='1.0', index2=END)
@@ -92,6 +96,14 @@ class Map:
             self.top.attributes('-topmost', 1)
         elif self.alwaysTopVar.get() == 0:
             self.top.attributes('-topmost', 0)
+
+    def pointerEnter(self, e):
+        """Change button color on mouse hover."""
+        e.widget['bg'] = DARK_GOLD_COLOR
+
+    def pointerLeave(self, e):
+        """Change button color back to normal on mouse hover."""
+        e.widget['bg'] = BUTTON_BG_COLOR
 
 
 if __name__ == '__main__':
