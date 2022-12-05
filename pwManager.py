@@ -277,8 +277,8 @@ class PasswordManager:
         try:
             self.db = DataBase(root=top)
         except KeyError:
-            messagebox.showerror(
-                parent=self.top, title='Key Missing', message="Key is missing in 'data.json'. Use Authenticator to setup PIN/Phrase and reset key.")
+            messagebox.showerror(parent=self.top, title='Key Missing',
+                                 message="Key is missing in 'data.json'. Use Authenticator to setup PIN/Phrase and reset key.")
         except FileNotFoundError:
             messagebox.showerror(parent=self.top, title='File Missing',
                                  message="The file 'data.json' is missing. Use Authenticator to setup PIN/Phrase.")
@@ -379,9 +379,8 @@ class PasswordManager:
             with open('data/data.json', 'r') as f:
                 data = json.load(f)
                 if not website or not username or not password:
-                    messagebox.showwarning(
-                        title='Error',
-                        message='Please do not leave any fields empty.')
+                    messagebox.showwarning(parent=self.top, title='Error',
+                                           message='Please do not leave any fields empty.')
                     return
                 elif enWebsite in data:
                     self.top.bell()
@@ -396,9 +395,8 @@ class PasswordManager:
                 data.update(loginInfo)
         except (FileNotFoundError, json.decoder.JSONDecodeError):
             if not website or not username or not password:
-                messagebox.showwarning(
-                    title='Error',
-                    message='Please do not leave any fields empty.')
+                messagebox.showwarning(parent=self.top, title='Error',
+                                       message='Please do not leave any fields empty.')
                 return
 
             data = loginInfo
@@ -426,18 +424,15 @@ class PasswordManager:
                 if enWebsite in data:
                     self._show_login(data=data, website=enWebsite, event=event)
                 elif not website:
-                    messagebox.showwarning(
-                        title='Error',
-                        message=f'Please enter a website to search.')
+                    messagebox.showwarning(parent=self.top, title='Error',
+                                           message=f'Please enter a website to search.')
                     self._clear_all(event)
                 else:
-                    messagebox.showwarning(
-                        title='Error',
-                        message=f'{website.title()} is not found in the database.')
+                    messagebox.showwarning(parent=self.top, title='Error',
+                                           message=f'{website.title()} is not found in the database.')
         except (FileNotFoundError, json.decoder.JSONDecodeError):
-            messagebox.showwarning(
-                title='Error',
-                message='No data found.')
+            messagebox.showwarning(parent=self.top, title='Error',
+                                   message='No data found.')
             self._clear_all(event)
 
     def _show_login(self, data, website, event):
