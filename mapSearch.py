@@ -7,7 +7,7 @@ BG_COLOR = '#30323D'
 FG_COLOR = 'white'
 BG_COLOR3 = '#5C80BC'
 BUTTON_BG_COLOR = '#4D5061'
-FONT = ('Bahnschrift Light', 14, 'normal')
+FONT = ('Bahnschrift Light', 16, 'normal')
 GOLD_COLOR = '#E9D985'
 
 
@@ -28,20 +28,19 @@ class Map:
         self.alwaysTopVar = tk.IntVar()
         self.always_top_cb = tk.Checkbutton(self.top, text='Always on top',
                                             variable=self.alwaysTopVar, onvalue=1, offvalue=0,
-                                            bg=BG_COLOR, fg=FG_COLOR, font=(
-                                                'Serif', 10, 'normal'),
+                                            bg=BG_COLOR, fg=FG_COLOR, font=('Bahnschrift Light', 11, 'normal'),
                                             activebackground=BG_COLOR, activeforeground=FG_COLOR,
                                             selectcolor=BG_COLOR, command=self.always_top)
         self.always_top_cb.grid(column=0, row=0, sticky='E')
 
         # Address Label & Text
         self.address_l = tk.Label(self.top, text='Address:', bg=BG_COLOR, fg=GOLD_COLOR,
-                                  font=('Bahnschrift Light', 20, 'bold'))
+                                  font=('Bahnschrift Light', 20, 'normal'))
         self.address_l.grid(column=0, row=0, sticky='W')
         self.address_t = tk.Text(self.top, bg=FG_COLOR, fg=BG_COLOR,
-                                 font=('Bahnschrift Light', 14, 'bold'), width=26, height=3)
+                                 font=FONT, width=25, height=3)
         self.address_t.grid(column=0, row=1, pady=(10, 15))
-        self.address_t.focus_set()
+       
 
         # Get Direction Button
         self.calculate_b = tk.Button(self.top, text='Search (Shift + Enter)', bg=BUTTON_BG_COLOR,
@@ -62,6 +61,7 @@ class Map:
         y = int(screen_height/2 - win_height/2)
         self.top.geometry(f"{win_width}x{win_height}+{x}+{y}")
         self.top.deiconify()
+        self.address_t.focus_set()
 
         # URL
         self.mapUrl = 'https://www.google.com/maps/dir/'
