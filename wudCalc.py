@@ -4,7 +4,7 @@ import pyperclip
 from tkinter import END
 
 
-FONT = ('Serif', 14, 'normal')
+FONT = ('Bahnschrift Light', 16, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
 GOLD_COLOR = '#E9D985'
@@ -32,7 +32,7 @@ class WrapUpDateCalculator():
         self.alwaysTopVar = tk.IntVar()
         self.always_top_check_button = tk.Checkbutton(self.top, text='Always on top',
                                         variable=self.alwaysTopVar, onvalue=1, offvalue=0,
-                                        bg=BG_COLOR, fg=FG_COLOR, font=('Serif', 10, 'normal'),
+                                        bg=BG_COLOR, fg=FG_COLOR, font=('Bahnschrift Light', 11, 'normal'),
                                         activebackground=BG_COLOR, activeforeground=FG_COLOR,
                                         selectcolor=BG_COLOR, command=self.always_top)
         self.always_top_check_button.grid(column=0, row=0, sticky='NW', pady=(0, 5))
@@ -49,7 +49,7 @@ class WrapUpDateCalculator():
                                             width=12)
         self.dispense_date_entry.focus()
         self.dispense_date_entry.grid(column=1, row=1,
-                                    padx=10)
+                                    padx=10, pady=5)
 
         # Day Supply Label & Entry
         self.day_supply_label = tk.Label(self.top, text='Day Supply:',
@@ -67,12 +67,12 @@ class WrapUpDateCalculator():
         self.v = tk.IntVar()
         self.v.set(1)
         self.seven_days = tk.Radiobutton(self.top, text='7 days before', variable=self.v, value=1,
-                                        bg=BG_COLOR, fg=FG_COLOR, font=('Serif', 10, 'normal'),
+                                        bg=BG_COLOR, fg=FG_COLOR, font=('Bahnschrift Light', 11, 'normal'),
                                         activebackground=BG_COLOR, activeforeground=FG_COLOR,
                                         selectcolor=BG_COLOR)
-        self.seven_days.grid(column=0, row=3)
+        self.seven_days.grid(column=0, row=3, pady=5)
         self.nine_days = tk.Radiobutton(self.top, text='9 days before', variable=self.v, value=2,
-                                        bg=BG_COLOR, fg=FG_COLOR, font=('Serif', 10, 'normal'),
+                                        bg=BG_COLOR, fg=FG_COLOR, font=('Bahnschrift Light', 11, 'normal'),
                                         activebackground=BG_COLOR, activeforeground=FG_COLOR,
                                         selectcolor=BG_COLOR)
         self.nine_days.grid(column=1, row=3)
@@ -92,12 +92,12 @@ class WrapUpDateCalculator():
 
         # Wrap Up Date Label
         self.wrap_up_date_text = tk.Label(self.top, text='Wrap Up Date:', 
-                                            font=FONT,
+                                            font=('Bahnschrift Light', 16, 'bold'),
                                             bg=BG_COLOR,
                                             fg=GOLD_COLOR)
         self.wrap_up_date_text.grid(column=0, row=6, pady=(2, 7))
         self.wrap_up_date = tk.Label(self.top, text='',
-                                        font=FONT,
+                                        font=('Bahnschrift Light', 16, 'bold'),
                                         bg=BG_COLOR,
                                         fg=GOLD_COLOR)
         self.wrap_up_date.grid(column=1, row=6, pady=(2, 7))
