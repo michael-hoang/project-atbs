@@ -83,11 +83,12 @@ class Authenticator:
         try:
             with open('data/data.json', 'r') as f:
                 data = json.load(f)
-                checkKey = data['key'] # if data.json found, check if key exists
+                # if data.json found, check if key exists
+                checkKey = data['key']
 
             with open('data/data.json', 'r') as f:
                 cred2 = f.read()
-                
+
         except FileNotFoundError:
             cred2 = False
 
@@ -98,10 +99,20 @@ class Authenticator:
                                  " be overwritten. Proceed with caution!")
             return False
 
-        except (json.decoder.JSONDecodeError, TypeError): # error handling for empty data.json or invalid data in data.json
+        # error handling for empty data.json or invalid data in data.json
+        except (json.decoder.JSONDecodeError, TypeError):
             return False
 
         if cred1 and cred2:
+            # check for corrupted key
+            try:
+                decryptedKey = self._decrypt_token()
+            except ValueError:
+                messagebox.showerror(parent=self.top, title='Corrupted Key', message="Key is corrupted "
+                                     "in 'data.json' or 'auth.key'. Set up a new PIN/Phrase to generate a new key. All "
+                                     "stored data will be overwritten. Proceed with caution!")
+                return False
+
             return True
         elif cred1 and not cred2:
             message = "Path 'cred/auth.key' was detected, but path 'data/data.json' is missing."\
