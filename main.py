@@ -10,7 +10,8 @@ from authentication import Authenticator
 FONT = ('Bahnschrift Light', 17, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
-SLATEGRAY4 = 'SlateGray4'
+HOVER_BUTTON_COLOR = 'SlateGray4'
+ACTIVE_BG_COLOR = 'SlateGray2'
 
 
 def open_WrapUpDateCalculator():
@@ -46,7 +47,7 @@ def _check_isVerified_flag(authenticator):
 
 def pointerEnter(event):
     """Change button color on mouse hover."""
-    event.widget['bg'] = SLATEGRAY4
+    event.widget['bg'] = HOVER_BUTTON_COLOR
 
 
 def pointerLeave(event):
@@ -67,8 +68,8 @@ root.iconphoto(False, atbs_icon)
 cc_img_open = Image.open(fp='img/cc_icon.png')
 cc_img_resized = cc_img_open.resize(size=(50, 50))
 cc_img = ImageTk.PhotoImage(cc_img_resized)
-cp_but = tk.Button(text='  Payment', image=cc_img, compound='left',
-                   font=FONT, fg=FG_COLOR, bg=BG_COLOR, command=open_CardPaymentForm,
+cp_but = tk.Button(text='  Payment', image=cc_img, compound='left', font=FONT, fg=FG_COLOR,
+                   bg=BG_COLOR, activebackground=ACTIVE_BG_COLOR, command=open_CardPaymentForm,
                    anchor='w', padx=10, pady=5, width=208)
 cp_but.grid(column=0, row=0, sticky='EW')
 
@@ -76,18 +77,18 @@ cp_but.grid(column=0, row=0, sticky='EW')
 cal_calc_img_open = Image.open(fp='img/cal_calc.png')
 cal_calc_img_resized = cal_calc_img_open.resize(size=(50, 50))
 cal_calc_img = ImageTk.PhotoImage(cal_calc_img_resized)
-wud_but = tk.Button(text='  Wrap Up', image=cal_calc_img, compound='left',
-                    font=FONT, fg=FG_COLOR, bg=BG_COLOR, command=open_WrapUpDateCalculator,
-                    anchor='w', padx=10, pady=5, width=207)
+wud_but = tk.Button(text='  Wrap Up', image=cal_calc_img, compound='left', font=FONT,
+                    fg=FG_COLOR, bg=BG_COLOR, activebackground=ACTIVE_BG_COLOR,
+                    command=open_WrapUpDateCalculator, anchor='w', padx=10, pady=5, width=207)
 wud_but.grid(column=0, row=1, sticky='EW')
 
 # Map search
 map_img_open = Image.open(fp='img/map_icon.png')
 map_img_resized = map_img_open.resize(size=(50, 50))
 map_img = ImageTk.PhotoImage(map_img_resized)
-m_but = tk.Button(text='  Map', image=map_img, compound='left', font=FONT,
-                  fg=FG_COLOR, bg=BG_COLOR, command=open_MapSearch, anchor='w',
-                  padx=10, pady=5, width=207)
+m_but = tk.Button(text='  Map', image=map_img, compound='left', font=FONT, fg=FG_COLOR,
+                  bg=BG_COLOR, activebackground=ACTIVE_BG_COLOR, command=open_MapSearch,
+                  anchor='w', padx=10, pady=5, width=207)
 m_but.grid(column=0, row=2, sticky='EW')
 
 # Password Manager
@@ -95,8 +96,8 @@ lock_img_open = Image.open(fp='img/lock_icon.png')
 lock_img_resized = lock_img_open.resize(size=(50, 50))
 lock_img = ImageTk.PhotoImage(lock_img_resized)
 pm_but = tk.Button(text='  Password', image=lock_img, compound='left', font=FONT,
-                   fg=FG_COLOR, bg=BG_COLOR, command=open_PasswordManager, anchor='w',
-                   padx=10, pady=5, width=207)
+                   fg=FG_COLOR, bg=BG_COLOR, activebackground=ACTIVE_BG_COLOR,
+                   command=open_PasswordManager, anchor='w', padx=10, pady=5, width=207)
 pm_but.grid(column=0, row=3, sticky='EW')
 
 # Center window to screen
