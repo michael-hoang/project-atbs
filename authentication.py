@@ -25,6 +25,7 @@ class Authenticator:
         self.top = tk.Toplevel(bg=BG_COLOR, padx=25, pady=20)
         self.top.title('Authentication')
         self.top.withdraw()
+        self.top.resizable(width=False, height=False)
         self.authentication_icon = tk.PhotoImage(
             file='img/authentication_icon.png')
         self.top.iconphoto(False, self.authentication_icon)
@@ -32,9 +33,6 @@ class Authenticator:
         self.instructLabel = tk.Label(
             self.top, text='Enter your PIN/Phrase.', bg=BG_COLOR, fg='white', font=('Bahnschrift Light', 14, 'normal'))
         self.instructLabel.grid(column=0, row=0, columnspan=2, pady=(0, 10))
-        # self.enterKeyLabel = tk.Label(
-        #     self.top, text='PIN/Phrase: ', bg=BG_COLOR, fg='white', font=FONT)
-        # self.enterKeyLabel.grid(column=0, row=2)
         self.keyEntry = tk.Entry(self.top, font=FONT, width=24, show='*')
         self.keyEntry.grid(column=0, row=2)
         self.okButton = tk.Button(
@@ -59,6 +57,7 @@ class Authenticator:
         self._authenticate()
 
         self.top.bind('<Return>', self.confirmation)
+        self.top.bind('<Escape>', self.close_verification_window)
 
     def _authenticate(self):
         """Start authentication or prompt user to create secret key."""
@@ -187,6 +186,7 @@ class Authenticator:
         createKeyWin = tk.Toplevel(self.top, padx=20, pady=20, bg=BG_COLOR)
         createKeyWin.title('Setup PIN/Phrase')
         createKeyWin.withdraw()
+        createKeyWin.resizable(width=False, height=False)
         createKeyWin.iconphoto(False, self.authentication_icon)
         # Pin/Phrase creation window jumps to the front.
         createKeyWin.lift()
@@ -314,6 +314,10 @@ class Authenticator:
                                  title='Error', message='Invalid PIN/Phrase. Please try again.')
             self.keyEntry.delete(0, END)
             self.keyEntry.focus()
+
+    def close_verification_window(self, event):
+        """Close verification window."""
+        self.top.destroy()
 
 
 if __name__ == '__main__':
