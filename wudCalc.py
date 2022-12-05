@@ -8,7 +8,9 @@ FONT = ('Bahnschrift Light', 16, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
 GOLD_COLOR = '#E9D985'
+DARK_GOLD_COLOR = '#8B7536'
 BUTTON_BG_COLOR = '#4D5061'
+
 
 class WrapUpDateCalculator():
     """Models a wrap up date calculator. Calculates next wrap up date."""
@@ -22,7 +24,7 @@ class WrapUpDateCalculator():
         self.top.title('Wrap Up Date Calculator')
         self.top.config(bg=BG_COLOR,
                         padx=25,
-                        pady=15)
+                        pady=10)
         self.top.resizable(width=False, height=False)
 
         self.cal_calc_icon = tk.PhotoImage(file="img/cal_calc.png")
@@ -31,12 +33,14 @@ class WrapUpDateCalculator():
         # Checkbutton
         self.alwaysTopVar = tk.IntVar()
         self.always_top_check_button = tk.Checkbutton(self.top, text='Always on top',
-                                        variable=self.alwaysTopVar, onvalue=1, offvalue=0,
-                                        bg=BG_COLOR, fg=FG_COLOR, font=('Bahnschrift Light', 11, 'normal'),
-                                        activebackground=BG_COLOR, activeforeground=FG_COLOR,
-                                        selectcolor=BG_COLOR, command=self.always_top)
-        self.always_top_check_button.grid(column=0, row=0, sticky='NW', pady=(0, 5))
-        
+                                                      variable=self.alwaysTopVar, onvalue=1, offvalue=0,
+                                                      bg=BG_COLOR, fg=FG_COLOR, font=(
+                                                          'Bahnschrift Light', 11, 'normal'),
+                                                      activebackground=BG_COLOR, activeforeground=FG_COLOR,
+                                                      selectcolor=BG_COLOR, command=self.always_top)
+        self.always_top_check_button.grid(
+            column=0, row=0, sticky='NW', pady=(0, 5))
+
         # Dispense Date Label & Entry
         self.dispense_date_label = tk.Label(self.top, text='Dispense Date:',
                                             bg=BG_COLOR,
@@ -49,76 +53,87 @@ class WrapUpDateCalculator():
                                             width=12)
         self.dispense_date_entry.focus()
         self.dispense_date_entry.grid(column=1, row=1,
-                                    padx=10, pady=5)
+                                      padx=10, pady=5)
 
         # Day Supply Label & Entry
         self.day_supply_label = tk.Label(self.top, text='Day Supply:',
-                                        bg=BG_COLOR,
-                                        fg=FG_COLOR,
-                                        font=FONT)
+                                         bg=BG_COLOR,
+                                         fg=FG_COLOR,
+                                         font=FONT)
         self.day_supply_label.grid(column=0, row=2, sticky='E')
         self.day_supply_entry = tk.Entry(self.top, bg=FG_COLOR,
-                                        fg=BG_COLOR,
-                                        font=FONT,
-                                        width=12)
+                                         fg=BG_COLOR,
+                                         font=FONT,
+                                         width=12)
         self.day_supply_entry.grid(column=1, row=2, pady=5)
 
         # Radiobuttons
         self.v = tk.IntVar()
         self.v.set(1)
         self.seven_days = tk.Radiobutton(self.top, text='7 days before', variable=self.v, value=1,
-                                        bg=BG_COLOR, fg=FG_COLOR, font=('Bahnschrift Light', 11, 'normal'),
-                                        activebackground=BG_COLOR, activeforeground=FG_COLOR,
-                                        selectcolor=BG_COLOR)
+                                         bg=BG_COLOR, fg=FG_COLOR, font=(
+                                             'Bahnschrift Light', 11, 'normal'),
+                                         activebackground=BG_COLOR, activeforeground=FG_COLOR,
+                                         selectcolor=BG_COLOR)
         self.seven_days.grid(column=0, row=3, pady=5)
         self.nine_days = tk.Radiobutton(self.top, text='9 days before', variable=self.v, value=2,
-                                        bg=BG_COLOR, fg=FG_COLOR, font=('Bahnschrift Light', 11, 'normal'),
+                                        bg=BG_COLOR, fg=FG_COLOR, font=(
+                                            'Bahnschrift Light', 11, 'normal'),
                                         activebackground=BG_COLOR, activeforeground=FG_COLOR,
                                         selectcolor=BG_COLOR)
         self.nine_days.grid(column=1, row=3)
-        
+
         # Calculate Button
         self.calculate_button = tk.Button(self.top, text='Calculate',
-                                        bg=BUTTON_BG_COLOR,
-                                        fg=FG_COLOR,
-                                        font=FONT,
-                                        activebackground=GOLD_COLOR,
-                                        borderwidth=0, command=self.calculate_wrap_up_date)
+                                          bg=BUTTON_BG_COLOR,
+                                          fg=FG_COLOR,
+                                          font=FONT,
+                                          activebackground=GOLD_COLOR,
+                                          borderwidth=0, command=self.calculate_wrap_up_date)
         self.calculate_button.grid(column=0, row=4,
-                                    sticky='EW',
-                                    columnspan=2,
-                                    padx=5,
-                                    pady=(10, 5))
+                                   sticky='EW',
+                                   columnspan=2,
+                                   padx=5,
+                                   pady=(10, 5))
+        self.calculate_button.bind('<Enter>', self.pointerEnterCalculator)
+        self.calculate_button.bind('<Leave>', self.pointerLeaveCalculator)
 
         # Wrap Up Date Label
-        self.wrap_up_date_text = tk.Label(self.top, text='Wrap Up Date:', 
-                                            font=('Bahnschrift Light', 16, 'bold'),
-                                            bg=BG_COLOR,
-                                            fg=GOLD_COLOR)
+        self.wrap_up_date_text = tk.Label(self.top, text='Wrap Up Date:',
+                                          font=('Bahnschrift Light',
+                                                18, 'normal'),
+                                          bg=BG_COLOR,
+                                          fg=GOLD_COLOR)
         self.wrap_up_date_text.grid(column=0, row=6, pady=(2, 7))
         self.wrap_up_date = tk.Label(self.top, text='',
-                                        font=('Bahnschrift Light', 16, 'bold'),
-                                        bg=BG_COLOR,
-                                        fg=GOLD_COLOR)
+                                     font=('Bahnschrift Light', 18, 'normal'),
+                                     bg=BG_COLOR,
+                                     fg=GOLD_COLOR)
         self.wrap_up_date.grid(column=1, row=6, pady=(2, 7))
 
         # Clear button
         self.clear_button = tk.Button(self.top, text='Clear',
-                                    bg=BUTTON_BG_COLOR,
-                                    fg=FG_COLOR,
-                                    font=FONT,
-                                    activebackground=GOLD_COLOR,
-                                    borderwidth=0, command=self.clear)
-        self.clear_button.grid(column=1, row=5, sticky='EW', padx=(5, 5), pady=(0, 10))
+                                      bg=BUTTON_BG_COLOR,
+                                      fg=FG_COLOR,
+                                      font=FONT,
+                                      activebackground=GOLD_COLOR,
+                                      borderwidth=0, command=self.clear)
+        self.clear_button.grid(
+            column=1, row=5, sticky='EW', padx=(5, 5), pady=(0, 10))
+        self.clear_button.bind('<Enter>', self.pointerEnterClear)
+        self.clear_button.bind('<Leave>', self.pointerLeaveClear)
 
         # Exit button
         self.exit_button = tk.Button(self.top, text='Exit',
-                                    bg=BUTTON_BG_COLOR,
-                                    fg=FG_COLOR,
-                                    font=FONT,
-                                    activebackground=GOLD_COLOR,
-                                    borderwidth=0, command=self.top.destroy)
-        self.exit_button.grid(column=0, row=5, sticky='EW', padx=(5, 0), pady=(0, 10))
+                                     bg=BUTTON_BG_COLOR,
+                                     fg=FG_COLOR,
+                                     font=FONT,
+                                     activebackground='coral',
+                                     borderwidth=0, command=self.top.destroy)
+        self.exit_button.grid(column=0, row=5, sticky='EW',
+                              padx=(5, 0), pady=(0, 10))
+        self.exit_button.bind('<Enter>', self.pointerEnterExit)
+        self.exit_button.bind('<Leave>', self.pointerLeaveExit)
 
         # Center window to screen
         self.top.update_idletasks()
@@ -133,33 +148,6 @@ class WrapUpDateCalculator():
 
         self.top.bind('<Return>', self.calculate_wrap_up_date)
         self.top.bind('<Delete>', self.clear)
-
-        # self.top.update()
-        # # self.top.overrideredirect(True)
-        # self._offsetx = 0
-        # self._offsety = 0
-        # self._window_x = int(screen_width/2 - win_width/2)
-        # self._window_y = int(screen_height/2 - win_height/2)
-        # self._window_w = self.top.winfo_width()
-        # self._window_h = self.top.winfo_height()
-        # # self.top.geometry('{w}x{h}+{x}+{y}'.format(w=self._window_w,h=self._window_h,x=self._window_x,y=self._window_y))
-        # self.top.bind('<Button-1>',self.clickwin)
-        # self.top.bind('<B1-Motion>',self.dragwin)
-
-    # def dragwin(self,event):
-    #     delta_x = self.top.winfo_pointerx() - self._offsetx
-    #     delta_y = self.top.winfo_pointery() - self._offsety
-    #     x = self._window_x + delta_x
-    #     y = self._window_y + delta_y
-    #     self.top.geometry("+{x}+{y}".format(x=x, y=y))
-    #     self._offsetx = self.top.winfo_pointerx()
-    #     self._offsety = self.top.winfo_pointery()
-    #     self._window_x = x
-    #     self._window_y = y
-
-    # def clickwin(self,event):
-    #     self._offsetx = self.top.winfo_pointerx()
-    #     self._offsety = self.top.winfo_pointery()
 
     def press_enter_calculate_wrap_up_date(self, event):
         self.calculate_wrap_up_date()
@@ -190,11 +178,12 @@ class WrapUpDateCalculator():
                 dispense_date_split = entered_dispense_date.split('/')
             elif '-' in entered_dispense_date:
                 dispense_date_split = entered_dispense_date.split('-')
-            
+
             # Check if user entered 4 digits year. If not, format it to YYYY.
             if len(entered_dispense_date) <= 5:
                 if len(dispense_date_split) == 3:
-                    if len(dispense_date_split[2]) == 1: # if only 1 digit in the year
+                    # if only 1 digit in the year
+                    if len(dispense_date_split[2]) == 1:
                         self.wrap_up_date.config(text='INVALID')
                         return
                 else:
@@ -209,7 +198,8 @@ class WrapUpDateCalculator():
             dispense_year = int(dispense_year)
 
             day_supply = int(self.day_supply_entry.get())
-            dispense_date = dt.datetime(month=dispense_month, day=dispense_day, year=dispense_year)
+            dispense_date = dt.datetime(
+                month=dispense_month, day=dispense_day, year=dispense_year)
 
             v_state = self.v.get()
             if v_state == 1:
@@ -217,12 +207,15 @@ class WrapUpDateCalculator():
             elif v_state == 2:
                 days_before = 9
 
-            wrap_up_date = dispense_date + dt.timedelta(days=day_supply-days_before)
+            wrap_up_date = dispense_date + \
+                dt.timedelta(days=day_supply-days_before)
             # Avoid weekends
             if dt.datetime(wrap_up_date.year, wrap_up_date.month, wrap_up_date.day).weekday() == 5:
-                wrap_up_date = dispense_date + dt.timedelta(days=day_supply-days_before-1)
+                wrap_up_date = dispense_date + \
+                    dt.timedelta(days=day_supply-days_before-1)
             if dt.datetime(wrap_up_date.year, wrap_up_date.month, wrap_up_date.day).weekday() == 6:
-                wrap_up_date = dispense_date + dt.timedelta(days=day_supply-days_before-2)
+                wrap_up_date = dispense_date + \
+                    dt.timedelta(days=day_supply-days_before-2)
 
             # Make sure wrap up date is not in the past.
 
@@ -235,6 +228,30 @@ class WrapUpDateCalculator():
             pyperclip.copy(formatted_wrap_up_date)
         except:
             self.wrap_up_date.config(text='INVALID')
+
+    def pointerEnterCalculator(self, event):
+        """Change Calculate button color on mouse hover."""
+        self.calculate_button['bg'] = DARK_GOLD_COLOR
+
+    def pointerLeaveCalculator(self, event):
+        """Change Calculate button color back to normal when mouse leave button."""
+        self.calculate_button['bg'] = BUTTON_BG_COLOR
+
+    def pointerEnterClear(self, event):
+        """Change Clear button color on mouse hover."""
+        self.clear_button['bg'] = DARK_GOLD_COLOR
+
+    def pointerLeaveClear(self, event):
+        """Change Clear button color back to normal when mouse leave button."""
+        self.clear_button['bg'] = BUTTON_BG_COLOR
+
+    def pointerEnterExit(self, event):
+        """Change Exit button color on mouse hover."""
+        self.exit_button['bg'] = 'coral4'
+
+    def pointerLeaveExit(self, event):
+        """Change Exit button color back to normal when mouse leave button."""
+        self.exit_button['bg'] = BUTTON_BG_COLOR
 
 
 if __name__ == '__main__':
