@@ -7,8 +7,7 @@ from tkinter import END
 FONT = ('Serif', 14, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
-FG_COLOR2 = '#E8C547'
-BG_COLOR3 = '#5C80BC'
+GOLD_COLOR = '#E9D985'
 BUTTON_BG_COLOR = '#4D5061'
 
 class WrapUpDateCalculator():
@@ -22,8 +21,8 @@ class WrapUpDateCalculator():
         self.top.attributes('-topmost', 0)
         self.top.title('Wrap Up Date Calculator')
         self.top.config(bg=BG_COLOR,
-                        padx=15,
-                        pady=5)
+                        padx=25,
+                        pady=15)
         self.top.resizable(width=False, height=False)
 
         self.cal_calc_icon = tk.PhotoImage(file="img/cal_calc.png")
@@ -83,7 +82,7 @@ class WrapUpDateCalculator():
                                         bg=BUTTON_BG_COLOR,
                                         fg=FG_COLOR,
                                         font=FONT,
-                                        activebackground=FG_COLOR2,
+                                        activebackground=GOLD_COLOR,
                                         borderwidth=0, command=self.calculate_wrap_up_date)
         self.calculate_button.grid(column=0, row=4,
                                     sticky='EW',
@@ -95,12 +94,12 @@ class WrapUpDateCalculator():
         self.wrap_up_date_text = tk.Label(self.top, text='Wrap Up Date:', 
                                             font=FONT,
                                             bg=BG_COLOR,
-                                            fg=FG_COLOR2)
+                                            fg=GOLD_COLOR)
         self.wrap_up_date_text.grid(column=0, row=6, pady=(2, 7))
         self.wrap_up_date = tk.Label(self.top, text='',
                                         font=FONT,
                                         bg=BG_COLOR,
-                                        fg=FG_COLOR2)
+                                        fg=GOLD_COLOR)
         self.wrap_up_date.grid(column=1, row=6, pady=(2, 7))
 
         # Clear button
@@ -108,7 +107,7 @@ class WrapUpDateCalculator():
                                     bg=BUTTON_BG_COLOR,
                                     fg=FG_COLOR,
                                     font=FONT,
-                                    activebackground=FG_COLOR2,
+                                    activebackground=GOLD_COLOR,
                                     borderwidth=0, command=self.clear)
         self.clear_button.grid(column=1, row=5, sticky='EW', padx=(5, 5), pady=(0, 10))
 
@@ -117,7 +116,7 @@ class WrapUpDateCalculator():
                                     bg=BUTTON_BG_COLOR,
                                     fg=FG_COLOR,
                                     font=FONT,
-                                    activebackground=FG_COLOR2,
+                                    activebackground=GOLD_COLOR,
                                     borderwidth=0, command=self.top.destroy)
         self.exit_button.grid(column=0, row=5, sticky='EW', padx=(5, 0), pady=(0, 10))
 
@@ -236,3 +235,10 @@ class WrapUpDateCalculator():
             pyperclip.copy(formatted_wrap_up_date)
         except:
             self.wrap_up_date.config(text='INVALID')
+
+
+if __name__ == '__main__':
+    root = tk.Tk()
+    wudc = WrapUpDateCalculator()
+
+    root.mainloop()
