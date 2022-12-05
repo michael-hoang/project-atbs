@@ -12,6 +12,7 @@ from myEncryption import EnDeCrypt
 FONT = ('Bahnschrift Light', 12, 'normal')
 BG_COLOR = '#30323D'
 GOLD_COLOR = '#E9D985'
+DARK_GOLD_COLOR = '#8B7536'
 BUTTON_COLOR = '#4D5061'
 LIGHT_GRAY = '#999999'
 
@@ -58,6 +59,8 @@ class Authenticator:
 
         self.top.bind('<Return>', self.confirmation)
         self.top.bind('<Escape>', self.close_verification_window)
+        self.okButton.bind('<Enter>', self.pointerEnter)
+        self.okButton.bind('<Leave>', self.pointerLeave)
 
     def _authenticate(self):
         """Start authentication or prompt user to create secret key."""
@@ -237,6 +240,9 @@ class Authenticator:
         createKeyWin.deiconify()
         keyEntry.focus()
 
+        okButton.bind('<Enter>', self.pointerEnter)
+        okButton.bind('<Leave>', self.pointerLeave)
+
     def _encrypt_token(self) -> str:
         """Encrypt and embed secret key inside token. Attach unencrypted shift number at the end of encrypted token."""
         encryptedKey = self.endecrypt.encrypt(
@@ -318,6 +324,14 @@ class Authenticator:
     def close_verification_window(self, event):
         """Close verification window."""
         self.top.destroy()
+
+    def pointerEnter(self, e):
+        """Change button color when mouse pointer is on top of button."""
+        e.widget['bg'] = DARK_GOLD_COLOR
+
+    def pointerLeave(self, e):
+        """Change button color back to normal when mouse pointer is not on button."""
+        e. widget['bg'] = BUTTON_COLOR
 
 
 if __name__ == '__main__':
