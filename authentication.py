@@ -82,9 +82,24 @@ class Authenticator:
 
         try:
             with open('data/data.json', 'r') as f:
+                data = json.load(f)
+                checkKey = data['key'] # if data.json found, check if key exists
+
+            with open('data/data.json', 'r') as f:
                 cred2 = f.read()
+                
         except FileNotFoundError:
             cred2 = False
+
+        except KeyError:
+            messagebox.showerror(parent=self.top, title='Key Missing',
+                                 message="Key is missing in 'data.json'. Set up"
+                                 " a new PIN/Phrase to generate a new key. Any stored data will"
+                                 " be overwritten. Proceed with caution!")
+            return False
+
+        except json.decoder.JSONDecodeError: # error handling for empty data.json 
+            return False
 
         if cred1 and cred2:
             return True
@@ -92,13 +107,15 @@ class Authenticator:
             message = "Path 'cred/auth.key' was detected, but path 'data/data.json' is missing."\
                 "\n\nBoth paths are needed to access stored data. Setting up a new Pin/Phrase"\
                 " will overwrite any existing data. Proceed with caution!"
-            messagebox.showwarning(parent=self.top, title='Missing File', message=message)
+            messagebox.showwarning(
+                parent=self.top, title='Missing File', message=message)
             return False
         elif not cred1 and cred2:
             message = "Path 'data/data.json' was detected, but path 'cred/auth.key' is missing."\
                 "\n\nBoth paths are needed to access stored data. Setting up a new Pin/Phrase"\
                 " will overwrite any existing data. Proceed with caution!"
-            messagebox.showwarning(parent=self.top, title='Missing File', message=message)
+            messagebox.showwarning(
+                parent=self.top, title='Missing File', message=message)
             return False
         else:
             return False
