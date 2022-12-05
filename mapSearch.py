@@ -3,12 +3,13 @@ from tkinter import END
 import webbrowser
 
 
-FONT = ('Serif', 14, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
-FG_COLOR2 = '#E8C547'
 BG_COLOR3 = '#5C80BC'
 BUTTON_BG_COLOR = '#4D5061'
+FONT = ('Bahnschrift Light', 16, 'normal')
+GOLD_COLOR = '#E9D985'
+DARK_GOLD_COLOR = '#8B7536'
 
 
 class Map:
@@ -19,34 +20,33 @@ class Map:
         self.top = tk.Toplevel()
         self.top.withdraw()
         self.top.title('Search Maps')
-        self.top.config(bg=BG_COLOR, padx=12, pady=12)
+        self.top.config(bg=BG_COLOR, padx=20, pady=20)
         self.top.resizable(width=False, height=False)
         self.map_icon = tk.PhotoImage(file="img/map_icon.png")
         self.top.iconphoto(False, self.map_icon)
-
 
         # Checkbutton
         self.alwaysTopVar = tk.IntVar()
         self.always_top_cb = tk.Checkbutton(self.top, text='Always on top',
                                             variable=self.alwaysTopVar, onvalue=1, offvalue=0,
-                                            bg=BG_COLOR, fg=FG_COLOR, font=('Serif', 10, 'normal'),
+                                            bg=BG_COLOR, fg=FG_COLOR, font=(
+                                                'Bahnschrift Light', 11, 'normal'),
                                             activebackground=BG_COLOR, activeforeground=FG_COLOR,
                                             selectcolor=BG_COLOR, command=self.always_top)
         self.always_top_cb.grid(column=0, row=0, sticky='E')
 
         # Address Label & Text
-        self.address_l = tk.Label(self.top, text='Address:', bg=BG_COLOR, fg=FG_COLOR,
-                                    font=FONT)
+        self.address_l = tk.Label(self.top, text='Address:', bg=BG_COLOR, fg=GOLD_COLOR,
+                                  font=('Bahnschrift Light', 20, 'normal'))
         self.address_l.grid(column=0, row=0, sticky='W')
         self.address_t = tk.Text(self.top, bg=FG_COLOR, fg=BG_COLOR,
-                                font=('Serif', 12, 'bold'), width=26, height=3)
-        self.address_t.grid(column=0, row=1, pady=(5, 10))
-        self.address_t.focus_set()
+                                 font=FONT, width=25, height=3)
+        self.address_t.grid(column=0, row=1, pady=(10, 15))
 
         # Get Direction Button
         self.calculate_b = tk.Button(self.top, text='Search (Shift + Enter)', bg=BUTTON_BG_COLOR,
-                                    fg=FG_COLOR, font=FONT, activebackground=FG_COLOR2,
-                                    borderwidth=0, command=self.get_direction)
+                                     fg=FG_COLOR, font=FONT, activebackground=GOLD_COLOR,
+                                     borderwidth=0, command=self.get_direction)
         self.calculate_b.grid(column=0, row=2, sticky='EW', columnspan=2)
 
         self.top.bind('<Shift-Return>', self.get_direction)
@@ -62,11 +62,15 @@ class Map:
         y = int(screen_height/2 - win_height/2)
         self.top.geometry(f"{win_width}x{win_height}+{x}+{y}")
         self.top.deiconify()
+        self.address_t.focus_set()
 
         # URL
         self.mapUrl = 'https://www.google.com/maps/dir/'
         self.uciAddress = 'UCI+Medical+Center,+101+The+City+Dr+S,+Orange,+CA+92868/'
         self.destination = ''
+
+        self.calculate_b.bind('<Enter>', self.pointerEnter)
+        self.calculate_b.bind('<Leave>', self.pointerLeave)
 
     def get_direction(self, even=None):
         """Get destination from user."""
@@ -92,6 +96,14 @@ class Map:
             self.top.attributes('-topmost', 1)
         elif self.alwaysTopVar.get() == 0:
             self.top.attributes('-topmost', 0)
+
+    def pointerEnter(self, e):
+        """Change button color on mouse hover."""
+        e.widget['bg'] = DARK_GOLD_COLOR
+
+    def pointerLeave(self, e):
+        """Change button color back to normal on mouse hover."""
+        e.widget['bg'] = BUTTON_BG_COLOR
 
 
 if __name__ == '__main__':
