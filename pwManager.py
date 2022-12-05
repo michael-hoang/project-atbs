@@ -386,7 +386,7 @@ class PasswordManager:
                 elif enWebsite in data:
                     self.top.bell()
                     update_existing_info = messagebox.askyesno(
-                        title='Warning',
+                        parent=self.top, title='Warning',
                         message=f"There is already a password saved for {website.title()}.\nWould you like to overwrite?")
                     if update_existing_info:
                         pass
