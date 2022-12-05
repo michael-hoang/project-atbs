@@ -6,6 +6,7 @@ import json
 from PIL import Image, ImageTk
 from myEncryption import EnDeCrypt
 from database import DataBase
+import os
 
 
 # BG_COLOR = '#222E50'
@@ -271,8 +272,11 @@ class PasswordManager:
         """Open login database TopLevel window."""
         try:
             DataBase(root=top)
-        except:
-            return
+        except KeyError:
+            messagebox.showerror(
+                parent=self.top, title='Key Missing', message="Key is missing in 'data.json'. Use Authenticator to setup PIN/Phrase and reset key.")
+        except FileNotFoundError:
+            messagebox.showerror(parent=self.top, title='File Missing', message="The file 'data.json' is missing. Use Authenticator to setup PIN/Phrase.")
 
     def _exclude_symbol(self):
         """Add selected symbol to Exclude listbox."""
@@ -393,6 +397,13 @@ class PasswordManager:
                 return
 
             data = loginInfo
+
+        folder = 'data'
+        programPath = os.path.dirname(__file__)
+        folderAbsPath = os.path.join(programPath, folder)
+        folderExist = os.path.exists(folderAbsPath)
+        if not folderExist:
+            os.mkdir(folderAbsPath)
 
         with open('data/data.json', 'w') as f:
             json.dump(obj=data, fp=f, indent=4)
