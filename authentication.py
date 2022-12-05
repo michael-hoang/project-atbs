@@ -98,7 +98,7 @@ class Authenticator:
                                  " be overwritten. Proceed with caution!")
             return False
 
-        except json.decoder.JSONDecodeError: # error handling for empty data.json 
+        except (json.decoder.JSONDecodeError, TypeError): # error handling for empty data.json or invalid data in data.json
             return False
 
         if cred1 and cred2:
