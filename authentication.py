@@ -50,6 +50,20 @@ class Authenticator:
         y = int(screen_height/2 - win_width/2)
         self.top.geometry(f"{win_width}x{win_height}+{x}+{y}")
 
+        relPath1 = 'data'
+        relPath2 = 'cred'
+        mainPath = os.path.dirname(__file__)
+        absolutePath1 = os.path.join(mainPath, relPath1)
+        absolutePath2 = os.path.join(mainPath, relPath2)
+        isExist1 = os.path.exists(absolutePath1)
+        isExist2 = os.path.exists(absolutePath2)
+
+        if not isExist1:
+            os.mkdir(absolutePath1)
+
+        if not isExist2:
+            os.mkdir(absolutePath2)
+
         self.secretKey = ''
         self.shiftNum = ''
         self.token = ''
@@ -257,19 +271,6 @@ class Authenticator:
         """Separate encrypted token into two parts and write each part to data.json and auth.key."""
         tokenPiece1 = token[:int(len(token)/2)]
         tokenPiece2 = token[int(len(token)/2):]
-        relPath1 = 'data'
-        relPath2 = 'cred'
-        mainPath = os.path.dirname(__file__)
-        absolutePath1 = os.path.join(mainPath, relPath1)
-        absolutePath2 = os.path.join(mainPath, relPath2)
-        isExist1 = os.path.exists(absolutePath1)
-        isExist2 = os.path.exists(absolutePath2)
-
-        if not isExist1:
-            os.mkdir(absolutePath1)
-
-        if not isExist2:
-            os.mkdir(absolutePath2)
 
         with open('data/data.json', 'w') as f:
             data = {'key': tokenPiece1}
