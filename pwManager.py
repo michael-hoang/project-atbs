@@ -9,10 +9,9 @@ from database import DataBase
 import os
 
 
-# BG_COLOR = '#222E50'
 BG_COLOR = '#30323D'
 GOLD_COLOR = '#E9D985'
-# BUTTON_COLOR = '#455EA3'
+DARK_GOLD_COLOR = '#8B7536'
 BUTTON_COLOR = '#4D5061'
 LIGHT_GRAY = '#999999'
 FONT = ('Bahnschrift Light', 14, 'normal')
@@ -265,18 +264,24 @@ class PasswordManager:
         self.top.bind('<Return>', func=self.search_login)
         self.top.bind('<Shift-Return>', func=self.save_login_info)
         self.top.bind('<Delete>', func=self._clear_all)
+        self.addButton.bind('<Enter>', self.pointerEnter)
+        self.addButton.bind('<Leave>', self.pointerLeave)
 
         self._update_topWindow_entries()
+        # Exit after 600 seconds (10 minutes)
+        self.seconds = 600
+        self._pwmCountdown(seconds=self.seconds)
 
     def open_database(self, top):
         """Open login database TopLevel window."""
         try:
-            DataBase(root=top)
+            self.db = DataBase(root=top)
         except KeyError:
             messagebox.showerror(
                 parent=self.top, title='Key Missing', message="Key is missing in 'data.json'. Use Authenticator to setup PIN/Phrase and reset key.")
         except FileNotFoundError:
-            messagebox.showerror(parent=self.top, title='File Missing', message="The file 'data.json' is missing. Use Authenticator to setup PIN/Phrase.")
+            messagebox.showerror(parent=self.top, title='File Missing',
+                                 message="The file 'data.json' is missing. Use Authenticator to setup PIN/Phrase.")
 
     def _exclude_symbol(self):
         """Add selected symbol to Exclude listbox."""
@@ -565,6 +570,10 @@ class PasswordManager:
         top.deiconify()  # Makes TopLevel window visible again.
 
         top.bind('<Escape>', func=_escape)
+        topUsernameCopyButton.bind('<Enter>', self.pointerEnter)
+        topUsernameCopyButton.bind('<Leave>', self.pointerLeave)
+        topPasswordCopyButton.bind('<Enter>', self.pointerEnter)
+        topPasswordCopyButton.bind('<Leave>', self.pointerLeave)
 
         _countdown(seconds)
 
@@ -645,6 +654,25 @@ class PasswordManager:
             self.numSymbols = 0
 
         self.top.after(50, self._update_topWindow_entries)
+
+    def pointerEnter(self, event):
+        """Highlight button on mouse hover."""
+        event.widget['bg'] = DARK_GOLD_COLOR
+
+    def pointerLeave(self, event):
+        """Remove highlight from button when mouse leave button."""
+        event.widget['bg'] = BUTTON_COLOR
+
+    def _pwmCountdown(self, seconds):
+        """Automatically closes Password Manager after # of seconds."""
+        if seconds > 0:
+            self.top.after(1000, self._pwmCountdown, seconds-1)
+        else:
+            try:
+                self.db.destroy()
+            except AttributeError:
+                pass
+            self.top.destroy()
 
 
 if __name__ == '__main__':
