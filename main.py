@@ -7,7 +7,7 @@ from pwManager import PasswordManager
 from authentication import Authenticator
 
 
-FONT = ('Serif', 14, 'normal')
+FONT = ('Bahnschrift Light', 17, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
 
