@@ -6,6 +6,7 @@ from PIL import Image, ImageTk
 import random
 import json
 import os
+import sys
 from myEncryption import EnDeCrypt
 
 
@@ -259,9 +260,13 @@ class Authenticator:
         tokenPiece2 = token[int(len(token)/2):]
         relPath1 = 'data'
         relPath2 = 'cred'
-        mainPath = os.path.dirname(__file__)
-        absolutePath1 = os.path.join(mainPath, relPath1)
-        absolutePath2 = os.path.join(mainPath, relPath2)
+        if getattr(sys, 'frozen', False):
+            application_path = os.path.dirname(sys.executable)
+        elif __file__:
+            application_path = os.path.dirname(__file__)
+
+        absolutePath1 = os.path.join(application_path, relPath1)
+        absolutePath2 = os.path.join(application_path, relPath2)
         isExist1 = os.path.exists(absolutePath1)
         isExist2 = os.path.exists(absolutePath2)
 
