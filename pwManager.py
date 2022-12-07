@@ -143,11 +143,15 @@ class PasswordManager:
             'Bahnschrift Light', 12, 'normal'), bg=BUTTON_COLOR, fg='white',
             borderwidth=0, activebackground=GOLD_COLOR, command=self._exclude_symbol)
         excludeButton.grid(column=2, row=2, ipadx=10, padx=10)
+        excludeButton.bind('<Enter>', self.pointerEnter)
+        excludeButton.bind('<Leave>', self.pointerLeave)
         # << Button
         includeButton = tk.Button(master=symbols_lf, text='<<', font=(
             'Bahnschrift Light', 12, 'normal'), bg=BUTTON_COLOR, fg='white',
             borderwidth=0, activebackground=GOLD_COLOR, command=self._include_symbol)
         includeButton.grid(column=2, row=3, ipadx=10, padx=10)
+        includeButton.bind('<Enter>', self.pointerEnter)
+        includeButton.bind('<Leave>', self.pointerLeave)
 
         # ListBox (Exclude Symbols)
         exclude_l = tk.Label(master=symbols_lf, text='Exclude', font=(
