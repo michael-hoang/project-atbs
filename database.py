@@ -44,6 +44,7 @@ class DataBase(tk.Toplevel):
         self.deiconify()
         self.focus_force()
 
+        self.bind('<Escape>', lambda event: self.exit_window(event, root))
         self.protocol('WM_DELETE_WINDOW', lambda: self.on_closing(root))
 
     def on_closing(self, root):
@@ -192,6 +193,11 @@ class DataBase(tk.Toplevel):
     def pointerLeave(self, event):
         """Remove highlight when mouse not on button."""
         event.widget['bg'] = DARK_RED_COLOR
+
+    def exit_window(self, event, root):
+        """Exit Database window when ESC is pressed."""
+        root.attributes('-disabled', 0)
+        self.destroy()
 
 
 if __name__ == '__main__':
