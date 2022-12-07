@@ -51,7 +51,6 @@ class WrapUpDateCalculator():
                                             fg=BG_COLOR,
                                             font=FONT,
                                             width=12)
-        self.dispense_date_entry.focus()
         self.dispense_date_entry.grid(column=1, row=1,
                                       padx=10, pady=5)
 
@@ -94,7 +93,7 @@ class WrapUpDateCalculator():
                                    sticky='EW',
                                    columnspan=2,
                                    padx=5,
-                                   pady=(10, 5))
+                                   pady=(10, 7))
         self.calculate_button.bind('<Enter>', self.pointerEnterCalculator)
         self.calculate_button.bind('<Leave>', self.pointerLeaveCalculator)
 
@@ -119,7 +118,7 @@ class WrapUpDateCalculator():
                                       activebackground=GOLD_COLOR,
                                       borderwidth=0, command=self.clear)
         self.clear_button.grid(
-            column=1, row=5, sticky='EW', padx=(5, 5), pady=(0, 10))
+            column=1, row=5, sticky='EW', padx=(7, 5), pady=(0, 10))
         self.clear_button.bind('<Enter>', self.pointerEnterClear)
         self.clear_button.bind('<Leave>', self.pointerLeaveClear)
 
@@ -145,6 +144,7 @@ class WrapUpDateCalculator():
         y = int(screen_height/2 - win_height/2)
         self.top.geometry(f"{win_width}x{win_height}+{x}+{y}")
         self.top.deiconify()
+        self.dispense_date_entry.focus()
 
         self.top.bind('<Return>', self.calculate_wrap_up_date)
         self.top.bind('<Delete>', self.clear)
