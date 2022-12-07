@@ -265,6 +265,7 @@ class PasswordManager:
         self.top.deiconify()  # Makes top window visible again.
         self.websiteEntry.focus()
 
+        self.topSettings.bind('<Escape>', self.hide_settings)
         self.top.bind('<Return>', func=self.search_login)
         self.top.bind('<Shift-Return>', func=self.save_login_info)
         self.top.bind('<Delete>', func=self._clear_all)
@@ -672,6 +673,15 @@ class PasswordManager:
             except AttributeError:
                 pass
             self.top.destroy()
+
+    def hide_settings(self, event):
+        """Press ESC to hide settings window."""
+        if self.topSettings_hiddenStatus:
+            self.topSettings.withdraw()
+            self.topSettings_hiddenStatus = False
+            self.top.lift()
+            self.top.attributes('-disabled', 0)
+            self.top.focus_force()
 
 
 if __name__ == '__main__':
