@@ -52,12 +52,13 @@ class CardPayment:
         self.cc_icon = PhotoImage(file="img/cc_icon.png")
         self.top.iconphoto(False, self.cc_icon)
 
-         # Checkbutton
+        # Checkbutton
         self.alwaysTopVar = IntVar()
         self.always_top_check_button = Checkbutton(self.top, text='Always on top',
-                                        variable=self.alwaysTopVar, onvalue=1, offvalue=0,
-                                        command=self.always_top)
-        self.always_top_check_button.grid(column=1, row=0, columnspan=2, sticky='NW')
+                                                   variable=self.alwaysTopVar, onvalue=1, offvalue=0,
+                                                   command=self.always_top)
+        self.always_top_check_button.grid(
+            column=1, row=0, columnspan=2, sticky='NW')
 
         self.image_paths = [
             "img/generic_card.png",
@@ -65,7 +66,7 @@ class CardPayment:
             "img/discover.png",
             "img/mastercard.png",
             "img/visa.png"
-            ]
+        ]
 
         self.tk_images = {}
 
@@ -77,18 +78,20 @@ class CardPayment:
             image_key = key.split(".")[0]
             self.tk_images[image_key] = img_value
 
-        self.card_button = Button(self.top, image=self.tk_images["generic_card"], borderwidth=0, command=self.open_directory)
-        self.card_button.grid(column=1, row=1, columnspan=2, rowspan=3, sticky="w")
-    
+        self.card_button = Button(
+            self.top, image=self.tk_images["generic_card"], borderwidth=0, command=self.open_directory)
+        self.card_button.grid(
+            column=1, row=1, columnspan=2, rowspan=3, sticky="w")
+
         self.date_text_label = Label(self.top, text="Date:")
         self.date_text_label.grid(column=2, row=1, columnspan=2, sticky="E")
-        self.date_num_label = Label(self.top, text=datetime.today().strftime('%m-%d-%Y'))
+        self.date_num_label = Label(
+            self.top, text=datetime.today().strftime('%m-%d-%Y'))
         self.date_num_label.grid(column=4, row=1, sticky="W")
 
         self.cc_label = Label(self.top, text="Credit Card No.")
         self.cc_label.grid(column=2, row=2, columnspan=2, sticky="E")
         self.cc_entry = Entry(self.top)
-        self.cc_entry.focus_set()
         self.cc_entry.grid(column=4, row=2)
 
         self.exp_label = Label(self.top, text="Exp:")
@@ -97,7 +100,7 @@ class CardPayment:
         self.exp_entry.grid(column=4, row=3)
 
         self.cvv_label = Label(self.top, text="Security No.")
-        self.cvv_label.grid(column=2,row=4, columnspan=2, sticky="E")
+        self.cvv_label.grid(column=2, row=4, columnspan=2, sticky="E")
         self.cvv_entry = Entry(self.top)
         self.cvv_entry.grid(column=4, row=4)
 
@@ -168,8 +171,10 @@ class CardPayment:
         self.total_num_label = Label(self.top, text="")
         self.total_num_label.grid(column=4, row=13, sticky="W")
 
-        self.done_button = Button(self.top, text="Done", command=self.message_box)
-        self.done_button.grid(column=1, row=14, columnspan=4, sticky="EW", pady=5)
+        self.done_button = Button(
+            self.top, text="Done", command=self.message_box)
+        self.done_button.grid(
+            column=1, row=14, columnspan=4, sticky="EW", pady=5)
 
         # Center window to screen
         self.top.update_idletasks()
@@ -181,6 +186,7 @@ class CardPayment:
         y = int(screen_height/2 - win_width/2)
         self.top.geometry(f"{win_width}x{win_height}+{x}+{y}")
         self.top.deiconify()
+        self.cc_entry.focus_set()
 
     def always_top(self):
         """Window always display on top."""
@@ -212,7 +218,7 @@ class CardPayment:
         }
 
         self.date_num_label.config(text=datetime.today().strftime('%m-%d-%Y'))
-        
+
         if self.fields['Medication Names 1'] == "":
             cost_1 = 0
             self.fields['Cost'] = ""
@@ -293,11 +299,10 @@ class CardPayment:
         except IndexError:
             generic_card_img = self.tk_images["generic_card"]
             self.card_button.config(image=generic_card_img)
-            
 
     def export_pdf(self):
         """Outputs payment information into a PDF form."""
-        
+
         name_list = self.fields['Cardholder Name'].split()
         formatted_name = ""
         for name in name_list:
@@ -310,12 +315,12 @@ class CardPayment:
             app_path = os.path.dirname(sys.executable)
         else:
             app_path = os.path.dirname(os.path.abspath(__file__))
-        
+
         abs_path = f"{app_path}\PaymentForms"
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
-            os.makedirs(abs_path) 
-        
+            os.makedirs(abs_path)
+
         reader = PdfReader("templates\card_payment_form.pdf")
         writer = PdfWriter()
         page = reader.pages[0]
@@ -344,12 +349,13 @@ class CardPayment:
         self.dollar_entry3.delete(0, END)
         self.dollar_entry4.delete(0, END)
         self.dollar_entry5.delete(0, END)
-         
+
     def message_box(self):
         """Prompt user for confirmation when 'Done' button is clicked."""
-        
-        answer = messagebox.askyesno(title="Confirm", message="Are you sure?", parent=self.top)
-        
+
+        answer = messagebox.askyesno(
+            title="Confirm", message="Are you sure?", parent=self.top)
+
         if answer:
             self.export_pdf()
             self.clear_entries()
@@ -362,10 +368,17 @@ class CardPayment:
             app_path = os.path.dirname(sys.executable)
         else:
             app_path = os.path.dirname(os.path.abspath(__file__))
-        
+
         abs_path = f"{app_path}\PaymentForms"
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
             os.makedirs(abs_path)
-        
+
         subprocess.Popen(f'explorer "{abs_path}"')
+
+
+if __name__ == '__main__':
+    root = Tk()
+    cp = CardPayment()
+
+    root.mainloop()
