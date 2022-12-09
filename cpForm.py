@@ -44,7 +44,7 @@ class CardPayment:
         self.top = Toplevel()
         self.top.withdraw()
         self.top.attributes('-topmost', 0)
-        self.top.config(padx=8, pady=8)
+        self.top.config(padx=15, pady=15)
         self.top.resizable(width=False, height=False)
         self.top.title("Card Payment Form")
         self.top.after(ms=50, func=self.update_fields)
@@ -172,7 +172,7 @@ class CardPayment:
         self.total_num_label.grid(column=4, row=13, sticky="W")
 
         self.done_button = Button(
-            self.top, text="Done", command=self.message_box)
+            self.top, text="Done", command=lambda: self.message_box(event=None))
         self.done_button.grid(
             column=1, row=14, columnspan=4, sticky="EW", pady=5)
 
@@ -188,6 +188,8 @@ class CardPayment:
         self.top.deiconify()
         self.cc_entry.focus_set()
 
+        self.top.bind('<Shift-Return>', self.message_box)
+
     def always_top(self):
         """Window always display on top."""
         if self.alwaysTopVar.get() == 1:
@@ -197,7 +199,7 @@ class CardPayment:
 
     def cc_length_check(self):
         """Check length of credit card number to ensure correct number of digits are entered."""
-        entered_cc_num = self.cc_entry.get().replace(' ','')
+        entered_cc_num = self.cc_entry.get().replace(' ', '')
         cc_length = len(entered_cc_num)
         try:
             if cc_length == 0:
@@ -217,8 +219,8 @@ class CardPayment:
 
     def cvv_length_check(self):
         """Check length of cvv to ensure correct number of digits are entered."""
-        entered_cc_num = self.cc_entry.get().replace(' ','')
-        entered_cvv_num = self.cvv_entry.get().replace(' ','')
+        entered_cc_num = self.cc_entry.get().replace(' ', '')
+        entered_cvv_num = self.cvv_entry.get().replace(' ', '')
         cvv_length = len(entered_cvv_num)
         try:
             if cvv_length == 0:
@@ -340,7 +342,7 @@ class CardPayment:
         except IndexError:
             generic_card_img = self.tk_images["generic_card"]
             self.card_button.config(image=generic_card_img)
-        
+
         self.cc_length_check()
         self.cvv_length_check()
 
@@ -394,7 +396,7 @@ class CardPayment:
         self.dollar_entry4.delete(0, END)
         self.dollar_entry5.delete(0, END)
 
-    def message_box(self):
+    def message_box(self, event):
         """Prompt user for confirmation when 'Done' button is clicked."""
 
         answer = messagebox.askyesno(
