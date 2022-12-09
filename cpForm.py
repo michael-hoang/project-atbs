@@ -195,6 +195,47 @@ class CardPayment:
         elif self.alwaysTopVar.get() == 0:
             self.top.attributes('-topmost', 0)
 
+    def cc_length_check(self):
+        """Check length of credit card number to ensure correct number of digits are entered."""
+        entered_cc_num = self.cc_entry.get().replace(' ','')
+        cc_length = len(entered_cc_num)
+        try:
+            if cc_length == 0:
+                self.cc_label.config(fg='black')
+            elif entered_cc_num[0] == '3':
+                if cc_length == 15:
+                    self.cc_label.config(fg='black')
+                else:
+                    self.cc_label.config(fg='red')
+            else:
+                if cc_length == 16:
+                    self.cc_label.config(fg='black')
+                else:
+                    self.cc_label.config(fg='red')
+        except IndexError:
+            pass
+
+    def cvv_length_check(self):
+        """Check length of cvv to ensure correct number of digits are entered."""
+        entered_cc_num = self.cc_entry.get().replace(' ','')
+        entered_cvv_num = self.cvv_entry.get().replace(' ','')
+        cvv_length = len(entered_cvv_num)
+        try:
+            if cvv_length == 0:
+                self.cvv_label.config(fg='black')
+            elif entered_cc_num[0] == '3':
+                if cvv_length == 4:
+                    self.cvv_label.config(fg='black')
+                else:
+                    self.cvv_label.config(fg='red')
+            else:
+                if cvv_length == 3:
+                    self.cvv_label.config(fg='black')
+                else:
+                    self.cvv_label.config(fg='red')
+        except IndexError:
+            pass
+
     def update_fields(self):
         """ 
         Update self.fields attribute with information entered by user in the
@@ -299,6 +340,9 @@ class CardPayment:
         except IndexError:
             generic_card_img = self.tk_images["generic_card"]
             self.card_button.config(image=generic_card_img)
+        
+        self.cc_length_check()
+        self.cvv_length_check()
 
     def export_pdf(self):
         """Outputs payment information into a PDF form."""
