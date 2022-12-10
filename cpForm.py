@@ -11,8 +11,9 @@ import sys
 import re
 
 
-LABEL_BG = '#F7F7F7'
-WINDOW_BG = '#F7F7F7'
+LABEL_BG = '#EAEEF3'
+WINDOW_BG = '#EAEEF3'
+ENTRY_BG = '#F8FAFC'
 BUTTON_BG = '#484B5B'
 FONT = ('Helvetica', 10, 'normal')
 
@@ -98,28 +99,28 @@ class CardPayment:
 
         self.cc_label = Label(self.top, text="Credit Card No.", bg=LABEL_BG)
         self.cc_label.grid(column=2, row=2, columnspan=2, sticky="E")
-        self.cc_entry = Entry(self.top, relief='flat')
+        self.cc_entry = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.cc_entry.grid(column=4, row=2)
 
         self.exp_label = Label(self.top, text="Exp:", bg=LABEL_BG)
         self.exp_label.grid(column=2, row=3, columnspan=2, sticky="E")
-        self.exp_entry = Entry(self.top, relief='flat')
+        self.exp_entry = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.exp_entry.grid(column=4, row=3)
 
         self.cvv_label = Label(self.top, text="Security No.", bg=LABEL_BG)
         self.cvv_label.grid(column=2, row=4, columnspan=2, sticky="E")
-        self.cvv_entry = Entry(self.top, relief='flat')
+        self.cvv_entry = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.cvv_entry.grid(column=4, row=4)
 
         self.cardholder_label = Label(
             self.top, text="Cardholder Name:", bg=LABEL_BG)
         self.cardholder_label.grid(column=2, row=5, columnspan=2, sticky="E")
-        self.cardholder_entry = Entry(self.top, relief='flat')
+        self.cardholder_entry = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.cardholder_entry.grid(column=4, row=5)
 
         self.mrn_label = Label(self.top, text="MRN:", bg=LABEL_BG)
         self.mrn_label.grid(column=2, row=6, columnspan=2, sticky="E")
-        self.mrn_entry = Entry(self.top, relief='flat')
+        self.mrn_entry = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.mrn_entry.grid(column=4, row=6)
 
         self.index_label1 = Label(self.top, text="1.", bg=LABEL_BG)
@@ -140,39 +141,39 @@ class CardPayment:
         self.amount_label = Label(self.top, text="Amount", bg=LABEL_BG)
         self.amount_label.grid(column=4, row=7, sticky="W")
 
-        self.med_entry1 = Entry(self.top, relief='flat')
+        self.med_entry1 = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.med_entry1.grid(column=2, row=8)
         self.dollar_label1 = Label(self.top, text="$", bg=LABEL_BG)
         self.dollar_label1.grid(column=3, row=8, padx=5, sticky="E")
-        self.dollar_entry1 = Entry(self.top, relief='flat')
+        self.dollar_entry1 = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.dollar_entry1.grid(column=4, row=8)
 
-        self.med_entry2 = Entry(self.top, relief='flat')
+        self.med_entry2 = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.med_entry2.grid(column=2, row=9)
         self.dollar_label2 = Label(self.top, text="$", bg=LABEL_BG)
         self.dollar_label2.grid(column=3, row=9, padx=5, sticky="E")
-        self.dollar_entry2 = Entry(self.top, relief='flat')
+        self.dollar_entry2 = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.dollar_entry2.grid(column=4, row=9)
 
-        self.med_entry3 = Entry(self.top, relief='flat')
+        self.med_entry3 = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.med_entry3.grid(column=2, row=10)
         self.dollar_label3 = Label(self.top, text="$", bg=LABEL_BG)
         self.dollar_label3.grid(column=3, row=10, padx=5, sticky="E")
-        self.dollar_entry3 = Entry(self.top, relief='flat')
+        self.dollar_entry3 = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.dollar_entry3.grid(column=4, row=10)
 
-        self.med_entry4 = Entry(self.top, relief='flat')
+        self.med_entry4 = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.med_entry4.grid(column=2, row=11)
         self.dollar_label4 = Label(self.top, text="$", bg=LABEL_BG)
         self.dollar_label4.grid(column=3, row=11, padx=5, sticky="E")
-        self.dollar_entry4 = Entry(self.top, relief='flat')
+        self.dollar_entry4 = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.dollar_entry4.grid(column=4, row=11)
 
-        self.med_entry5 = Entry(self.top, relief='flat')
+        self.med_entry5 = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.med_entry5.grid(column=2, row=12)
         self.dollar_label5 = Label(self.top, text="$", bg=LABEL_BG)
         self.dollar_label5.grid(column=3, row=12, padx=5, sticky="E")
-        self.dollar_entry5 = Entry(self.top, relief='flat')
+        self.dollar_entry5 = Entry(self.top, relief='flat', bg=ENTRY_BG)
         self.dollar_entry5.grid(column=4, row=12)
 
         self.total_text_label = Label(self.top, text="Total", bg=LABEL_BG)
@@ -181,9 +182,13 @@ class CardPayment:
         self.total_num_label.grid(column=4, row=13, sticky="W")
 
         self.done_button = Button(
-            self.top, text="Done", command=lambda: self.message_box(event=None), borderwidth=0, bg=BUTTON_BG, fg='white', width=30, height=1, font=('Helvetica', 10, 'normal'))
+            self.top, text="Done", command=lambda: self.message_box(event=None), 
+            borderwidth=0, bg=BUTTON_BG, fg='white', width=25, height=1, 
+            font=('Helvetica', 10, 'normal'), activebackground='#B0B3C4', activeforeground='white')
         self.done_button.grid(
             column=1, row=14, columnspan=4, pady=5)
+        self.done_button.bind('<Enter>', self.pointerEnter)
+        self.done_button.bind('<Leave>', self.pointerLeave)
 
         # Center window to screen
         self.top.update_idletasks()
@@ -198,6 +203,14 @@ class CardPayment:
         self.cc_entry.focus_set()
 
         self.top.bind('<Shift-Return>', self.message_box)
+
+    def pointerEnter(self, e):
+        """Highlight button on mouse hover."""
+        e.widget['bg'] = '#777A90'
+
+    def pointerLeave(self, e):
+        """Remove highlight from button when mouse leave."""
+        e.widget['bg'] = BUTTON_BG
 
     def always_top(self):
         """Window always display on top."""
