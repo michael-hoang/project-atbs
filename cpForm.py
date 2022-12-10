@@ -8,6 +8,7 @@ from PIL import Image, ImageTk
 import os
 import subprocess
 import sys
+import re
 
 
 class CardPayment:
@@ -199,7 +200,7 @@ class CardPayment:
 
     def cc_length_check(self):
         """Check length of credit card number to ensure correct number of digits are entered."""
-        entered_cc_num = self.cc_entry.get().replace(' ', '')
+        entered_cc_num = re.sub(r'[^0-9]', '', self.cc_entry.get())
         cc_length = len(entered_cc_num)
         try:
             if cc_length == 0:
@@ -219,8 +220,8 @@ class CardPayment:
 
     def cvv_length_check(self):
         """Check length of cvv to ensure correct number of digits are entered."""
-        entered_cc_num = self.cc_entry.get().replace(' ', '')
-        entered_cvv_num = self.cvv_entry.get().replace(' ', '')
+        entered_cc_num = re.sub(r'[^0-9]', '', self.cc_entry.get())
+        entered_cvv_num = re.sub(r'[^0-9]', '', self.cvv_entry.get())
         cvv_length = len(entered_cvv_num)
         try:
             if cvv_length == 0:
