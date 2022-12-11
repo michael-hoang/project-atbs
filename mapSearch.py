@@ -8,7 +8,7 @@ FG_COLOR = 'white'
 BG_COLOR3 = '#5C80BC'
 BUTTON_BG_COLOR = '#4D5061'
 FONT = ('Bahnschrift Light', 16, 'normal')
-GOLD_COLOR = '#E9D985'
+GOLD_COLOR = 'gold3'
 DARK_GOLD_COLOR = '#8B7536'
 
 
@@ -36,7 +36,7 @@ class Map:
         self.always_top_cb.grid(column=0, row=0, sticky='E')
 
         # Address Label & Text
-        self.address_l = tk.Label(self.top, text='Address:', bg=BG_COLOR, fg=GOLD_COLOR,
+        self.address_l = tk.Label(self.top, text='Address:', bg=BG_COLOR, fg='gold',
                                   font=('Bahnschrift Light', 20, 'normal'))
         self.address_l.grid(column=0, row=0, sticky='W')
         self.address_t = tk.Text(self.top, bg=FG_COLOR, fg=BG_COLOR,
