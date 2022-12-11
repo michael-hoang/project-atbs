@@ -7,7 +7,7 @@ from tkinter import END
 FONT = ('Bahnschrift Light', 16, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
-GOLD_COLOR = '#E9D985'
+GOLD_COLOR = 'gold3'
 DARK_GOLD_COLOR = '#8B7536'
 BUTTON_BG_COLOR = '#4D5061'
 
@@ -35,7 +35,7 @@ class WrapUpDateCalculator():
         self.always_top_check_button = tk.Checkbutton(self.top, text='Always on top',
                                                       variable=self.alwaysTopVar, onvalue=1, offvalue=0,
                                                       bg=BG_COLOR, fg=FG_COLOR, font=(
-                                                          'Bahnschrift Light', 11, 'normal'),
+                                                          'Bahnschrift Light', 10, 'normal'),
                                                       activebackground=BG_COLOR, activeforeground=FG_COLOR,
                                                       selectcolor=BG_COLOR, command=self.always_top)
         self.always_top_check_button.grid(
@@ -102,12 +102,12 @@ class WrapUpDateCalculator():
                                           font=('Bahnschrift Light',
                                                 18, 'normal'),
                                           bg=BG_COLOR,
-                                          fg=GOLD_COLOR)
+                                          fg='gold')
         self.wrap_up_date_text.grid(column=0, row=6, pady=(2, 7))
         self.wrap_up_date = tk.Label(self.top, text='',
                                      font=('Bahnschrift Light', 18, 'normal'),
                                      bg=BG_COLOR,
-                                     fg=GOLD_COLOR)
+                                     fg='gold')
         self.wrap_up_date.grid(column=1, row=6, pady=(2, 7))
 
         # Clear button
@@ -127,7 +127,7 @@ class WrapUpDateCalculator():
                                      bg=BUTTON_BG_COLOR,
                                      fg=FG_COLOR,
                                      font=FONT,
-                                     activebackground='coral',
+                                     activebackground='firebrick4', activeforeground='white',
                                      borderwidth=0, command=self.top.destroy)
         self.exit_button.grid(column=0, row=5, sticky='EW',
                               padx=(5, 0), pady=(0, 10))
