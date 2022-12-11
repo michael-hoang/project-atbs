@@ -41,13 +41,13 @@ class Map:
         self.address_l.grid(column=0, row=0, sticky='W')
         self.address_t = tk.Text(self.top, bg=FG_COLOR, fg=BG_COLOR,
                                  font=FONT, width=25, height=3)
-        self.address_t.grid(column=0, row=1, pady=(10, 15))
+        self.address_t.grid(column=0, row=1, pady=(13, 20))
 
         # Get Direction Button
-        self.calculate_b = tk.Button(self.top, text='Search (Shift + Enter)', bg=BUTTON_BG_COLOR,
+        self.calculate_b = tk.Button(self.top, text='Search', bg=BUTTON_BG_COLOR,
                                      fg=FG_COLOR, font=FONT, activebackground=GOLD_COLOR,
-                                     borderwidth=0, command=self.get_direction)
-        self.calculate_b.grid(column=0, row=2, sticky='EW', columnspan=2)
+                                     borderwidth=0, command=self.get_direction, width=12, pady=2)
+        self.calculate_b.grid(column=0, row=2, columnspan=2)
 
         self.top.bind('<Shift-Return>', self.get_direction)
         self.top.bind('<Delete>', self.clear)
