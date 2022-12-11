@@ -24,7 +24,7 @@ class WrapUpDateCalculator():
         self.top.title('Wrap Up Date Calculator')
         self.top.config(bg=BG_COLOR,
                         padx=25,
-                        pady=10)
+                        pady=15)
         self.top.resizable(width=False, height=False)
 
         self.cal_calc_icon = tk.PhotoImage(file="img/cal_calc.png")
@@ -39,7 +39,7 @@ class WrapUpDateCalculator():
                                                       activebackground=BG_COLOR, activeforeground=FG_COLOR,
                                                       selectcolor=BG_COLOR, command=self.always_top)
         self.always_top_check_button.grid(
-            column=0, row=0, sticky='NW', pady=(0, 5))
+            column=0, row=0, sticky='NW', pady=(0, 10))
 
         # Dispense Date Label & Entry
         self.dispense_date_label = tk.Label(self.top, text='Dispense Date:',
@@ -80,7 +80,7 @@ class WrapUpDateCalculator():
                                             'Bahnschrift Light', 11, 'normal'),
                                         activebackground=BG_COLOR, activeforeground=FG_COLOR,
                                         selectcolor=BG_COLOR)
-        self.nine_days.grid(column=1, row=3)
+        self.nine_days.grid(column=1, row=3, pady=5)
 
         # Calculate Button
         self.calculate_button = tk.Button(self.top, text='Calculate',
@@ -103,12 +103,12 @@ class WrapUpDateCalculator():
                                                 18, 'normal'),
                                           bg=BG_COLOR,
                                           fg='gold')
-        self.wrap_up_date_text.grid(column=0, row=6, pady=(2, 7))
+        self.wrap_up_date_text.grid(column=0, row=6, pady=6)
         self.wrap_up_date = tk.Label(self.top, text='',
                                      font=('Bahnschrift Light', 18, 'normal'),
                                      bg=BG_COLOR,
                                      fg='gold')
-        self.wrap_up_date.grid(column=1, row=6, pady=(2, 7))
+        self.wrap_up_date.grid(column=1, row=6, pady=6)
 
         # Clear button
         self.clear_button = tk.Button(self.top, text='Clear',
