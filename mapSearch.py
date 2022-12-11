@@ -30,7 +30,7 @@ class Map:
         self.always_top_cb = tk.Checkbutton(self.top, text='Always on top',
                                             variable=self.alwaysTopVar, onvalue=1, offvalue=0,
                                             bg=BG_COLOR, fg=FG_COLOR, font=(
-                                                'Bahnschrift Light', 11, 'normal'),
+                                                'Bahnschrift Light', 10, 'normal'),
                                             activebackground=BG_COLOR, activeforeground=FG_COLOR,
                                             selectcolor=BG_COLOR, command=self.always_top)
         self.always_top_cb.grid(column=0, row=0, sticky='E')
