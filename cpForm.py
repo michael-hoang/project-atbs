@@ -8,6 +8,15 @@ from PIL import Image, ImageTk
 import os
 import subprocess
 import sys
+import re
+
+
+LABEL_BG = '#EAEEF3'
+WINDOW_BG = '#EAEEF3'
+ENTRY_BG = '#F8FAFC'
+BUTTON_BG = '#484B5B'
+FONT = ('Helvetica', 11, 'normal')
+ENTRY_FONT = ('Helvetica', 10, 'normal')
 
 
 class CardPayment:
@@ -44,7 +53,7 @@ class CardPayment:
         self.top = Toplevel()
         self.top.withdraw()
         self.top.attributes('-topmost', 0)
-        self.top.config(padx=8, pady=8)
+        self.top.config(padx=20, pady=20, bg=WINDOW_BG)
         self.top.resizable(width=False, height=False)
         self.top.title("Card Payment Form")
         self.top.after(ms=50, func=self.update_fields)
@@ -52,12 +61,13 @@ class CardPayment:
         self.cc_icon = PhotoImage(file="img/cc_icon.png")
         self.top.iconphoto(False, self.cc_icon)
 
-         # Checkbutton
+        # Checkbutton
         self.alwaysTopVar = IntVar()
-        self.always_top_check_button = Checkbutton(self.top, text='Always on top',
-                                        variable=self.alwaysTopVar, onvalue=1, offvalue=0,
-                                        command=self.always_top)
-        self.always_top_check_button.grid(column=1, row=0, columnspan=2, sticky='NW')
+        self.always_top_check_button = Checkbutton(self.top, text='Always on top', font=('Helvetica', 9, 'normal'),
+                                                   variable=self.alwaysTopVar, onvalue=1, offvalue=0,
+                                                   command=self.always_top, bg=LABEL_BG, activebackground=LABEL_BG)
+        self.always_top_check_button.grid(
+            column=0, row=0, columnspan=3, sticky='NW')
 
         self.image_paths = [
             "img/generic_card.png",
@@ -65,7 +75,7 @@ class CardPayment:
             "img/discover.png",
             "img/mastercard.png",
             "img/visa.png"
-            ]
+        ]
 
         self.tk_images = {}
 
@@ -77,99 +87,130 @@ class CardPayment:
             image_key = key.split(".")[0]
             self.tk_images[image_key] = img_value
 
-        self.card_button = Button(self.top, image=self.tk_images["generic_card"], borderwidth=0, command=self.open_directory)
-        self.card_button.grid(column=1, row=1, columnspan=2, rowspan=3, sticky="w")
-    
-        self.date_text_label = Label(self.top, text="Date:")
+        self.card_button = Button(
+            self.top, image=self.tk_images["generic_card"], borderwidth=0, command=self.open_directory)
+        self.card_button.grid(
+            column=1, row=1, columnspan=2, rowspan=3, sticky="w")
+
+        self.date_text_label = Label(
+            self.top, text="Date:", bg=LABEL_BG, font=FONT)
         self.date_text_label.grid(column=2, row=1, columnspan=2, sticky="E")
-        self.date_num_label = Label(self.top, text=datetime.today().strftime('%m-%d-%Y'))
+        self.date_num_label = Label(
+            self.top, text=datetime.today().strftime('%m-%d-%Y'), bg=LABEL_BG, font=FONT)
         self.date_num_label.grid(column=4, row=1, sticky="W")
 
-        self.cc_label = Label(self.top, text="Credit Card No.")
+        self.cc_label = Label(
+            self.top, text="Credit Card No.", bg=LABEL_BG, font=FONT)
         self.cc_label.grid(column=2, row=2, columnspan=2, sticky="E")
-        self.cc_entry = Entry(self.top)
-        self.cc_entry.focus_set()
+        self.cc_entry = Entry(self.top, relief='flat',
+                              bg=ENTRY_BG, font=ENTRY_FONT)
         self.cc_entry.grid(column=4, row=2)
 
-        self.exp_label = Label(self.top, text="Exp:")
+        self.exp_label = Label(self.top, text="Exp:", bg=LABEL_BG, font=FONT)
         self.exp_label.grid(column=2, row=3, columnspan=2, sticky="E")
-        self.exp_entry = Entry(self.top)
+        self.exp_entry = Entry(self.top, relief='flat',
+                               bg=ENTRY_BG, font=ENTRY_FONT)
         self.exp_entry.grid(column=4, row=3)
 
-        self.cvv_label = Label(self.top, text="Security No.")
-        self.cvv_label.grid(column=2,row=4, columnspan=2, sticky="E")
-        self.cvv_entry = Entry(self.top)
+        self.cvv_label = Label(
+            self.top, text="Security No.", bg=LABEL_BG, font=FONT)
+        self.cvv_label.grid(column=2, row=4, columnspan=2, sticky="E")
+        self.cvv_entry = Entry(self.top, relief='flat',
+                               bg=ENTRY_BG, font=ENTRY_FONT)
         self.cvv_entry.grid(column=4, row=4)
 
-        self.cardholder_label = Label(self.top, text="Cardholder Name:")
+        self.cardholder_label = Label(
+            self.top, text="Cardholder Name:", bg=LABEL_BG, font=FONT)
         self.cardholder_label.grid(column=2, row=5, columnspan=2, sticky="E")
-        self.cardholder_entry = Entry(self.top)
+        self.cardholder_entry = Entry(
+            self.top, relief='flat', bg=ENTRY_BG, font=ENTRY_FONT)
         self.cardholder_entry.grid(column=4, row=5)
 
-        self.mrn_label = Label(self.top, text="MRN:")
+        self.mrn_label = Label(self.top, text="MRN:", bg=LABEL_BG, font=FONT)
         self.mrn_label.grid(column=2, row=6, columnspan=2, sticky="E")
-        self.mrn_entry = Entry(self.top)
+        self.mrn_entry = Entry(self.top, relief='flat',
+                               bg=ENTRY_BG, font=ENTRY_FONT)
         self.mrn_entry.grid(column=4, row=6)
 
-        self.index_label1 = Label(self.top, text="1.")
+        self.index_label1 = Label(self.top, text="1.", bg=LABEL_BG, font=FONT)
         self.index_label1.grid(column=1, row=8, sticky="E")
-        self.index_label2 = Label(self.top, text="2.")
+        self.index_label2 = Label(self.top, text="2.", bg=LABEL_BG, font=FONT)
         self.index_label2.grid(column=1, row=9, sticky="E")
-        self.index_label3 = Label(self.top, text="3.")
+        self.index_label3 = Label(self.top, text="3.", bg=LABEL_BG, font=FONT)
         self.index_label3.grid(column=1, row=10, sticky="E")
-        self.index_label4 = Label(self.top, text="4.")
+        self.index_label4 = Label(self.top, text="4.", bg=LABEL_BG, font=FONT)
         self.index_label4.grid(column=1, row=11, sticky="E")
-        self.index_label5 = Label(self.top, text="5.")
+        self.index_label5 = Label(self.top, text="5.", bg=LABEL_BG, font=FONT)
         self.index_label5.grid(column=1, row=12, sticky="E")
 
-        self.medication_label = Label(self.top, text="Medication Name(s)")
-        self.medication_label.grid(column=2, row=7)
+        self.medication_label = Label(
+            self.top, text="Medication Name(s)", bg=LABEL_BG, font=FONT)
+        self.medication_label.grid(column=2, row=7, sticky="EW", pady=(15, 0))
 
-        self.amount_label = Label(self.top, text="Amount")
-        self.amount_label.grid(column=4, row=7, sticky="W")
+        self.amount_label = Label(
+            self.top, text="Price", bg=LABEL_BG, font=FONT)
+        self.amount_label.grid(column=4, row=7, sticky="EW", pady=(15, 0))
 
-        self.med_entry1 = Entry(self.top)
+        self.med_entry1 = Entry(self.top, relief='flat',
+                                bg=ENTRY_BG, font=ENTRY_FONT)
         self.med_entry1.grid(column=2, row=8)
-        self.dollar_label1 = Label(self.top, text="$")
+        self.dollar_label1 = Label(self.top, text="$", bg=LABEL_BG, font=FONT)
         self.dollar_label1.grid(column=3, row=8, padx=5, sticky="E")
-        self.dollar_entry1 = Entry(self.top)
+        self.dollar_entry1 = Entry(
+            self.top, relief='flat', bg=ENTRY_BG, font=ENTRY_FONT)
         self.dollar_entry1.grid(column=4, row=8)
 
-        self.med_entry2 = Entry(self.top)
+        self.med_entry2 = Entry(self.top, relief='flat',
+                                bg=ENTRY_BG, font=ENTRY_FONT)
         self.med_entry2.grid(column=2, row=9)
-        self.dollar_label2 = Label(self.top, text="$")
+        self.dollar_label2 = Label(self.top, text="$", bg=LABEL_BG, font=FONT)
         self.dollar_label2.grid(column=3, row=9, padx=5, sticky="E")
-        self.dollar_entry2 = Entry(self.top)
+        self.dollar_entry2 = Entry(
+            self.top, relief='flat', bg=ENTRY_BG, font=ENTRY_FONT)
         self.dollar_entry2.grid(column=4, row=9)
 
-        self.med_entry3 = Entry(self.top)
+        self.med_entry3 = Entry(self.top, relief='flat',
+                                bg=ENTRY_BG, font=ENTRY_FONT)
         self.med_entry3.grid(column=2, row=10)
-        self.dollar_label3 = Label(self.top, text="$")
+        self.dollar_label3 = Label(self.top, text="$", bg=LABEL_BG, font=FONT)
         self.dollar_label3.grid(column=3, row=10, padx=5, sticky="E")
-        self.dollar_entry3 = Entry(self.top)
+        self.dollar_entry3 = Entry(
+            self.top, relief='flat', bg=ENTRY_BG, font=ENTRY_FONT)
         self.dollar_entry3.grid(column=4, row=10)
 
-        self.med_entry4 = Entry(self.top)
+        self.med_entry4 = Entry(self.top, relief='flat',
+                                bg=ENTRY_BG, font=ENTRY_FONT)
         self.med_entry4.grid(column=2, row=11)
-        self.dollar_label4 = Label(self.top, text="$")
+        self.dollar_label4 = Label(self.top, text="$", bg=LABEL_BG, font=FONT)
         self.dollar_label4.grid(column=3, row=11, padx=5, sticky="E")
-        self.dollar_entry4 = Entry(self.top)
+        self.dollar_entry4 = Entry(
+            self.top, relief='flat', bg=ENTRY_BG, font=ENTRY_FONT)
         self.dollar_entry4.grid(column=4, row=11)
 
-        self.med_entry5 = Entry(self.top)
+        self.med_entry5 = Entry(self.top, relief='flat',
+                                bg=ENTRY_BG, font=ENTRY_FONT)
         self.med_entry5.grid(column=2, row=12)
-        self.dollar_label5 = Label(self.top, text="$")
+        self.dollar_label5 = Label(self.top, text="$", bg=LABEL_BG, font=FONT)
         self.dollar_label5.grid(column=3, row=12, padx=5, sticky="E")
-        self.dollar_entry5 = Entry(self.top)
+        self.dollar_entry5 = Entry(
+            self.top, relief='flat', bg=ENTRY_BG, font=ENTRY_FONT)
         self.dollar_entry5.grid(column=4, row=12)
 
-        self.total_text_label = Label(self.top, text="Total")
-        self.total_text_label.grid(column=3, row=13, sticky="E")
-        self.total_num_label = Label(self.top, text="")
-        self.total_num_label.grid(column=4, row=13, sticky="W")
+        self.total_text_label = Label(
+            self.top, text="Total", bg=LABEL_BG, font=('Helvetica', 11, 'bold'))
+        self.total_text_label.grid(column=3, row=13, sticky="E", pady=(8, 0))
+        self.total_num_label = Label(
+            self.top, text="", bg=LABEL_BG, font=('Helvetica', 11, 'bold'))
+        self.total_num_label.grid(column=4, row=13, sticky="", pady=(8, 0))
 
-        self.done_button = Button(self.top, text="Done", command=self.message_box)
-        self.done_button.grid(column=1, row=14, columnspan=4, sticky="EW", pady=5)
+        self.done_button = Button(
+            self.top, text="Done", command=lambda: self.message_box(event=None),
+            borderwidth=0, bg=BUTTON_BG, fg='white', width=22, height=1,
+            font=('Helvetica', 12, 'normal'), activebackground='#363945', activeforeground='white')
+        self.done_button.grid(
+            column=1, row=14, columnspan=4, pady=(15, 0))
+        self.done_button.bind('<Enter>', self.pointerEnter)
+        self.done_button.bind('<Leave>', self.pointerLeave)
 
         # Center window to screen
         self.top.update_idletasks()
@@ -181,6 +222,17 @@ class CardPayment:
         y = int(screen_height/2 - win_width/2)
         self.top.geometry(f"{win_width}x{win_height}+{x}+{y}")
         self.top.deiconify()
+        self.cc_entry.focus_set()
+
+        self.top.bind('<Shift-Return>', self.message_box)
+
+    def pointerEnter(self, e):
+        """Highlight button on mouse hover."""
+        e.widget['bg'] = '#5F6275'
+
+    def pointerLeave(self, e):
+        """Remove highlight from button when mouse leave."""
+        e.widget['bg'] = BUTTON_BG
 
     def always_top(self):
         """Window always display on top."""
@@ -188,6 +240,47 @@ class CardPayment:
             self.top.attributes('-topmost', 1)
         elif self.alwaysTopVar.get() == 0:
             self.top.attributes('-topmost', 0)
+
+    def cc_length_check(self):
+        """Check length of credit card number to ensure correct number of digits are entered."""
+        entered_cc_num = re.sub(r'[^0-9]', '', self.cc_entry.get())
+        cc_length = len(entered_cc_num)
+        try:
+            if cc_length == 0:
+                self.cc_label.config(fg='black')
+            elif entered_cc_num[0] == '3':
+                if cc_length == 15:
+                    self.cc_label.config(fg='black')
+                else:
+                    self.cc_label.config(fg='red')
+            else:
+                if cc_length == 16:
+                    self.cc_label.config(fg='black')
+                else:
+                    self.cc_label.config(fg='red')
+        except IndexError:
+            pass
+
+    def cvv_length_check(self):
+        """Check length of cvv to ensure correct number of digits are entered."""
+        entered_cc_num = re.sub(r'[^0-9]', '', self.cc_entry.get())
+        entered_cvv_num = re.sub(r'[^0-9]', '', self.cvv_entry.get())
+        cvv_length = len(entered_cvv_num)
+        try:
+            if cvv_length == 0:
+                self.cvv_label.config(fg='black')
+            elif entered_cc_num[0] == '3':
+                if cvv_length == 4:
+                    self.cvv_label.config(fg='black')
+                else:
+                    self.cvv_label.config(fg='red')
+            else:
+                if cvv_length == 3:
+                    self.cvv_label.config(fg='black')
+                else:
+                    self.cvv_label.config(fg='red')
+        except IndexError:
+            pass
 
     def update_fields(self):
         """ 
@@ -212,7 +305,7 @@ class CardPayment:
         }
 
         self.date_num_label.config(text=datetime.today().strftime('%m-%d-%Y'))
-        
+
         if self.fields['Medication Names 1'] == "":
             cost_1 = 0
             self.fields['Cost'] = ""
@@ -293,11 +386,13 @@ class CardPayment:
         except IndexError:
             generic_card_img = self.tk_images["generic_card"]
             self.card_button.config(image=generic_card_img)
-            
+
+        self.cc_length_check()
+        self.cvv_length_check()
 
     def export_pdf(self):
         """Outputs payment information into a PDF form."""
-        
+
         name_list = self.fields['Cardholder Name'].split()
         formatted_name = ""
         for name in name_list:
@@ -310,12 +405,12 @@ class CardPayment:
             app_path = os.path.dirname(sys.executable)
         else:
             app_path = os.path.dirname(os.path.abspath(__file__))
-        
+
         abs_path = f"{app_path}\PaymentForms"
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
-            os.makedirs(abs_path) 
-        
+            os.makedirs(abs_path)
+
         reader = PdfReader("templates\card_payment_form.pdf")
         writer = PdfWriter()
         page = reader.pages[0]
@@ -344,12 +439,13 @@ class CardPayment:
         self.dollar_entry3.delete(0, END)
         self.dollar_entry4.delete(0, END)
         self.dollar_entry5.delete(0, END)
-         
-    def message_box(self):
+
+    def message_box(self, event):
         """Prompt user for confirmation when 'Done' button is clicked."""
-        
-        answer = messagebox.askyesno(title="Confirm", message="Are you sure?", parent=self.top)
-        
+
+        answer = messagebox.askyesno(
+            title="Confirm", message="Are you sure?", parent=self.top)
+
         if answer:
             self.export_pdf()
             self.clear_entries()
@@ -362,10 +458,17 @@ class CardPayment:
             app_path = os.path.dirname(sys.executable)
         else:
             app_path = os.path.dirname(os.path.abspath(__file__))
-        
+
         abs_path = f"{app_path}\PaymentForms"
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
             os.makedirs(abs_path)
-        
+
         subprocess.Popen(f'explorer "{abs_path}"')
+
+
+if __name__ == '__main__':
+    root = Tk()
+    cp = CardPayment()
+
+    root.mainloop()
