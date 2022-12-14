@@ -66,21 +66,33 @@ class WrapUpDateCalculator():
                                          width=12)
         self.day_supply_entry.grid(column=1, row=2, pady=5)
 
-        # Radiobuttons
-        self.v = tk.IntVar()
-        self.v.set(1)
-        self.seven_days = tk.Radiobutton(self.top, text='7 days before', variable=self.v, value=1,
-                                         bg=BG_COLOR, fg=FG_COLOR, font=(
-                                             'Bahnschrift Light', 11, 'normal'),
-                                         activebackground=BG_COLOR, activeforeground=FG_COLOR,
-                                         selectcolor=BG_COLOR)
-        self.seven_days.grid(column=0, row=3, pady=5)
-        self.nine_days = tk.Radiobutton(self.top, text='9 days before', variable=self.v, value=2,
-                                        bg=BG_COLOR, fg=FG_COLOR, font=(
-                                            'Bahnschrift Light', 11, 'normal'),
-                                        activebackground=BG_COLOR, activeforeground=FG_COLOR,
-                                        selectcolor=BG_COLOR)
-        self.nine_days.grid(column=1, row=3, pady=5)
+        # Custom wrap up date
+        self.custom_canvas = tk.Canvas(self.top)
+        self.custom_canvas.grid(column=0, row=3)
+        self.custom_wrapUpLabel = tk.Label(
+            self.custom_canvas, text='Wrap up', font=FONT, bg=BG_COLOR, fg=FG_COLOR)
+        self.custom_wrapUpLabel.grid(column=0, row=0)
+        self.custom_wrapUpEntry = tk.Entry(
+            self.custom_canvas, font=FONT, width=1)
+        self.custom_wrapUpEntry.grid(column=1, row=0)
+        self.custom_daysBeforeLabel = tk.Label(
+            self.custom_canvas, text='days before', font=FONT, bg=BG_COLOR, fg=FG_COLOR)
+        self.custom_daysBeforeLabel.grid(column=2, row=0)
+
+        # self.v = tk.IntVar()
+        # self.v.set(1)
+        # self.seven_days = tk.Radiobutton(self.top, text='7 days before', variable=self.v, value=1,
+        #                                  bg=BG_COLOR, fg=FG_COLOR, font=(
+        #                                      'Bahnschrift Light', 11, 'normal'),
+        #                                  activebackground=BG_COLOR, activeforeground=FG_COLOR,
+        #                                  selectcolor=BG_COLOR)
+        # self.seven_days.grid(column=0, row=3, pady=5)
+        # self.nine_days = tk.Radiobutton(self.top, text='9 days before', variable=self.v, value=2,
+        #                                 bg=BG_COLOR, fg=FG_COLOR, font=(
+        #                                     'Bahnschrift Light', 11, 'normal'),
+        #                                 activebackground=BG_COLOR, activeforeground=FG_COLOR,
+        #                                 selectcolor=BG_COLOR)
+        # self.nine_days.grid(column=1, row=3, pady=5)
 
         # Calculate Button
         self.calculate_button = tk.Button(self.top, text='Calculate',
