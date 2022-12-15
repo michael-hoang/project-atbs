@@ -64,17 +64,19 @@ class WrapUpDateCalculator():
                                          fg=BG_COLOR,
                                          font=FONT,
                                          width=12)
-        self.day_supply_entry.grid(column=1, row=2, pady=5)
+        self.day_supply_entry.grid(column=1, row=2, pady=10)
 
         # Custom wrap up date
-        self.custom_canvas = tk.Canvas(self.top)
-        self.custom_canvas.grid(column=0, row=3)
+        self.custom_canvas = tk.Canvas(
+            self.top, bg=BG_COLOR, highlightbackground=BG_COLOR, highlightcolor=BG_COLOR)
+        self.custom_canvas.grid(column=0, row=3, columnspan=2, pady=5)
         self.custom_wrapUpLabel = tk.Label(
             self.custom_canvas, text='Wrap up', font=FONT, bg=BG_COLOR, fg=FG_COLOR)
         self.custom_wrapUpLabel.grid(column=0, row=0)
         self.custom_wrapUpEntry = tk.Entry(
-            self.custom_canvas, font=FONT, width=1)
-        self.custom_wrapUpEntry.grid(column=1, row=0)
+            self.custom_canvas, font=FONT, width=2, justify='center', bg='lightgray')
+        self.custom_wrapUpEntry.grid(column=1, row=0, padx=4)
+        self.custom_wrapUpEntry.insert(0, '7')
         self.custom_daysBeforeLabel = tk.Label(
             self.custom_canvas, text='days before', font=FONT, bg=BG_COLOR, fg=FG_COLOR)
         self.custom_daysBeforeLabel.grid(column=2, row=0)
