@@ -74,7 +74,7 @@ class WrapUpDateCalculator():
             self.custom_canvas, text='Wrap up', font=FONT, bg=BG_COLOR, fg=FG_COLOR)
         self.custom_wrapUpLabel.grid(column=0, row=0)
         self.custom_wrapUpEntry = tk.Entry(
-            self.custom_canvas, font=FONT, width=2, justify='center', bg='lightgray')
+            self.custom_canvas, font=('Bahnschrift Light', 14, 'bold'), width=2, justify='center', bg=BUTTON_BG_COLOR, fg=FG_COLOR)
         self.custom_wrapUpEntry.grid(column=1, row=0, padx=4)
         self.custom_wrapUpEntry.insert(0, '7')
         self.custom_daysBeforeLabel = tk.Label(
