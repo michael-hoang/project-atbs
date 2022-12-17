@@ -12,7 +12,7 @@ from myEncryption import EnDeCrypt
 
 FONT = ('Bahnschrift Light', 12, 'normal')
 BG_COLOR = '#30323D'
-GOLD_COLOR = '#E9D985'
+GOLD_COLOR = 'gold2'
 DARK_GOLD_COLOR = '#8B7536'
 BUTTON_COLOR = '#4D5061'
 LIGHT_GRAY = '#999999'
@@ -196,7 +196,7 @@ class Authenticator:
         createKeyWin.lift()
         createKeyWin.attributes('-topmost', True)
         createKeyWin.attributes('-topmost', False)
-        #
+        
         warningLabel = tk.Label(
             createKeyWin, text=warning_message, justify='left', font=FONT, wraplength=400, bg=BG_COLOR, fg='white')
         warningLabel.grid(column=0, row=0, columnspan=2,
