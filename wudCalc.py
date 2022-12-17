@@ -215,11 +215,7 @@ class WrapUpDateCalculator():
             dispense_date = dt.datetime(
                 month=dispense_month, day=dispense_day, year=dispense_year)
 
-            v_state = self.v.get()
-            if v_state == 1:
-                days_before = 7
-            elif v_state == 2:
-                days_before = 9
+            days_before = int(self.custom_wrapUpEntry.get())
 
             wrap_up_date = dispense_date + \
                 dt.timedelta(days=day_supply-days_before)
