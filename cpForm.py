@@ -81,7 +81,7 @@ class CardPayment:
 
         for image_path in self.image_paths:
             with Image.open(fp=f"{image_path}") as i:
-                img = i.resize(size=(75, 45))
+                img = i.resize(size=(75, 50))
                 img_value = ImageTk.PhotoImage(img)
             key = image_path.split("/")[-1]
             image_key = key.split(".")[0]
@@ -90,7 +90,7 @@ class CardPayment:
         self.card_button = Button(
             self.top, image=self.tk_images["generic_card"], borderwidth=0, command=self.open_directory)
         self.card_button.grid(
-            column=1, row=1, columnspan=2, rowspan=3, sticky="w")
+            column=1, row=1, columnspan=2, rowspan=4, sticky="w")
 
         self.date_text_label = Label(
             self.top, text="Date:", bg=LABEL_BG, font=FONT)
