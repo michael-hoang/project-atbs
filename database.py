@@ -7,7 +7,7 @@ from functools import partial
 
 BG_COLOR = '#30323D'
 GRAY_COLOR = '#4D5061'
-GOLD_COLOR = '#E9D985'
+GOLD_COLOR = 'gold2'
 DARK_RED_COLOR = '#460000'
 FONT = ('Bahnschrift Light', 12, 'normal')
 
