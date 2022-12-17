@@ -6,12 +6,13 @@ from PIL import Image, ImageTk
 import random
 import json
 import os
+import sys
 from myEncryption import EnDeCrypt
 
 
 FONT = ('Bahnschrift Light', 12, 'normal')
 BG_COLOR = '#30323D'
-GOLD_COLOR = '#E9D985'
+GOLD_COLOR = 'gold2'
 DARK_GOLD_COLOR = '#8B7536'
 BUTTON_COLOR = '#4D5061'
 LIGHT_GRAY = '#999999'
@@ -195,7 +196,7 @@ class Authenticator:
         createKeyWin.lift()
         createKeyWin.attributes('-topmost', True)
         createKeyWin.attributes('-topmost', False)
-        #
+        
         warningLabel = tk.Label(
             createKeyWin, text=warning_message, justify='left', font=FONT, wraplength=400, bg=BG_COLOR, fg='white')
         warningLabel.grid(column=0, row=0, columnspan=2,
@@ -259,9 +260,13 @@ class Authenticator:
         tokenPiece2 = token[int(len(token)/2):]
         relPath1 = 'data'
         relPath2 = 'cred'
-        mainPath = os.path.dirname(__file__)
-        absolutePath1 = os.path.join(mainPath, relPath1)
-        absolutePath2 = os.path.join(mainPath, relPath2)
+        if getattr(sys, 'frozen', False):
+            application_path = os.path.dirname(sys.executable)
+        elif __file__:
+            application_path = os.path.dirname(__file__)
+
+        absolutePath1 = os.path.join(application_path, relPath1)
+        absolutePath2 = os.path.join(application_path, relPath2)
         isExist1 = os.path.exists(absolutePath1)
         isExist2 = os.path.exists(absolutePath2)
 
