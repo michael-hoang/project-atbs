@@ -8,7 +8,7 @@ FG_COLOR = 'white'
 BG_COLOR3 = '#5C80BC'
 BUTTON_BG_COLOR = '#4D5061'
 FONT = ('Bahnschrift Light', 16, 'normal')
-GOLD_COLOR = 'gold3'
+GOLD_COLOR = 'gold2'
 DARK_GOLD_COLOR = '#8B7536'
 
 
