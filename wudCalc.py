@@ -162,6 +162,7 @@ class WrapUpDateCalculator():
 
         self.top.bind('<Return>', self.calculate_wrap_up_date)
         self.top.bind('<Delete>', self.clear)
+        self.custom_wrapUpEntry.bind('<FocusIn>', self.highlight_text)
 
     def press_enter_calculate_wrap_up_date(self, event):
         self.calculate_wrap_up_date()
@@ -262,6 +263,10 @@ class WrapUpDateCalculator():
     def pointerLeaveExit(self, event):
         """Change Exit button color back to normal when mouse leave button."""
         self.exit_button['bg'] = BUTTON_BG_COLOR
+
+    def highlight_text(self, event):
+        """Highlight custom wrap up Entry box when clicked."""
+        self.custom_wrapUpEntry.selection_range(0, END)
 
 
 if __name__ == '__main__':
