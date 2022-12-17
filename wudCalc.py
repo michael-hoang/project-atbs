@@ -7,7 +7,7 @@ from tkinter import END
 FONT = ('Bahnschrift Light', 16, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
-GOLD_COLOR = 'gold3'
+GOLD_COLOR = 'gold2'
 DARK_GOLD_COLOR = '#8B7536'
 BUTTON_BG_COLOR = '#4D5061'
 
@@ -141,7 +141,7 @@ class WrapUpDateCalculator():
                                      bg=BUTTON_BG_COLOR,
                                      fg=FG_COLOR,
                                      font=FONT,
-                                     activebackground='firebrick4', activeforeground='white',
+                                     activebackground='firebrick3', activeforeground='white',
                                      borderwidth=0, command=self.top.destroy)
         self.exit_button.grid(column=0, row=5, sticky='EW',
                               padx=(5, 0), pady=(0, 10))
