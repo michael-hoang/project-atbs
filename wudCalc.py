@@ -7,7 +7,7 @@ from tkinter import END
 FONT = ('Bahnschrift Light', 16, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
-GOLD_COLOR = 'gold3'
+GOLD_COLOR = 'gold2'
 DARK_GOLD_COLOR = '#8B7536'
 BUTTON_BG_COLOR = '#4D5061'
 
@@ -64,23 +64,37 @@ class WrapUpDateCalculator():
                                          fg=BG_COLOR,
                                          font=FONT,
                                          width=12)
-        self.day_supply_entry.grid(column=1, row=2, pady=5)
+        self.day_supply_entry.grid(column=1, row=2, pady=10)
 
-        # Radiobuttons
-        self.v = tk.IntVar()
-        self.v.set(1)
-        self.seven_days = tk.Radiobutton(self.top, text='7 days before', variable=self.v, value=1,
-                                         bg=BG_COLOR, fg=FG_COLOR, font=(
-                                             'Bahnschrift Light', 11, 'normal'),
-                                         activebackground=BG_COLOR, activeforeground=FG_COLOR,
-                                         selectcolor=BG_COLOR)
-        self.seven_days.grid(column=0, row=3, pady=5)
-        self.nine_days = tk.Radiobutton(self.top, text='9 days before', variable=self.v, value=2,
-                                        bg=BG_COLOR, fg=FG_COLOR, font=(
-                                            'Bahnschrift Light', 11, 'normal'),
-                                        activebackground=BG_COLOR, activeforeground=FG_COLOR,
-                                        selectcolor=BG_COLOR)
-        self.nine_days.grid(column=1, row=3, pady=5)
+        # Custom wrap up date
+        self.custom_canvas = tk.Canvas(
+            self.top, bg=BG_COLOR, highlightbackground=BG_COLOR, highlightcolor=BG_COLOR)
+        self.custom_canvas.grid(column=0, row=3, columnspan=2, pady=5)
+        self.custom_wrapUpLabel = tk.Label(
+            self.custom_canvas, text='Wrap up', font=FONT, bg=BG_COLOR, fg=FG_COLOR)
+        self.custom_wrapUpLabel.grid(column=0, row=0)
+        self.custom_wrapUpEntry = tk.Entry(
+            self.custom_canvas, font=('Bahnschrift Light', 14, 'bold'), width=2, justify='center', bg=BUTTON_BG_COLOR, fg=FG_COLOR)
+        self.custom_wrapUpEntry.grid(column=1, row=0, padx=4)
+        self.custom_wrapUpEntry.insert(0, '7')
+        self.custom_daysBeforeLabel = tk.Label(
+            self.custom_canvas, text='days before', font=FONT, bg=BG_COLOR, fg=FG_COLOR)
+        self.custom_daysBeforeLabel.grid(column=2, row=0)
+
+        # self.v = tk.IntVar()
+        # self.v.set(1)
+        # self.seven_days = tk.Radiobutton(self.top, text='7 days before', variable=self.v, value=1,
+        #                                  bg=BG_COLOR, fg=FG_COLOR, font=(
+        #                                      'Bahnschrift Light', 11, 'normal'),
+        #                                  activebackground=BG_COLOR, activeforeground=FG_COLOR,
+        #                                  selectcolor=BG_COLOR)
+        # self.seven_days.grid(column=0, row=3, pady=5)
+        # self.nine_days = tk.Radiobutton(self.top, text='9 days before', variable=self.v, value=2,
+        #                                 bg=BG_COLOR, fg=FG_COLOR, font=(
+        #                                     'Bahnschrift Light', 11, 'normal'),
+        #                                 activebackground=BG_COLOR, activeforeground=FG_COLOR,
+        #                                 selectcolor=BG_COLOR)
+        # self.nine_days.grid(column=1, row=3, pady=5)
 
         # Calculate Button
         self.calculate_button = tk.Button(self.top, text='Calculate',
@@ -127,7 +141,7 @@ class WrapUpDateCalculator():
                                      bg=BUTTON_BG_COLOR,
                                      fg=FG_COLOR,
                                      font=FONT,
-                                     activebackground='firebrick4', activeforeground='white',
+                                     activebackground='firebrick3', activeforeground='white',
                                      borderwidth=0, command=self.top.destroy)
         self.exit_button.grid(column=0, row=5, sticky='EW',
                               padx=(5, 0), pady=(0, 10))
@@ -148,6 +162,7 @@ class WrapUpDateCalculator():
 
         self.top.bind('<Return>', self.calculate_wrap_up_date)
         self.top.bind('<Delete>', self.clear)
+        self.custom_wrapUpEntry.bind('<FocusIn>', self.highlight_text)
 
     def press_enter_calculate_wrap_up_date(self, event):
         self.calculate_wrap_up_date()
@@ -201,11 +216,7 @@ class WrapUpDateCalculator():
             dispense_date = dt.datetime(
                 month=dispense_month, day=dispense_day, year=dispense_year)
 
-            v_state = self.v.get()
-            if v_state == 1:
-                days_before = 7
-            elif v_state == 2:
-                days_before = 9
+            days_before = int(self.custom_wrapUpEntry.get())
 
             wrap_up_date = dispense_date + \
                 dt.timedelta(days=day_supply-days_before)
@@ -252,6 +263,10 @@ class WrapUpDateCalculator():
     def pointerLeaveExit(self, event):
         """Change Exit button color back to normal when mouse leave button."""
         self.exit_button['bg'] = BUTTON_BG_COLOR
+
+    def highlight_text(self, event):
+        """Highlight custom wrap up Entry box when clicked."""
+        self.custom_wrapUpEntry.selection_range(0, END)
 
 
 if __name__ == '__main__':
