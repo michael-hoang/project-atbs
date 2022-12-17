@@ -7,9 +7,10 @@ from pwManager import PasswordManager
 from authentication import Authenticator
 
 
-FONT = ('Serif', 14, 'normal')
+FONT = ('Bahnschrift Light', 17, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
+SLATEGRAY4 = 'SlateGray4'
 
 
 def open_WrapUpDateCalculator():
@@ -41,6 +42,16 @@ def _check_isVerified_flag(authenticator):
     else:
         authenticator.top.destroy()
         pm = PasswordManager()
+
+
+def pointerEnter(event):
+    """Change button color on mouse hover."""
+    event.widget['bg'] = SLATEGRAY4
+
+
+def pointerLeave(event):
+    """Change button color back to normal when mouse leave button."""
+    event.widget['bg'] = BG_COLOR
 
 
 root = tk.Tk()
@@ -99,5 +110,8 @@ y = int(screen_height/2 - win_width/2)
 root.geometry(f"{win_width}x{win_height}+{x}+{y}")
 root.deiconify()
 # root.attributes('-topmost', 1)
+
+root.bind('<Enter>', pointerEnter)
+root.bind('<Leave>', pointerLeave)
 
 root.mainloop()

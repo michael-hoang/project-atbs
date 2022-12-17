@@ -7,7 +7,7 @@ from functools import partial
 
 BG_COLOR = '#30323D'
 GRAY_COLOR = '#4D5061'
-GOLD_COLOR = '#E9D985'
+GOLD_COLOR = 'gold2'
 DARK_RED_COLOR = '#460000'
 FONT = ('Bahnschrift Light', 12, 'normal')
 
@@ -44,6 +44,7 @@ class DataBase(tk.Toplevel):
         self.deiconify()
         self.focus_force()
 
+        self.bind('<Escape>', lambda event: self.exit_window(event, root))
         self.protocol('WM_DELETE_WINDOW', lambda: self.on_closing(root))
 
     def on_closing(self, root):
@@ -107,8 +108,8 @@ class DataBase(tk.Toplevel):
         """Delete entire row from database."""
         deWebsite = self.edc.decrypt(key)
         self.bell()
-        confirmDelete = messagebox.askyesno(
-            title='Delete Confirmation', message=f'Are you sure you want to delete login information for {deWebsite.title()}?')
+        confirmDelete = messagebox.askyesno(parent=self, title='Delete Confirmation',
+                                            message=f'Are you sure you want to delete login information for {deWebsite.title()}?')
         if confirmDelete:
             pass
         else:
@@ -175,6 +176,8 @@ class DataBase(tk.Toplevel):
                 delete_button = tk.Button(
                     master=scrollableframe, text='Delete', command=partial(self.delete, key=k), bg=DARK_RED_COLOR, fg='white', activebackground='red', activeforeground='white')
                 delete_button.grid(column=4, row=entryRow)
+                delete_button.bind('<Enter>', self.pointerEnter)
+                delete_button.bind('<Leave>', self.pointerLeave)
 
                 scrollableframe.bind("<Configure>", lambda event: self.canvas.configure(
                     scrollregion=self.canvas.bbox("all")))
@@ -182,6 +185,19 @@ class DataBase(tk.Toplevel):
                 number += 1
                 entryRow += 1
                 y += 23
+
+    def pointerEnter(self, event):
+        """Highlight button on mouse hover."""
+        event.widget['bg'] = 'darkred'
+
+    def pointerLeave(self, event):
+        """Remove highlight when mouse not on button."""
+        event.widget['bg'] = DARK_RED_COLOR
+
+    def exit_window(self, event, root):
+        """Exit Database window when ESC is pressed."""
+        root.attributes('-disabled', 0)
+        self.destroy()
 
 
 if __name__ == '__main__':
