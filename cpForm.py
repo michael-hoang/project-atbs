@@ -9,6 +9,8 @@ import os
 import subprocess
 import sys
 import re
+import datetime as dt
+from calendar import monthrange
 
 
 LABEL_BG = '#EAEEF3'
@@ -263,6 +265,7 @@ class CardPayment:
 
     def cvv_length_check(self):
         """Check length of cvv to ensure correct number of digits are entered."""
+        # Replace all characters except (^) 0 through 9 with ''
         entered_cc_num = re.sub(r'[^0-9]', '', self.cc_entry.get())
         entered_cvv_num = re.sub(r'[^0-9]', '', self.cvv_entry.get())
         cvv_length = len(entered_cvv_num)
@@ -281,6 +284,42 @@ class CardPayment:
                     self.cvv_label.config(fg='red')
         except IndexError:
             pass
+
+    def expiration_check(self):
+        """Check expiration date of payment card."""
+        # Replace all characters except (^) 0 through 9, /, and - with ''
+        entered_exp_date = re.sub(r'[^0-9/-]', '', self.exp_entry.get())
+        split_exp_date = re.split('[-/]', entered_exp_date)
+        exp_date_length = len(split_exp_date)
+        try:
+            if exp_date_length == 2:  # Only month and year
+                month = int(split_exp_date[0])
+                year = int(split_exp_date[1])
+                if len(str(year)) == 2:
+                    year = 2000 + year
+
+                day = monthrange(year, month)[1]
+                exp_date = dt.datetime(year, month, day)
+
+            elif exp_date_length == 3:  # Month, day, and year
+                month = int(split_exp_date[0])
+                day = int(split_exp_date[1])
+                year = int(split_exp_date[2])
+                if len(str(year)) == 2:
+                    year = 2000 + year
+
+                exp_date = dt.datetime(year, month, day)
+
+            today = dt.datetime.now()
+
+            if self.exp_entry.get() == '':
+                self.exp_label.config(fg='black')
+            elif exp_date < today:
+                self.exp_label.config(fg='red')
+            else:
+                self.exp_label.config(fg='black')
+        except (UnboundLocalError, ValueError):
+            self.exp_label.config(fg='red')
 
     def update_fields(self):
         """ 
@@ -389,6 +428,7 @@ class CardPayment:
 
         self.cc_length_check()
         self.cvv_length_check()
+        self.expiration_check()
 
     def export_pdf(self):
         """Outputs payment information into a PDF form."""
