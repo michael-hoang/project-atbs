@@ -407,7 +407,7 @@ class CardPayment:
 
         total = cost_1 + cost_2 + cost_3 + cost_4 + cost_5
         self.total_num_label.config(text="${:,.2f}".format(total))
-        self.fields['Total'] = "${:,.2f}".format(total)
+        self.fields['Total'] = "${:.2f}".format(total)
 
         try:
             if self.fields['Credit Card No'][0] == '3':
