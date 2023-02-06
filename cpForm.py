@@ -11,6 +11,7 @@ import sys
 import re
 import datetime as dt
 from calendar import monthrange
+import time
 
 
 LABEL_BG = '#EAEEF3'
@@ -59,6 +60,8 @@ class CardPayment:
         self.top.resizable(width=False, height=False)
         self.top.title("Card Payment Form")
         self.top.after(ms=50, func=self.update_fields)
+        self.remove_files()
+        self.top.after(ms=3_600_000, func=self.remove_files) # after 1 hour
 
         self.cc_icon = PhotoImage(file="img/cc_icon.png")
         self.top.iconphoto(False, self.cc_icon)
@@ -505,6 +508,28 @@ class CardPayment:
             os.makedirs(abs_path)
 
         subprocess.Popen(f'explorer "{abs_path}"')
+
+    def remove_files(self):
+        """Remove files in PaymentForms older than 7 days."""
+
+        current_time = time.time()
+
+        if getattr(sys, 'frozen', False):
+            app_path = os.path.dirname(sys.executable)
+        else:
+            app_path = os.path.dirname(os.path.abspath(__file__))
+
+        abs_path = f"{app_path}\PaymentForms"
+        check_folder = os.path.isdir(abs_path)
+        if not check_folder:
+            os.makedirs(abs_path)
+
+        for f in os.listdir(path=abs_path):
+            file_path = os.path.join(abs_path, f)
+            print(f"file_path: {file_path}")
+            creation_time = os.path.getctime(file_path)
+            if (current_time - creation_time) // (24 * 3600) >= 7:
+                os.unlink(file_path)
 
 
 if __name__ == '__main__':
