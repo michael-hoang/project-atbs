@@ -526,7 +526,6 @@ class CardPayment:
 
         for f in os.listdir(path=abs_path):
             file_path = os.path.join(abs_path, f)
-            print(f"file_path: {file_path}")
             creation_time = os.path.getctime(file_path)
             if (current_time - creation_time) // (24 * 3600) >= 7:
                 os.unlink(file_path)
