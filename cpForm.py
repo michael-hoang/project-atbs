@@ -511,7 +511,7 @@ class CardPayment:
 
     def remove_files(self):
         """Remove files in PaymentForms older than 7 days."""
-
+        
         current_time = time.time()
 
         if getattr(sys, 'frozen', False):
@@ -529,6 +529,8 @@ class CardPayment:
             creation_time = os.path.getctime(file_path)
             if (current_time - creation_time) // (24 * 3600) >= 7:
                 os.unlink(file_path)
+
+        self.top.after(ms=3_600_000, func=self.remove_files) # after 1 hour
 
 
 if __name__ == '__main__':
