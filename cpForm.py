@@ -70,6 +70,7 @@ class CardPayment:
         # Add Notes Window
         self.notes_window = Toplevel(self.top, bg=WINDOW_BG, padx=5, pady=5)
         self.notes_window.title('Add Notes')
+        self.notes_window.resizable(width=False, height=False)
 
         self.notes_text = Text(self.notes_window, height=5, width=26, font=NOTES_FONT, wrap=WORD)
         self.notes_text.grid(column=0, row=0, columnspan=2, padx=10, pady=10)
