@@ -31,10 +31,10 @@ class CardPayment:
     def __init__(self):
         self.fields = {
             'Date': datetime.today().strftime('%m-%d-%Y'),
-            # 'Visa': '/On',
-            # 'MasterCard': '/Off',
-            # 'Discover': '/Off',
-            # 'AMEX': '/Off',
+            'Visa': '',
+            'MasterCard': '',
+            'Discover': '',
+            'AMEX': '',
             'Credit Card No': '',
             'Exp': '',
             'Security No': '',
@@ -414,18 +414,28 @@ class CardPayment:
             if self.fields['Credit Card No'][0] == '3':
                 amex_img = self.tk_images["amex"]
                 self.card_button.config(image=amex_img)
+                self.fields['AMEX'] = 'X'
             elif self.fields['Credit Card No'][0] == '4':
                 visa_img = self.tk_images["visa"]
                 self.card_button.config(image=visa_img)
+                self.fields['Visa'] = 'X'
             elif self.fields['Credit Card No'][0] == '5':
                 mastercard_img = self.tk_images["mastercard"]
                 self.card_button.config(image=mastercard_img)
+                self.fields['MasterCard'] = 'X'
             elif self.fields['Credit Card No'][0] == '6':
                 discover_img = self.tk_images["discover"]
                 self.card_button.config(image=discover_img)
+                self.fields['Discover'] = 'X'
         except IndexError:
             generic_card_img = self.tk_images["generic_card"]
             self.card_button.config(image=generic_card_img)
+            self.fields |= {
+                'Visa': '',
+                'MasterCard': '',
+                'Discover': '',
+                'AMEX': '',
+            }
 
         self.cc_length_check()
         self.cvv_length_check()
