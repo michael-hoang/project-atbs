@@ -20,6 +20,7 @@ ENTRY_BG = '#F8FAFC'
 BUTTON_BG = '#484B5B'
 FONT = ('Helvetica', 11, 'normal')
 ENTRY_FONT = ('Helvetica', 10, 'normal')
+NOTES_FONT = ('Courier', 13, 'normal')
 
 
 class CardPayment:
@@ -67,11 +68,16 @@ class CardPayment:
         self.top.iconphoto(False, self.cc_icon)
 
         # Add Notes Window
-        self.notes_window = Toplevel(self.top, bg=WINDOW_BG, padx=10, pady=10)
+        self.notes_window = Toplevel(self.top, bg=WINDOW_BG, padx=5, pady=5)
         self.notes_window.title('Add Notes')
 
-        self.notes_text = Text(self.notes_window, height=5, width=26, font=('Courier', 13, 'normal'), wrap=WORD)
-        self.notes_text.grid(column=0, row=0)
+        self.notes_text = Text(self.notes_window, height=5, width=26, font=NOTES_FONT, wrap=WORD)
+        self.notes_text.grid(column=0, row=0, columnspan=2, padx=10, pady=10)
+
+        self.notes_ok_button = Button(self.notes_window, text='OK', font=FONT, width=6)
+        self.notes_ok_button.grid(column=0, row=1, sticky='E', padx=(0, 10), pady=(0, 5))
+        self.notes_clear_button = Button(self.notes_window, text='Clear', font=FONT, width=6)
+        self.notes_clear_button.grid(column=1, row=1, sticky='W', padx=(10, 0), pady=(0, 5))
 
         # Always on top Checkbutton
         self.alwaysTopVar = IntVar()
