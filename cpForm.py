@@ -71,11 +71,14 @@ class CardPayment:
         self.notes_window = Toplevel(self.top, bg=WINDOW_BG, padx=5, pady=5)
         self.notes_window.title('Add Notes')
         self.notes_window.resizable(width=False, height=False)
+        self.notes_isHidden = True
+        self.toggle_notes_window()
+        self.notes_window.protocol('WM_DELETE_WINDOW', func=self.toggle_notes_window)
 
         self.notes_text = Text(self.notes_window, height=5, width=26, font=NOTES_FONT, wrap=WORD)
         self.notes_text.grid(column=0, row=0, columnspan=2, padx=10, pady=10)
 
-        self.notes_ok_button = Button(self.notes_window, text='OK', font=FONT, width=6)
+        self.notes_ok_button = Button(self.notes_window, text='OK', font=FONT, width=6, command=self.toggle_notes_window)
         self.notes_ok_button.grid(column=0, row=1, sticky='E', padx=(0, 10), pady=(0, 5))
         self.notes_clear_button = Button(self.notes_window, text='Clear', font=FONT, width=6)
         self.notes_clear_button.grid(column=1, row=1, sticky='W', padx=(10, 0), pady=(0, 5))
@@ -89,7 +92,7 @@ class CardPayment:
             column=0, row=0, columnspan=3, sticky='NW')
 
         # Add Notes button
-        self.notes_button = Button(self.top, text='Add Notes', font=FONT, bg=WINDOW_BG, relief=GROOVE)
+        self.notes_button = Button(self.top, text='Add Notes', font=FONT, bg=WINDOW_BG, relief=GROOVE, command=self.toggle_notes_window)
         self.notes_button.grid(column=4, row=0, columnspan=2, sticky='E', pady=(0, 10))
 
         self.image_paths = [
@@ -580,6 +583,33 @@ class CardPayment:
                 os.unlink(file_path)
 
         self.top.after(ms=3_600_000, func=self.remove_files) # after 1 hour
+
+    def toggle_notes_window(self):
+        """Toggles Note window for CardPayment Form."""
+
+        if self.notes_isHidden:
+            self.notes_window.withdraw()
+            self.notes_isHidden = False
+            self.top.lift()
+            self.top.attributes('-disabled', 0)
+            self.top.focus_force()
+        else:
+            # Center Notes window to Top window
+            top_x = self.top.winfo_x()
+            top_y = self.top.winfo_y()
+            top_width = self.top.winfo_reqwidth()
+            top_height = self.top.winfo_reqheight()
+            notes_width = self.notes_window.winfo_reqwidth()
+            notes_height = self.notes_window.winfo_reqheight()
+            dx = int((top_width / 2) - (notes_width / 2))
+            dy = int((top_height / 2) - (notes_height / 2))
+            self.notes_window.geometry('+%d+%d' % (top_x + dx, top_y + dy))
+
+            self.notes_isHidden = True
+            self.top.attributes('-disabled', 1)
+            self.notes_window.wm_transient(self.top)
+            self.notes_window.attributes('-topmost', 1)
+            self.notes_window.deiconify()
 
 
 if __name__ == '__main__':
