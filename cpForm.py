@@ -66,6 +66,10 @@ class CardPayment:
         self.cc_icon = PhotoImage(file="img/cc_icon.png")
         self.top.iconphoto(False, self.cc_icon)
 
+        # Add Notes Window
+        self.notes_window = Toplevel(self.top, bg=WINDOW_BG, padx=10, pady=10)
+        
+
         # Always on top Checkbutton
         self.alwaysTopVar = IntVar()
         self.always_top_check_button = Checkbutton(self.top, text='Always on top', font=('Helvetica', 9, 'normal'),
