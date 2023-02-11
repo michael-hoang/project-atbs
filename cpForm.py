@@ -68,7 +68,10 @@ class CardPayment:
 
         # Add Notes Window
         self.notes_window = Toplevel(self.top, bg=WINDOW_BG, padx=10, pady=10)
-        
+        self.notes_window.title('Add Notes')
+
+        self.notes_text = Text(self.notes_window, height=5, width=26, font=('Courier', 13, 'normal'), wrap=WORD)
+        self.notes_text.grid(column=0, row=0)
 
         # Always on top Checkbutton
         self.alwaysTopVar = IntVar()
