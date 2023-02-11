@@ -66,13 +66,17 @@ class CardPayment:
         self.cc_icon = PhotoImage(file="img/cc_icon.png")
         self.top.iconphoto(False, self.cc_icon)
 
-        # Checkbutton
+        # Always on top Checkbutton
         self.alwaysTopVar = IntVar()
         self.always_top_check_button = Checkbutton(self.top, text='Always on top', font=('Helvetica', 9, 'normal'),
                                                    variable=self.alwaysTopVar, onvalue=1, offvalue=0,
                                                    command=self.always_top, bg=LABEL_BG, activebackground=LABEL_BG)
         self.always_top_check_button.grid(
             column=0, row=0, columnspan=3, sticky='NW')
+
+        # Add Notes button
+        self.notes_button = Button(self.top, text='Add Notes', font=FONT)
+        self.notes_button.grid(column=4, row=0, columnspan=2, sticky='E', pady=(0, 10))
 
         self.image_paths = [
             "img/generic_card.png",
