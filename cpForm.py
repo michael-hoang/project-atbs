@@ -332,10 +332,10 @@ class CardPayment:
 
         self.fields |= {
             'Date': datetime.today().strftime('%m-%d-%Y'),
-            'Credit Card No': self.cc_entry.get(),
+            'Credit Card No': self.cc_entry.get().lstrip(),
             'Exp': self.exp_entry.get(),
             'Security No': self.cvv_entry.get(),
-            'Cardholder Name': self.cardholder_entry.get(),
+            'Cardholder Name': self.cardholder_entry.get().lstrip(),
             'MRN': self.mrn_entry.get(),
             'Medication Names 1': self.med_entry1.get(),
             'Medication Names 2': self.med_entry2.get(),
@@ -414,19 +414,39 @@ class CardPayment:
             if self.fields['Credit Card No'][0] == '3':
                 amex_img = self.tk_images["amex"]
                 self.card_button.config(image=amex_img)
-                self.fields['AMEX'] = 'X'
+                self.fields |= {
+                'Visa': '',
+                'MasterCard': '',
+                'Discover': '',
+                'AMEX': 'X',
+                }
             elif self.fields['Credit Card No'][0] == '4':
                 visa_img = self.tk_images["visa"]
                 self.card_button.config(image=visa_img)
-                self.fields['Visa'] = 'X'
+                self.fields |= {
+                'Visa': 'X',
+                'MasterCard': '',
+                'Discover': '',
+                'AMEX': '',
+                }
             elif self.fields['Credit Card No'][0] == '5':
                 mastercard_img = self.tk_images["mastercard"]
                 self.card_button.config(image=mastercard_img)
-                self.fields['MasterCard'] = 'X'
+                self.fields |= {
+                'Visa': '',
+                'MasterCard': 'X',
+                'Discover': '',
+                'AMEX': '',
+                }
             elif self.fields['Credit Card No'][0] == '6':
                 discover_img = self.tk_images["discover"]
                 self.card_button.config(image=discover_img)
-                self.fields['Discover'] = 'X'
+                self.fields |= {
+                'Visa': '',
+                'MasterCard': '',
+                'Discover': 'X',
+                'AMEX': '',
+                }
         except IndexError:
             generic_card_img = self.tk_images["generic_card"]
             self.card_button.config(image=generic_card_img)
