@@ -80,7 +80,7 @@ class CardPayment:
 
         self.notes_ok_button = Button(self.notes_window, text='OK', font=FONT, width=6, command=self.toggle_notes_window)
         self.notes_ok_button.grid(column=0, row=1, sticky='E', padx=(0, 10), pady=(0, 5))
-        self.notes_clear_button = Button(self.notes_window, text='Clear', font=FONT, width=6)
+        self.notes_clear_button = Button(self.notes_window, text='Clear', font=FONT, width=6, command=self.clear_notes)
         self.notes_clear_button.grid(column=1, row=1, sticky='W', padx=(10, 0), pady=(0, 5))
 
         # Always on top Checkbutton
@@ -611,6 +611,10 @@ class CardPayment:
             self.notes_window.attributes('-topmost', 1)
             self.notes_window.deiconify()
             self.notes_text.focus()
+
+    def clear_notes(self):
+        """Clear all text inside Notes text box."""
+        self.notes_text.delete(1.0, END)
 
 
 if __name__ == '__main__':
