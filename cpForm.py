@@ -610,6 +610,7 @@ class CardPayment:
             self.notes_window.wm_transient(self.top)
             self.notes_window.attributes('-topmost', 1)
             self.notes_window.deiconify()
+            self.notes_text.focus()
 
 
 if __name__ == '__main__':
