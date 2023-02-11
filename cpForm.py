@@ -75,7 +75,7 @@ class CardPayment:
             column=0, row=0, columnspan=3, sticky='NW')
 
         # Add Notes button
-        self.notes_button = Button(self.top, text='Add Notes', font=FONT)
+        self.notes_button = Button(self.top, text='Add Notes', font=FONT, bg=WINDOW_BG, relief=GROOVE)
         self.notes_button.grid(column=4, row=0, columnspan=2, sticky='E', pady=(0, 10))
 
         self.image_paths = [
