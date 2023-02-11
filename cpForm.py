@@ -330,8 +330,6 @@ class CardPayment:
         payment form entry.
         """
 
-        self.top.after(ms=50, func=self.update_fields)
-
         self.fields |= {
             'Date': datetime.today().strftime('%m-%d-%Y'),
             'Credit Card No': self.cc_entry.get(),
@@ -433,6 +431,8 @@ class CardPayment:
         self.cvv_length_check()
         self.expiration_check()
 
+        self.top.after(ms=50, func=self.update_fields)
+
     def export_pdf(self):
         """Outputs payment information into a PDF form."""
 
@@ -493,6 +493,7 @@ class CardPayment:
             self.export_pdf()
             self.clear_entries()
             self.cc_entry.focus_set()
+            self.clear_entries()
 
     def open_directory(self):
         """Opens directory containing exported credit card forms."""
