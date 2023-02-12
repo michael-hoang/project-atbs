@@ -255,6 +255,7 @@ class CardPayment:
         self.cc_entry.focus_set()
 
         self.top.bind('<Shift-Return>', self.message_box)
+        self.top.bind('<Control-n>', self.toggle_notes_window)
 
     def pointerEnter(self, e):
         """Highlight button on mouse hover."""
