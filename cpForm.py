@@ -67,22 +67,6 @@ class CardPayment:
         self.cc_icon = PhotoImage(file="img/cc_icon.png")
         self.top.iconphoto(False, self.cc_icon)
 
-        # Add Notes Window
-        self.notes_window = Toplevel(self.top, bg=WINDOW_BG, padx=5, pady=5)
-        self.notes_window.title('Add Notes')
-        self.notes_window.resizable(width=False, height=False)
-        self.notes_isHidden = True
-        self.toggle_notes_window()
-        self.notes_window.protocol('WM_DELETE_WINDOW', func=self.toggle_notes_window)
-
-        self.notes_text = Text(self.notes_window, height=5, width=26, font=NOTES_FONT, wrap=WORD)
-        self.notes_text.grid(column=0, row=0, columnspan=2, padx=10, pady=10)
-
-        self.notes_ok_button = Button(self.notes_window, text='OK', font=FONT, width=6, command=self.toggle_notes_window)
-        self.notes_ok_button.grid(column=0, row=1, sticky='E', padx=(0, 10), pady=(0, 5))
-        self.notes_clear_button = Button(self.notes_window, text='Clear', font=FONT, width=6, command=self.clear_notes)
-        self.notes_clear_button.grid(column=1, row=1, sticky='W', padx=(10, 0), pady=(0, 5))
-
         # Always on top Checkbutton
         self.alwaysTopVar = IntVar()
         self.always_top_check_button = Checkbutton(self.top, text='Always on top', font=('Helvetica', 9, 'normal'),
@@ -92,9 +76,28 @@ class CardPayment:
             column=0, row=0, columnspan=3, sticky='NW')
 
         # Add Notes button
-        self.notes_button = Button(self.top, text='Add Notes', font=FONT, bg=WINDOW_BG, relief=GROOVE, command=self.toggle_notes_window)
+        self.notes_button = Button(self.top, text='Add Notes', font=FONT, bg=WINDOW_BG, relief=GROOVE, command=lambda: self.toggle_notes_window(event=None))
         self.notes_button.grid(column=4, row=0, columnspan=2, sticky='E', pady=(0, 10))
 
+        # Add Notes Window
+        self.notes_window = Toplevel(self.top, bg=WINDOW_BG, padx=5, pady=5)
+        self.notes_window.title('Add Notes')
+        self.notes_window.resizable(width=False, height=False)
+        self.notes_isHidden = True
+        self.toggle_notes_window(event=None)
+        self.notes_window.protocol('WM_DELETE_WINDOW', func=self.toggle_notes_window)
+
+        self.notes_text = Text(self.notes_window, height=5, width=26, font=NOTES_FONT, wrap=WORD)
+        self.notes_text.grid(column=0, row=0, columnspan=2, padx=10, pady=10)
+
+        self.notes_ok_button = Button(self.notes_window, text='OK', font=FONT, width=6, command=lambda: self.toggle_notes_window(event=None))
+        self.notes_ok_button.grid(column=0, row=1, sticky='E', padx=(0, 10), pady=(0, 5))
+        self.notes_clear_button = Button(self.notes_window, text='Clear', font=FONT, width=6, command=self.clear_notes)
+        self.notes_clear_button.grid(column=1, row=1, sticky='W', padx=(10, 0), pady=(0, 5))
+
+        self.notes_window.bind('<Escape>', self.toggle_notes_window)
+
+        # Card Button image
         self.image_paths = [
             "img/generic_card.png",
             "img/amex.png",
@@ -584,7 +587,7 @@ class CardPayment:
 
         self.top.after(ms=3_600_000, func=self.remove_files) # after 1 hour
 
-    def toggle_notes_window(self):
+    def toggle_notes_window(self, event):
         """Toggles Note window for CardPayment Form."""
 
         if self.notes_isHidden:
