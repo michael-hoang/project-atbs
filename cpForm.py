@@ -20,6 +20,7 @@ ENTRY_BG = '#F8FAFC'
 BUTTON_BG = '#484B5B'
 FONT = ('Helvetica', 11, 'normal')
 ENTRY_FONT = ('Helvetica', 10, 'normal')
+NOTES_FONT = ('Courier', 13, 'normal')
 
 
 class CardPayment:
@@ -31,10 +32,10 @@ class CardPayment:
     def __init__(self):
         self.fields = {
             'Date': datetime.today().strftime('%m-%d-%Y'),
-            # 'Visa': '/On',
-            # 'MasterCard': '/Off',
-            # 'Discover': '/Off',
-            # 'AMEX': '/Off',
+            'Visa': '',
+            'MasterCard': '',
+            'Discover': '',
+            'AMEX': '',
             'Credit Card No': '',
             'Exp': '',
             'Security No': '',
@@ -51,6 +52,7 @@ class CardPayment:
             'Cost 4': '',
             'Cost 5': '',
             'Total': '',
+            'Notes': '',
         }
 
         self.top = Toplevel()
@@ -66,7 +68,7 @@ class CardPayment:
         self.cc_icon = PhotoImage(file="img/cc_icon.png")
         self.top.iconphoto(False, self.cc_icon)
 
-        # Checkbutton
+        # Always on top Checkbutton
         self.alwaysTopVar = IntVar()
         self.always_top_check_button = Checkbutton(self.top, text='Always on top', font=('Helvetica', 9, 'normal'),
                                                    variable=self.alwaysTopVar, onvalue=1, offvalue=0,
@@ -74,6 +76,30 @@ class CardPayment:
         self.always_top_check_button.grid(
             column=0, row=0, columnspan=3, sticky='NW')
 
+        # Add Notes button
+        self.notes_button = Button(self.top, text='Add Notes', font=FONT, bg=WINDOW_BG, relief=GROOVE, command=lambda: self.toggle_notes_window(event=None))
+        self.notes_button.grid(column=4, row=0, columnspan=2, sticky='E', pady=(0, 12))
+
+        # Add Notes Window
+        self.notes_window = Toplevel(self.top, bg=WINDOW_BG, padx=5, pady=5)
+        self.notes_window.title('Add Notes')
+        self.notes_window.resizable(width=False, height=False)
+        self.notes_isHidden = True
+        self.toggle_notes_window(event=None)
+        self.notes_window.protocol('WM_DELETE_WINDOW', func=lambda: self.toggle_notes_window(event=None))
+
+        self.notes_text = Text(self.notes_window, height=5, width=26, font=NOTES_FONT, wrap=WORD)
+        self.notes_text.grid(column=0, row=0, columnspan=2, padx=10, pady=10)
+
+        self.notes_ok_button = Button(self.notes_window, text='OK', font=FONT, width=6, command=lambda: self.toggle_notes_window(event=None))
+        self.notes_ok_button.grid(column=0, row=1, sticky='E', padx=(0, 10), pady=(0, 5))
+        self.notes_clear_button = Button(self.notes_window, text='Clear', font=FONT, width=6, command=lambda: self.clear_notes(event=None))
+        self.notes_clear_button.grid(column=1, row=1, sticky='W', padx=(10, 0), pady=(0, 5))
+
+        self.notes_window.bind('<Escape>', self.toggle_notes_window)
+        self.notes_window.bind('<Delete>', self.clear_notes)
+
+        # Card Button image
         self.image_paths = [
             "img/generic_card.png",
             "img/amex.png",
@@ -229,7 +255,8 @@ class CardPayment:
         self.top.deiconify()
         self.cc_entry.focus_set()
 
-        self.top.bind('<Shift-Return>', self.message_box)
+        self.top.bind('<Control-Return>', self.message_box)
+        self.top.bind('<Control-n>', self.toggle_notes_window)
 
     def pointerEnter(self, e):
         """Highlight button on mouse hover."""
@@ -330,14 +357,12 @@ class CardPayment:
         payment form entry.
         """
 
-        self.top.after(ms=50, func=self.update_fields)
-
         self.fields |= {
             'Date': datetime.today().strftime('%m-%d-%Y'),
-            'Credit Card No': self.cc_entry.get(),
+            'Credit Card No': self.cc_entry.get().lstrip(),
             'Exp': self.exp_entry.get(),
             'Security No': self.cvv_entry.get(),
-            'Cardholder Name': self.cardholder_entry.get(),
+            'Cardholder Name': self.cardholder_entry.get().lstrip(),
             'MRN': self.mrn_entry.get(),
             'Medication Names 1': self.med_entry1.get(),
             'Medication Names 2': self.med_entry2.get(),
@@ -345,6 +370,11 @@ class CardPayment:
             'Medication Names 4': self.med_entry4.get(),
             'Medication Names 5': self.med_entry5.get(),
         }
+
+        if len(self.notes_text.get(1.0, 'end-1c').lstrip()) != 0:
+            self.fields |= {'Notes': f'*** NOTE: ***\n' + self.notes_text.get(1.0, END)}
+        else:
+            self.fields |= {'Notes': ''}
 
         self.date_num_label.config(text=datetime.today().strftime('%m-%d-%Y'))
 
@@ -416,22 +446,55 @@ class CardPayment:
             if self.fields['Credit Card No'][0] == '3':
                 amex_img = self.tk_images["amex"]
                 self.card_button.config(image=amex_img)
+                self.fields |= {
+                'Visa': '',
+                'MasterCard': '',
+                'Discover': '',
+                'AMEX': 'X',
+                }
             elif self.fields['Credit Card No'][0] == '4':
                 visa_img = self.tk_images["visa"]
                 self.card_button.config(image=visa_img)
+                self.fields |= {
+                'Visa': 'X',
+                'MasterCard': '',
+                'Discover': '',
+                'AMEX': '',
+                }
             elif self.fields['Credit Card No'][0] == '5':
                 mastercard_img = self.tk_images["mastercard"]
                 self.card_button.config(image=mastercard_img)
+                self.fields |= {
+                'Visa': '',
+                'MasterCard': 'X',
+                'Discover': '',
+                'AMEX': '',
+                }
             elif self.fields['Credit Card No'][0] == '6':
                 discover_img = self.tk_images["discover"]
                 self.card_button.config(image=discover_img)
+                self.fields |= {
+                'Visa': '',
+                'MasterCard': '',
+                'Discover': 'X',
+                'AMEX': '',
+                }
         except IndexError:
             generic_card_img = self.tk_images["generic_card"]
             self.card_button.config(image=generic_card_img)
+            self.fields |= {
+                'Visa': '',
+                'MasterCard': '',
+                'Discover': '',
+                'AMEX': '',
+            }
 
         self.cc_length_check()
         self.cvv_length_check()
         self.expiration_check()
+        self.highlight_add_notes_button()
+
+        self.top.after(ms=50, func=self.update_fields)
 
     def export_pdf(self):
         """Outputs payment information into a PDF form."""
@@ -462,6 +525,7 @@ class CardPayment:
         with open(f"PaymentForms\{formatted_file_name}", "wb") as output_stream:
             writer.write(output_stream)
 
+        self.clear_entries()
         os.startfile(f"{app_path}\PaymentForms\{formatted_file_name}", "print")
 
     def clear_entries(self):
@@ -482,6 +546,7 @@ class CardPayment:
         self.dollar_entry3.delete(0, END)
         self.dollar_entry4.delete(0, END)
         self.dollar_entry5.delete(0, END)
+        self.notes_text.delete(1.0, END)
 
     def message_box(self, event):
         """Prompt user for confirmation when 'Done' button is clicked."""
@@ -491,8 +556,8 @@ class CardPayment:
 
         if answer:
             self.export_pdf()
-            self.clear_entries()
             self.cc_entry.focus_set()
+            self.clear_entries()
 
     def open_directory(self):
         """Opens directory containing exported credit card forms."""
@@ -511,7 +576,7 @@ class CardPayment:
 
     def remove_files(self):
         """Remove files in PaymentForms older than 7 days."""
-
+        
         current_time = time.time()
 
         if getattr(sys, 'frozen', False):
@@ -526,10 +591,50 @@ class CardPayment:
 
         for f in os.listdir(path=abs_path):
             file_path = os.path.join(abs_path, f)
-            print(f"file_path: {file_path}")
             creation_time = os.path.getctime(file_path)
             if (current_time - creation_time) // (24 * 3600) >= 7:
                 os.unlink(file_path)
+
+        self.top.after(ms=3_600_000, func=self.remove_files) # after 1 hour
+
+    def toggle_notes_window(self, event):
+        """Toggles Note window for CardPayment Form."""
+
+        if self.notes_isHidden:
+            self.notes_window.withdraw()
+            self.notes_isHidden = False
+            self.top.lift()
+            self.top.attributes('-disabled', 0)
+            self.top.focus_force()
+        else:
+            # Center Notes window to Top window
+            top_x = self.top.winfo_x()
+            top_y = self.top.winfo_y()
+            top_width = self.top.winfo_reqwidth()
+            top_height = self.top.winfo_reqheight()
+            notes_width = self.notes_window.winfo_reqwidth()
+            notes_height = self.notes_window.winfo_reqheight()
+            dx = int((top_width / 2) - (notes_width / 2))
+            dy = int((top_height / 2) - (notes_height / 2))
+            self.notes_window.geometry('+%d+%d' % (top_x + dx, top_y + dy))
+
+            self.notes_isHidden = True
+            self.top.attributes('-disabled', 1)
+            self.notes_window.wm_transient(self.top)
+            self.notes_window.attributes('-topmost', 1)
+            self.notes_window.deiconify()
+            self.notes_text.focus()
+
+    def clear_notes(self, event):
+        """Clear all text inside Notes text box."""
+        self.notes_text.delete(1.0, END)
+
+    def highlight_add_notes_button(self):
+        """Highlight Add Notes button if there are notes in text box."""
+        if len(self.notes_text.get(1.0, 'end-1c').lstrip()) == 0:
+            self.notes_button.config(bg=WINDOW_BG, activebackground=WINDOW_BG)
+        else:
+            self.notes_button.config(bg='lemon chiffon', activebackground='lemon chiffon')
 
 
 if __name__ == '__main__':
