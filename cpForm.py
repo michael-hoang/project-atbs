@@ -52,6 +52,7 @@ class CardPayment:
             'Cost 4': '',
             'Cost 5': '',
             'Total': '',
+            'Notes': '',
         }
 
         self.top = Toplevel()
@@ -368,6 +369,7 @@ class CardPayment:
             'Medication Names 3': self.med_entry3.get(),
             'Medication Names 4': self.med_entry4.get(),
             'Medication Names 5': self.med_entry5.get(),
+            'Notes': self.notes_text.get(1.0, END),
         }
 
         self.date_num_label.config(text=datetime.today().strftime('%m-%d-%Y'))
