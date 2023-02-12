@@ -369,8 +369,12 @@ class CardPayment:
             'Medication Names 3': self.med_entry3.get(),
             'Medication Names 4': self.med_entry4.get(),
             'Medication Names 5': self.med_entry5.get(),
-            'Notes': self.notes_text.get(1.0, END),
         }
+
+        if len(self.notes_text.get(1.0, 'end-1c').lstrip()) != 0:
+            self.fields |= {'Notes': f'*** NOTE: ***\n' + self.notes_text.get(1.0, END)}
+        else:
+            self.fields |= {'Notes': ''}
 
         self.date_num_label.config(text=datetime.today().strftime('%m-%d-%Y'))
 
