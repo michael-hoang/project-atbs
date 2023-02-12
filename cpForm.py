@@ -78,7 +78,7 @@ class CardPayment:
 
         # Add Notes button
         self.notes_button = Button(self.top, text='Add Notes', font=FONT, bg=WINDOW_BG, relief=GROOVE, command=lambda: self.toggle_notes_window(event=None))
-        self.notes_button.grid(column=4, row=0, columnspan=2, sticky='E', pady=(0, 10))
+        self.notes_button.grid(column=4, row=0, columnspan=2, sticky='E', pady=(0, 12))
 
         # Add Notes Window
         self.notes_window = Toplevel(self.top, bg=WINDOW_BG, padx=5, pady=5)
