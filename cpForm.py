@@ -518,6 +518,7 @@ class CardPayment:
         with open(f"PaymentForms\{formatted_file_name}", "wb") as output_stream:
             writer.write(output_stream)
 
+        self.clear_entries()
         os.startfile(f"{app_path}\PaymentForms\{formatted_file_name}", "print")
 
     def clear_entries(self):
@@ -538,6 +539,7 @@ class CardPayment:
         self.dollar_entry3.delete(0, END)
         self.dollar_entry4.delete(0, END)
         self.dollar_entry5.delete(0, END)
+        self.notes_text.delete(1.0, END)
 
     def message_box(self, event):
         """Prompt user for confirmation when 'Done' button is clicked."""
@@ -547,7 +549,6 @@ class CardPayment:
 
         if answer:
             self.export_pdf()
-            self.clear_entries()
             self.cc_entry.focus_set()
             self.clear_entries()
 
