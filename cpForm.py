@@ -486,6 +486,7 @@ class CardPayment:
         self.cc_length_check()
         self.cvv_length_check()
         self.expiration_check()
+        self.highlight_add_notes_button()
 
         self.top.after(ms=50, func=self.update_fields)
 
@@ -621,6 +622,13 @@ class CardPayment:
     def clear_notes(self, event):
         """Clear all text inside Notes text box."""
         self.notes_text.delete(1.0, END)
+
+    def highlight_add_notes_button(self):
+        """Highlight Add Notes button if there are notes in text box."""
+        if len(self.notes_text.get(1.0, 'end-1c').lstrip()) == 0:
+            self.notes_button.config(bg=WINDOW_BG, activebackground=WINDOW_BG)
+        else:
+            self.notes_button.config(bg='lemon chiffon', activebackground='lemon chiffon')
 
 
 if __name__ == '__main__':
