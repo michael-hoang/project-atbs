@@ -10,3 +10,13 @@ class RefillTemplate:
 
     def __init__(self):
         """Initialize template window and refill questions."""
+
+        self.root = tk.Tk()
+        self.root.title('Refill Coordination')
+        self.root.config(height=500, width=400)
+
+        self.root.mainloop()
+
+
+if __name__ == '__main__':
+    RefillTemplate()
