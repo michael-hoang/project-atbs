@@ -516,6 +516,7 @@ class CardPayment:
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
             os.makedirs(abs_path)
+            subprocess.call(["attrib", "+h", abs_path]) # hidden directory
 
         reader = PdfReader("assets/form/cardpayment.pdf")
         writer = PdfWriter()
@@ -571,6 +572,7 @@ class CardPayment:
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
             os.makedirs(abs_path)
+            subprocess.call(["attrib", "+h", abs_path]) # hidden directory
 
         subprocess.Popen(f'explorer "{abs_path}"')
 
@@ -588,6 +590,7 @@ class CardPayment:
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
             os.makedirs(abs_path)
+            subprocess.call(["attrib", "+h", abs_path]) # hidden directory
 
         for f in os.listdir(path=abs_path):
             file_path = os.path.join(abs_path, f)
