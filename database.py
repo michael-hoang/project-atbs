@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import json
-from myEncryption import EnDeCrypt
+from encryption import EnDeCrypt
 from functools import partial
 
 
@@ -20,7 +20,7 @@ class DataBase(tk.Toplevel):
         super().__init__()
         self.withdraw()
         self.title('Account Database')
-        lock_img = tk.PhotoImage(file='img/lock_icon.png')
+        lock_img = tk.PhotoImage(file='assets/img/lock_icon.png')
         self.iconphoto(False, lock_img)
 
         self.createCanvas()

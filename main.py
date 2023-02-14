@@ -1,9 +1,9 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-from wudCalc import WrapUpDateCalculator
-from cpForm import CardPayment
-from mapSearch import Map
-from pwManager import PasswordManager
+from wrapup import WrapUpDateCalculator
+from cardpayment import CardPayment
+from map import Map
+from pwmanager import PasswordManager
 from authentication import Authenticator
 
 
@@ -61,11 +61,11 @@ root.title('Project AtBS')
 root.config(bg=BG_COLOR)
 root.resizable(width=False, height=False)
 
-atbs_icon = tk.PhotoImage(file="img/atbs_icon.png")
+atbs_icon = tk.PhotoImage(file="assets/img/atbs_icon.png")
 root.iconphoto(False, atbs_icon)
 
 # Card payment form
-cc_img_open = Image.open(fp='img/cc_icon.png')
+cc_img_open = Image.open(fp='assets/img/cc_icon.png')
 cc_img_resized = cc_img_open.resize(size=(50, 50))
 cc_img = ImageTk.PhotoImage(cc_img_resized)
 cp_but = tk.Button(text='  Payment', image=cc_img, compound='left', font=FONT, fg=FG_COLOR,
@@ -74,7 +74,7 @@ cp_but = tk.Button(text='  Payment', image=cc_img, compound='left', font=FONT, f
 cp_but.grid(column=0, row=0, sticky='EW')
 
 # Wrap up date calculator
-cal_calc_img_open = Image.open(fp='img/cal_calc.png')
+cal_calc_img_open = Image.open(fp='assets/img/cal_calc.png')
 cal_calc_img_resized = cal_calc_img_open.resize(size=(50, 50))
 cal_calc_img = ImageTk.PhotoImage(cal_calc_img_resized)
 wud_but = tk.Button(text='  Wrap Up', image=cal_calc_img, compound='left', font=FONT,
@@ -83,7 +83,7 @@ wud_but = tk.Button(text='  Wrap Up', image=cal_calc_img, compound='left', font=
 wud_but.grid(column=0, row=1, sticky='EW')
 
 # Map search
-map_img_open = Image.open(fp='img/map_icon.png')
+map_img_open = Image.open(fp='assets/img/map_icon.png')
 map_img_resized = map_img_open.resize(size=(50, 50))
 map_img = ImageTk.PhotoImage(map_img_resized)
 m_but = tk.Button(text='  Map', image=map_img, compound='left', font=FONT, fg=FG_COLOR,
@@ -92,7 +92,7 @@ m_but = tk.Button(text='  Map', image=map_img, compound='left', font=FONT, fg=FG
 m_but.grid(column=0, row=2, sticky='EW')
 
 # Password Manager
-lock_img_open = Image.open(fp='img/lock_icon.png')
+lock_img_open = Image.open(fp='assets/img/lock_icon.png')
 lock_img_resized = lock_img_open.resize(size=(50, 50))
 lock_img = ImageTk.PhotoImage(lock_img_resized)
 pm_but = tk.Button(text='  Password', image=lock_img, compound='left', font=FONT,

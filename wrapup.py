@@ -27,7 +27,7 @@ class WrapUpDateCalculator():
                         pady=15)
         self.top.resizable(width=False, height=False)
 
-        self.cal_calc_icon = tk.PhotoImage(file="img/cal_calc.png")
+        self.cal_calc_icon = tk.PhotoImage(file="assets/img/cal_calc.png")
         self.top.iconphoto(False, self.cal_calc_icon)
 
         # Checkbutton

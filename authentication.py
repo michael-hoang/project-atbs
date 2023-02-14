@@ -7,7 +7,7 @@ import random
 import json
 import os
 import sys
-from myEncryption import EnDeCrypt
+from encryption import EnDeCrypt
 
 
 FONT = ('Bahnschrift Light', 12, 'normal')
@@ -29,7 +29,7 @@ class Authenticator:
         self.top.withdraw()
         self.top.resizable(width=False, height=False)
         self.authentication_icon = tk.PhotoImage(
-            file='img/authentication_icon.png')
+            file='assets/img/authentication_icon.png')
         self.top.iconphoto(False, self.authentication_icon)
 
         self.instructLabel = tk.Label(
@@ -215,7 +215,7 @@ class Authenticator:
                              font=FONT, width=10, bg=BUTTON_COLOR, fg='white', borderwidth=0, activebackground=GOLD_COLOR, command=lambda: _verifySecretKey('event'))
         okButton.grid(column=1, row=3, pady=(10, 0))
         # Eye button
-        createKeyWin.eyeImage_open = Image.open('img/eye.png')
+        createKeyWin.eyeImage_open = Image.open('assets/img/eye.png')
         createKeyWin.eyeImage_resized = createKeyWin.eyeImage_open.resize(
             (25, 25))
         createKeyWin.eyeImage = ImageTk.PhotoImage(
