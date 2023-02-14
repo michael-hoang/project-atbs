@@ -22,7 +22,7 @@ class Map:
         self.top.title('Search Maps')
         self.top.config(bg=BG_COLOR, padx=20, pady=20)
         self.top.resizable(width=False, height=False)
-        self.map_icon = tk.PhotoImage(file="img/map_icon.png")
+        self.map_icon = tk.PhotoImage(file="assets/img/map_icon.png")
         self.top.iconphoto(False, self.map_icon)
 
         # Checkbutton

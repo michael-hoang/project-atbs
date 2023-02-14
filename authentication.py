@@ -7,7 +7,8 @@ import random
 import json
 import os
 import sys
-from myEncryption import EnDeCrypt
+from encryption import EnDeCrypt
+import subprocess
 
 
 FONT = ('Bahnschrift Light', 12, 'normal')
@@ -29,7 +30,7 @@ class Authenticator:
         self.top.withdraw()
         self.top.resizable(width=False, height=False)
         self.authentication_icon = tk.PhotoImage(
-            file='img/authentication_icon.png')
+            file='assets/img/authentication_icon.png')
         self.top.iconphoto(False, self.authentication_icon)
 
         self.instructLabel = tk.Label(
@@ -78,18 +79,18 @@ class Authenticator:
     def _check_for_existing_credential(self) -> bool:
         """Check for existing crendential (data.json and auth.key)."""
         try:
-            with open('cred/auth.key', 'r') as f:
+            with open('.cred/auth.key', 'r') as f:
                 cred1 = f.read()
         except FileNotFoundError:
             cred1 = False
 
         try:
-            with open('data/data.json', 'r') as f:
+            with open('.data/data.json', 'r') as f:
                 data = json.load(f)
                 # if data.json found, check if key exists
                 checkKey = data['key']
 
-            with open('data/data.json', 'r') as f:
+            with open('.data/data.json', 'r') as f:
                 cred2 = f.read()
 
         except FileNotFoundError:
@@ -118,14 +119,14 @@ class Authenticator:
 
             return True
         elif cred1 and not cred2:
-            message = "Path 'cred/auth.key' was detected, but path 'data/data.json' is missing."\
+            message = "Path '.cred/auth.key' was detected, but path '.data/data.json' is missing."\
                 "\n\nBoth paths are needed to access stored data. Setting up a new Pin/Phrase"\
                 " will overwrite any existing data. Proceed with caution!"
             messagebox.showwarning(
                 parent=self.top, title='Missing File', message=message)
             return False
         elif not cred1 and cred2:
-            message = "Path 'data/data.json' was detected, but path 'cred/auth.key' is missing."\
+            message = "Path '.data/data.json' was detected, but path '.cred/auth.key' is missing."\
                 "\n\nBoth paths are needed to access stored data. Setting up a new Pin/Phrase"\
                 " will overwrite any existing data. Proceed with caution!"
             messagebox.showwarning(
@@ -215,7 +216,7 @@ class Authenticator:
                              font=FONT, width=10, bg=BUTTON_COLOR, fg='white', borderwidth=0, activebackground=GOLD_COLOR, command=lambda: _verifySecretKey('event'))
         okButton.grid(column=1, row=3, pady=(10, 0))
         # Eye button
-        createKeyWin.eyeImage_open = Image.open('img/eye.png')
+        createKeyWin.eyeImage_open = Image.open('assets/img/eye.png')
         createKeyWin.eyeImage_resized = createKeyWin.eyeImage_open.resize(
             (25, 25))
         createKeyWin.eyeImage = ImageTk.PhotoImage(
@@ -258,8 +259,8 @@ class Authenticator:
         """Separate encrypted token into two parts and write each part to data.json and auth.key."""
         tokenPiece1 = token[:int(len(token)/2)]
         tokenPiece2 = token[int(len(token)/2):]
-        relPath1 = 'data'
-        relPath2 = 'cred'
+        relPath1 = '.data'
+        relPath2 = '.cred'
         if getattr(sys, 'frozen', False):
             application_path = os.path.dirname(sys.executable)
         elif __file__:
@@ -272,15 +273,17 @@ class Authenticator:
 
         if not isExist1:
             os.mkdir(absolutePath1)
+            subprocess.call(["attrib", "+h", absolutePath1]) # hidden directory
 
         if not isExist2:
             os.mkdir(absolutePath2)
+            subprocess.call(["attrib", "+h", absolutePath2]) # hidden directory
 
-        with open('data/data.json', 'w') as f:
+        with open('.data/data.json', 'w') as f:
             data = {'key': tokenPiece1}
             json.dump(data, f, indent=4)
 
-        with open('cred/auth.key', 'w') as f:
+        with open('.cred/auth.key', 'w') as f:
             f.write(tokenPiece2)
 
     def confirmation(self, event):
@@ -304,11 +307,11 @@ class Authenticator:
 
     def _get_token(self) -> str:
         """Get token from data.json and auth.key"""
-        with open('data/data.json', 'r') as f:
+        with open('.data/data.json', 'r') as f:
             data = json.load(f)
             tokenPiece1 = data['key']
 
-        with open('cred/auth.key', 'r') as f:
+        with open('.cred/auth.key', 'r') as f:
             tokenPiece2 = f.read()
 
         token = tokenPiece1 + tokenPiece2

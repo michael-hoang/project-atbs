@@ -4,9 +4,10 @@ import random
 import string
 import json
 from PIL import Image, ImageTk
-from myEncryption import EnDeCrypt
+from encryption import EnDeCrypt
 from database import DataBase
 import os
+import subprocess
 
 
 BG_COLOR = '#30323D'
@@ -33,7 +34,7 @@ class PasswordManager:
         self.top.title('Password Manager')
         self.top.config(bg=BG_COLOR, padx=25, pady=10)
         self.top.resizable(width=False, height=False)
-        self.lock_icon = tk.PhotoImage(file="img/lock_icon.png")
+        self.lock_icon = tk.PhotoImage(file="assets/img/lock_icon.png")
         self.top.iconphoto(False, self.lock_icon)
 
         # Settings Window
@@ -42,7 +43,7 @@ class PasswordManager:
             master=self.top, bg=BG_COLOR, padx=20, pady=20)
         self._toggle_settngs()
         self.topSettings.title(string='Password Settings')
-        setting_icon = tk.PhotoImage(file="img/setting_icon.png")
+        setting_icon = tk.PhotoImage(file="assets/img/setting_icon.png")
         self.topSettings.iconphoto(False, setting_icon)
         self.topSettings.resizable(width=False, height=False)
         self.topSettings.protocol(
@@ -180,7 +181,7 @@ class PasswordManager:
             column=0, row=0, columnspan=2, sticky='NW', pady=(10, 0))
 
         # Lock Image Button
-        self.lock_img = tk.PhotoImage(file='img/lock_button.png')
+        self.lock_img = tk.PhotoImage(file='assets/img/lock_button.png')
         self.lockButton = tk.Button(master=self.top, image=self.lock_img, bg=BG_COLOR,
                                     activebackground=BG_COLOR, borderwidth=0, command=lambda: self.open_database(self.top))
         self.lockButton.grid(column=2, row=0, pady=(20, 10))
@@ -209,7 +210,7 @@ class PasswordManager:
         self.passEntry.grid(column=2, row=3, padx=5, pady=4)
 
         # Search Button
-        self.search_img = Image.open(fp='img/search.png')
+        self.search_img = Image.open(fp='assets/img/search.png')
         self.search_resized_img = self.search_img.resize((25, 25))
         self.new_search_img = ImageTk.PhotoImage(self.search_resized_img)
         self.searchButton = tk.Button(master=self.top, image=self.new_search_img, bg=BG_COLOR,
@@ -218,7 +219,7 @@ class PasswordManager:
         self.searchButton.grid(column=3, row=1, padx=5)
 
         # Dice Button
-        self.dice_img = Image.open(fp='img/dice.png')
+        self.dice_img = Image.open(fp='assets/img/dice.png')
         self.dice_resized_img = self.dice_img.resize((25, 25))
         self.new_dice_img = ImageTk.PhotoImage(self.dice_resized_img)
         self.diceButton = tk.Button(master=self.top, image=self.new_dice_img, bg=BG_COLOR,
@@ -227,7 +228,7 @@ class PasswordManager:
         self.diceButton.grid(column=3, row=3, padx=5)
 
         # Settings Button
-        self.setting_img = Image.open(fp='img/setting.png')
+        self.setting_img = Image.open(fp='assets/img/setting.png')
         self.setting_resized_img = self.setting_img.resize((25, 25))
         self.new_setting_img = ImageTk.PhotoImage(self.setting_resized_img)
         self.settingButton = tk.Button(master=self.top, image=self.new_setting_img, bg=BG_COLOR,
@@ -244,7 +245,7 @@ class PasswordManager:
         self.addButton.grid(column=2, row=4, pady=(4, 20))
 
         # Eye button
-        eye_img = Image.open(fp='img/eye.png')
+        eye_img = Image.open(fp='assets/img/eye.png')
         eye_resized_img = eye_img.resize((25, 25))
         self.new_eye_img = ImageTk.PhotoImage(eye_resized_img)
         self.eyeButton = tk.Button(master=self.top, image=self.new_eye_img, bg=BG_COLOR,
@@ -381,7 +382,7 @@ class PasswordManager:
         }
 
         try:
-            with open('data/data.json', 'r') as f:
+            with open('.data/data.json', 'r') as f:
                 data = json.load(f)
                 if not website or not username or not password:
                     messagebox.showwarning(parent=self.top, title='Error',
@@ -406,14 +407,15 @@ class PasswordManager:
 
             data = loginInfo
 
-        folder = 'data'
+        folder = '.data'
         programPath = os.path.dirname(__file__)
         folderAbsPath = os.path.join(programPath, folder)
         folderExist = os.path.exists(folderAbsPath)
         if not folderExist:
             os.mkdir(folderAbsPath)
+            subprocess.call(["attrib", "+h", folderAbsPath]) # hidden directory
 
-        with open('data/data.json', 'w') as f:
+        with open('.data/data.json', 'w') as f:
             json.dump(obj=data, fp=f, indent=4)
 
         self._clear_all(event)
@@ -424,7 +426,7 @@ class PasswordManager:
         enWebsite = self.EnDeCrypt.encrypt(website.lower())
 
         try:
-            with open(file='data/data.json', mode='r') as f:
+            with open(file='.data/data.json', mode='r') as f:
                 data = json.load(fp=f)
                 if enWebsite in data:
                     self._show_login(data=data, website=enWebsite, event=event)

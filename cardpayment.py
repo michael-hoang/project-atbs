@@ -65,7 +65,7 @@ class CardPayment:
         self.remove_files()
         self.top.after(ms=3_600_000, func=self.remove_files) # after 1 hour
 
-        self.cc_icon = PhotoImage(file="img/cc_icon.png")
+        self.cc_icon = PhotoImage(file="assets/img/cc_icon.png")
         self.top.iconphoto(False, self.cc_icon)
 
         # Always on top Checkbutton
@@ -101,11 +101,11 @@ class CardPayment:
 
         # Card Button image
         self.image_paths = [
-            "img/generic_card.png",
-            "img/amex.png",
-            "img/discover.png",
-            "img/mastercard.png",
-            "img/visa.png"
+            "assets/img/generic_card.png",
+            "assets/img/amex.png",
+            "assets/img/discover.png",
+            "assets/img/mastercard.png",
+            "assets/img/visa.png"
         ]
 
         self.tk_images = {}
@@ -512,21 +512,22 @@ class CardPayment:
         else:
             app_path = os.path.dirname(os.path.abspath(__file__))
 
-        abs_path = f"{app_path}\PaymentForms"
+        abs_path = f"{app_path}\.tmp"
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
             os.makedirs(abs_path)
+            subprocess.call(["attrib", "+h", abs_path]) # hidden directory
 
-        reader = PdfReader("templates\card_payment_form.pdf")
+        reader = PdfReader("assets/form/cardpayment.pdf")
         writer = PdfWriter()
         page = reader.pages[0]
         writer.add_page(page)
         writer.update_page_form_field_values(writer.pages[0], self.fields)
-        with open(f"PaymentForms\{formatted_file_name}", "wb") as output_stream:
+        with open(f".tmp\{formatted_file_name}", "wb") as output_stream:
             writer.write(output_stream)
 
         self.clear_entries()
-        os.startfile(f"{app_path}\PaymentForms\{formatted_file_name}", "print")
+        os.startfile(f"{app_path}\.tmp\{formatted_file_name}", "print")
 
     def clear_entries(self):
         """Clear all entries."""
@@ -567,15 +568,16 @@ class CardPayment:
         else:
             app_path = os.path.dirname(os.path.abspath(__file__))
 
-        abs_path = f"{app_path}\PaymentForms"
+        abs_path = f"{app_path}\.tmp"
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
             os.makedirs(abs_path)
+            subprocess.call(["attrib", "+h", abs_path]) # hidden directory
 
         subprocess.Popen(f'explorer "{abs_path}"')
 
     def remove_files(self):
-        """Remove files in PaymentForms older than 7 days."""
+        """Remove files in .tmp older than 7 days."""
         
         current_time = time.time()
 
@@ -584,10 +586,11 @@ class CardPayment:
         else:
             app_path = os.path.dirname(os.path.abspath(__file__))
 
-        abs_path = f"{app_path}\PaymentForms"
+        abs_path = f"{app_path}\.tmp"
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
             os.makedirs(abs_path)
+            subprocess.call(["attrib", "+h", abs_path]) # hidden directory
 
         for f in os.listdir(path=abs_path):
             file_path = os.path.join(abs_path, f)
