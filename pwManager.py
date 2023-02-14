@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 from encryption import EnDeCrypt
 from database import DataBase
 import os
+import subprocess
 
 
 BG_COLOR = '#30323D'
@@ -381,7 +382,7 @@ class PasswordManager:
         }
 
         try:
-            with open('data/data.json', 'r') as f:
+            with open('.data/data.json', 'r') as f:
                 data = json.load(f)
                 if not website or not username or not password:
                     messagebox.showwarning(parent=self.top, title='Error',
@@ -406,14 +407,15 @@ class PasswordManager:
 
             data = loginInfo
 
-        folder = 'data'
+        folder = '.data'
         programPath = os.path.dirname(__file__)
         folderAbsPath = os.path.join(programPath, folder)
         folderExist = os.path.exists(folderAbsPath)
         if not folderExist:
             os.mkdir(folderAbsPath)
+            subprocess.call(["attrib", "+h", folderAbsPath]) # hidden directory
 
-        with open('data/data.json', 'w') as f:
+        with open('.data/data.json', 'w') as f:
             json.dump(obj=data, fp=f, indent=4)
 
         self._clear_all(event)
@@ -424,7 +426,7 @@ class PasswordManager:
         enWebsite = self.EnDeCrypt.encrypt(website.lower())
 
         try:
-            with open(file='data/data.json', mode='r') as f:
+            with open(file='.data/data.json', mode='r') as f:
                 data = json.load(fp=f)
                 if enWebsite in data:
                     self._show_login(data=data, website=enWebsite, event=event)

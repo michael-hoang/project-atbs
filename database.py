@@ -115,11 +115,11 @@ class DataBase(tk.Toplevel):
         else:
             return
 
-        with open(file='data/data.json', mode='r') as f:
+        with open(file='.data/data.json', mode='r') as f:
             data = json.load(f)
             del data[key]
 
-        with open(file='data/data.json', mode='w') as f:
+        with open(file='.data/data.json', mode='w') as f:
             json.dump(data, f, indent=4)
 
         # self.headerFrame.destroy()
@@ -130,7 +130,7 @@ class DataBase(tk.Toplevel):
 
     def display_login_info(self):
         """Display login info from database."""
-        with open(file='data/data.json', mode='r') as f:
+        with open(file='.data/data.json', mode='r') as f:
             data = json.load(f)
 
             number = 1
