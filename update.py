@@ -1,6 +1,8 @@
 import tkinter as tk
 import requests
 import subprocess
+import sys
+import os
 
 
 # Github repo info
@@ -22,8 +24,20 @@ latest_version = data['tag_name']
 
 # Compare current version with latest version
 if latest_version != current_version:
-    print("An update is available!")
-    print(f"Current version: {current_version}")
-    print(f"Latest version: {latest_version}")
+    print('An update is available!')
+    print(f'Current version: {current_version}')
+    print(f'Latest version: {latest_version}')
 else:
-    print("You have the latest version.")
+    print('You have the latest version.')
+
+
+# Run main.exe once update completes
+if getattr(sys, 'frozen', False):
+    update_path = os.path.dirname(sys.executable)
+else:
+    update_path = os.path.dirname(os.path.abspath(__file__))
+
+exe_path = f'{update_path}\main.exe'
+p = subprocess.Popen(exe_path)
+p.wait()
+print('The exe file has finished executing.')
