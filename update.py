@@ -16,10 +16,24 @@ class Updater:
     """This class creates a GUI which checks for latest repo updates and prompts
     the user to download and install."""
 
-    def __init__(self):
-        """Initialize version number and GUI of Updater."""
+    def __init__(self, current_version):
+        """Initialize version number, Github repo info, and GUI of Updater."""
 
-        self.version_num = ''
+        self.updater_version = ''
+        self.github_user = 'michael-hoang'
+        self.github_repo = 'project-atbs-work'
+        self.current_version = current_version
+        self.latest_version = ''
+
+
+
+
+
+
+
+
+
+
 
 
 
