@@ -24,17 +24,20 @@ class Updater:
         self.github_repo = 'project-atbs-work'
         self.current_version = current_version
         self.latest_version = ''
+        self.api_url = f'https://api.github.com/repos/{self.github_user}/{self.github_repo}/releases/latest'
 
+    def compare_version(self):
+        """ Compare app's current version with the latest version on Github repo."""
 
-
-
-
-
-
-
-
-
-
+        response = requests.get(self.api_url)
+        data = response.json()
+        self.latest_version = data['tag_name']
+        if self.latest_version != self.current_version:
+            print('An update is available!')
+            print(f'Current version: {self.current_version}')
+            print(f'Latest version: {self.latest_version}')
+        else:
+            print('You have the latest version.')
 
 
 # Github repo info
