@@ -17,7 +17,7 @@ class Updater:
     the user to download and install."""
 
     def __init__(self, current_version):
-        """Initialize version number, Github repo info, and GUI of Updater."""
+        """Initialize version number, Github repo info, and GUI."""
 
         self.updater_version = ''
         self.github_user = 'michael-hoang'
@@ -25,6 +25,18 @@ class Updater:
         self.current_version = current_version
         self.latest_version = ''
         self.api_url = f'https://api.github.com/repos/{self.github_user}/{self.github_repo}/releases/latest'
+        self.dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/main.exe'
+        # GUI
+        self.root = tk.Tk()
+        self.root.title('Updater')
+        self.progress_bar = ttk.Progressbar(
+            self.root, orient='horizontal', length=300, mode='determinate'
+        )
+        self.progress_bar.pack(padx=15, pady=15, fill=tk.X)
+        self.b_check_update = tk.Button(self.root, text='Check for updates')
+        self.b_check_update.pack(pady=(0, 15))
+
+        self.root.mainloop()
 
     def compare_version(self):
         """ Compare app's current version with the latest version on Github repo."""
@@ -39,69 +51,57 @@ class Updater:
         else:
             print('You have the latest version.')
 
+    def download_files(self):
+        """Download the latest file(s) from Github repo to root directory."""
 
-# Github repo info
-github_user = 'michael-hoang'
-github_repo = 'project-atbs-work'
-current_version = '4.5'
+        if getattr(sys, 'frozen', False):
+            updater_path = os.path.dirname(sys.executable)
+        else:
+            updater_path = os.path.dirname(os.path.abspath(__file__))
 
-# Github API URL for repo's releases
-api_url = f'https://api.github.com/repos/{github_user}/{github_repo}/releases/latest'
-
-# GET request to API URL
-response = requests.get(api_url)
-
-# Parse JSON response
-data = response.json()
-
-# Get latest release version from response
-latest_version = data['tag_name']
-
-# Compare current version with latest version
-if latest_version != current_version:
-    print('An update is available!')
-    print(f'Current version: {current_version}')
-    print(f'Latest version: {latest_version}')
-else:
-    print('You have the latest version.')
+        exe_path = f'{updater_path}\main.exe'
 
 
-# Download latest files
-if getattr(sys, 'frozen', False):
-    update_path = os.path.dirname(sys.executable)
-else:
-    update_path = os.path.dirname(os.path.abspath(__file__))
-
-exe_path = f'{update_path}\main.exe'
-url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/main.exe'
-# urllib.request.urlretrieve(url, exe_path)
-
-# Download progress bar
-window = tk.Tk()
-window.title('Download Progress')
-progress_bar = ttk.Progressbar(
-    window, orient='horizontal', length=300, mode='determinate')
-progress_bar.pack(padx=5, pady=5, fill=tk.X)
-response = requests.get(url, stream=True)
-total_size = int(response.headers.get('content-length', 0))
-block_size = 1024
-progress = 0
-
-with open(exe_path, 'wb') as f:
-    for data in response.iter_content(block_size):
-        progress += len(data)
-        progress_bar['value'] = progress / total_size * 100
-        window.update_idletasks()
-        # time.sleep(0.1)
-        f.write(data)
+if __name__ == '__main__':
+    Updater('4.5')
 
 
-# progress_bar['value'] = 0
+# # Download latest files
+# if getattr(sys, 'frozen', False):
+#     update_path = os.path.dirname(sys.executable)
+# else:
+#     update_path = os.path.dirname(os.path.abspath(__file__))
+
+# exe_path = f'{update_path}\main.exe'
+# url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/main.exe'
+# # urllib.request.urlretrieve(url, exe_path)
+
+# # Download progress bar
+# window = tk.Tk()
+# window.title('Download Progress')
+# progress_bar = ttk.Progressbar(
+#     window, orient='horizontal', length=300, mode='determinate')
+# progress_bar.pack(padx=5, pady=5, fill=tk.X)
+# response = requests.get(url, stream=True)
+# total_size = int(response.headers.get('content-length', 0))
+# block_size = 1024
+# progress = 0
+
+# with open(exe_path, 'wb') as f:
+#     for data in response.iter_content(block_size):
+#         progress += len(data)
+#         progress_bar['value'] = progress / total_size * 100
+#         window.update_idletasks()
+#         # time.sleep(0.1)
+#         f.write(data)
 
 
-# Run main.exe once update completes
-p = subprocess.Popen(exe_path)
-p.wait()
-print('The exe file has finished executing.')
+# # progress_bar['value'] = 0
 
-window.mainloop()
+
+# # Run main.exe once update completes
+# p = subprocess.Popen(exe_path)
+# p.wait()
+# print('The exe file has finished executing.')
+
+# window.mainloop()
