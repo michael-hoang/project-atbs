@@ -1,3 +1,7 @@
+"""This module contains a class called Updater which checks on Github for the
+latest release on a repository and downloads it to the user's root directory."""
+
+
 import requests
 import subprocess
 import sys
@@ -8,30 +12,42 @@ from tkinter import ttk
 import time
 
 
-# # Github repo info
-# github_user = 'michael-hoang'
-# github_repo = 'project-atbs-work'
-# current_version = '4.5'
+class Updater:
+    """This class creates a GUI which checks for latest repo updates and prompts
+    the user to download and install."""
 
-# # Github API URL for repo's releases
-# api_url = f'https://api.github.com/repos/{github_user}/{github_repo}/releases/latest'
+    def __init__(self):
+        """Initialize version number and GUI of Updater."""
 
-# # GET request to API URL
-# response = requests.get(api_url)
+        self.version_num = ''
 
-# # Parse JSON response
-# data = response.json()
 
-# # Get latest release version from response
-# latest_version = data['tag_name']
 
-# # Compare current version with latest version
-# if latest_version != current_version:
-#     print('An update is available!')
-#     print(f'Current version: {current_version}')
-#     print(f'Latest version: {latest_version}')
-# else:
-#     print('You have the latest version.')
+# Github repo info
+github_user = 'michael-hoang'
+github_repo = 'project-atbs-work'
+current_version = '4.5'
+
+# Github API URL for repo's releases
+api_url = f'https://api.github.com/repos/{github_user}/{github_repo}/releases/latest'
+
+# GET request to API URL
+response = requests.get(api_url)
+
+# Parse JSON response
+data = response.json()
+
+# Get latest release version from response
+latest_version = data['tag_name']
+
+# Compare current version with latest version
+if latest_version != current_version:
+    print('An update is available!')
+    print(f'Current version: {current_version}')
+    print(f'Latest version: {latest_version}')
+else:
+    print('You have the latest version.')
+
 
 # Download latest files
 if getattr(sys, 'frozen', False):
@@ -46,7 +62,8 @@ url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/main.exe
 # Download progress bar
 window = tk.Tk()
 window.title('Download Progress')
-progress_bar = ttk.Progressbar(window, orient='horizontal', length=300, mode='determinate')
+progress_bar = ttk.Progressbar(
+    window, orient='horizontal', length=300, mode='determinate')
 progress_bar.pack(padx=5, pady=5, fill=tk.X)
 response = requests.get(url, stream=True)
 total_size = int(response.headers.get('content-length', 0))
@@ -60,8 +77,7 @@ with open(exe_path, 'wb') as f:
         window.update_idletasks()
         # time.sleep(0.1)
         f.write(data)
-        
-        
+
 
 # progress_bar['value'] = 0
 
