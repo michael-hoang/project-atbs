@@ -60,6 +60,16 @@ class Updater:
             updater_path = os.path.dirname(os.path.abspath(__file__))
 
         exe_path = f'{updater_path}\main.exe'
+        response = requests.get(self.dl_url, stream=True)
+        total_size = int(response.headers.get('content-length', 0))
+        block_size = 1024
+        progress = 0
+        with open(exe_path, 'wb') as f:
+            for data in response.iter_content(block_size):
+                progress += len(data)
+                self.progress_bar['value'] = progress / total_size * 100
+                self.root.update_idletasks()
+                f.write(data)
 
 
 if __name__ == '__main__':
