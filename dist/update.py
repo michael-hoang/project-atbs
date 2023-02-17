@@ -23,7 +23,7 @@ class Updater:
         self.app_current_version = ''
         self.app_latest_version = ''
         self.latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_version.json'
-        self.app_dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/main.exe'
+        self.latest_app_dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/latest_version/main.exe'
         # GUI
         self.root = tk.Tk()
         self.root.title('App Update Manager')
@@ -33,6 +33,7 @@ class Updater:
 
         self.get_current_app_version_number()
         self.get_latest_app_version_number()
+        self.download_files()
 
         self.root.mainloop()
 
@@ -72,7 +73,7 @@ class Updater:
             updater_path = os.path.dirname(os.path.abspath(__file__))
 
         destination_path = f'{updater_path[:-5]}\main.exe'
-        response = requests.get(self.app_dl_url, stream=True)
+        response = requests.get(self.latest_app_dl_url, stream=True)
         block_size = 1024
 
         with open(destination_path, 'wb') as f:
