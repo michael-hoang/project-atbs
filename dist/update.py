@@ -158,6 +158,11 @@ class Updater:
 
         self.current_working_directory = self.updater_path[:-5]
         self.main_app_path = f'{self.current_working_directory}\main.exe'
+
+    def open_main_app(self):
+        """Run the main app"""
+
+        os.startfile(self.main_app_path, cwd=self.current_working_directory)
             
 
 if __name__ == '__main__':
