@@ -12,31 +12,60 @@ import time
 import json
 
 
+FONT = ('Helvetica', 12, 'normal')
+STATUS_FONT = ('Helvetica', 12, 'bold')
+
+
 class Updater:
     """This class creates a GUI which checks for latest repo updates and prompts
     the user to download and install."""
 
     def __init__(self):
-        """Initialize version number, Github repo info, and GUI."""
+        """Initialize version number, Github URL, and GUI."""
 
         self.updater_current_version = 'v1.0.0'
         self.app_current_version = ''
         self.app_latest_version = ''
         self.latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_version.json'
         self.latest_app_dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/latest_version/main.exe'
-        self.update_available = False
+
+        self.get_current_app_version()
+
         # GUI
         self.root = tk.Tk()
         self.root.title('App Update Manager')
-        self.root.geometry('300x200')
         self.root.resizable(width=False, height=False)
-        self.status_message = tk.Label(self.root, text='Status:')
-        self.status_message.pack(padx=15, pady=15)
+
+        self.lf_current_version = tk.LabelFrame(self.root, text='Current Version', font=FONT)
+        self.lf_current_version.grid(column=0, row=0, columnspan=2, padx=20, pady=(20, 0))
+
+        self.l_updater_current_version = tk.Label(
+            self.lf_current_version, text='App Update Manager:', font=FONT)
+        self.l_updater_current_version.grid(column=0, row=0, sticky='e', padx=(15, 0), pady=(15, 0))
+        self.e_updater_current_version = tk.Entry(self.lf_current_version, width=8, font=FONT)
+        self.e_updater_current_version.grid(column=1, row=0, padx=(0, 15), pady=(15, 0))
+        self.e_updater_current_version.insert(
+            0, f'{self.updater_current_version}')
+        self.e_updater_current_version.config(state='disabled')
+
+        self.l_app_current_version = tk.Label(
+            self.lf_current_version, text='Main App:', font=FONT)
+        self.l_app_current_version.grid(column=0, row=1, sticky='e', padx=(15, 0), pady=(0, 15))
+        self.e_app_current_version = tk.Entry(self.lf_current_version, width=8, font=FONT)
+        self.e_app_current_version.grid(column=1, row=1, padx=(0, 15), pady=(0, 15))
+        self.e_app_current_version.insert(0, f'{self.app_current_version}')
+        self.e_app_current_version.config(state='disabled')
+
+        self.l_status = tk.Label(self.root, text='Status:', font=STATUS_FONT)
+        self.l_status.grid(column=0, row=1, padx=(15, 0), pady=(20), sticky='w')
+        self.l_status_message = tk.Label(self.root, text='', font=STATUS_FONT)
+        self.l_status_message.grid(column=1, row=1, padx=(0, 15), pady=(20), sticky='w')
+
         self.b_check_update = tk.Button(
-            self.root, text='Check for updates', command=self.check_for_latest_app_version
+            self.root, text='Check for updates', font=FONT, command=self.check_for_latest_app_version
         )
-        self.b_check_update.pack(padx=15, pady=15)
-        self.root.after(ms=100, )
+        self.b_check_update.grid(columnspan=2, pady=(0, 20))
+
 
         self.root.mainloop()
 
@@ -63,19 +92,18 @@ class Updater:
 
     def check_for_latest_app_version(self):
         """ Compare app's current version with the latest version on Github repo."""
-        self.get_current_app_version()
+
         self.get_latest_app_version()
         if self.app_current_version != self.app_latest_version:
-            self.update_available = True
-            self.status_message.config(
-                text='Status: Update available!', fg='green'
+            self.l_status_message.config(
+                text='Update available!', fg='green'
             )
             self.b_check_update.config(
                 text='Download', command=self.download_files, fg='green'
             )
         else:
-            self.status_message.config(
-                text='Status: No update available.'
+            self.l_status_message.config(
+                text='No update available.'
             )
 
         # print(f'updater_current_version: {self.updater_current_version}')
@@ -104,6 +132,13 @@ class Updater:
         with open(current_version_path, 'wb') as f:
             for data in response.iter_content(block_size):
                 f.write(data)
+        # Update status message and reset button
+        self.l_status_message.config(
+            text=f'App has been updated to {self.app_latest_version}', fg='black'
+        )
+        self.b_check_update.config(
+            text='Check for updates', command=self.check_for_latest_app_version, fg='black'
+        )
 
 
 if __name__ == '__main__':
