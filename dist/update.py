@@ -24,20 +24,23 @@ class Updater:
         self.app_latest_version = ''
         self.latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_version.json'
         self.latest_app_dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/latest_version/main.exe'
+        self.update_available = False
         # GUI
         self.root = tk.Tk()
         self.root.title('App Update Manager')
-
-        self.b_check_update = tk.Button(self.root, text='Check for updates')
+        self.root.geometry('300x200')
+        self.root.resizable(width=False, height=False)
+        self.status_message = tk.Label(self.root, text='Status:')
+        self.status_message.pack(padx=15, pady=15)
+        self.b_check_update = tk.Button(
+            self.root, text='Check for updates', command=self.check_for_latest_app_version
+        )
         self.b_check_update.pack(padx=15, pady=15)
-
-        self.get_current_app_version_number()
-        self.get_latest_app_version_number()
-        self.download_files()
+        self.root.after(ms=100, )
 
         self.root.mainloop()
 
-    def get_latest_app_version_number(self):
+    def get_latest_app_version(self):
         """Retrieve the latest version number for the app."""
 
         latest_version_response = requests.get(self.latest_version_url)
@@ -45,7 +48,7 @@ class Updater:
             data = json.loads(latest_version_response.content)
             self.app_latest_version = data['main']
 
-    def get_current_app_version_number(self):
+    def get_current_app_version(self):
         """Retrieve the current version number for the app"""
 
         if getattr(sys, 'frozen', False):
@@ -58,11 +61,27 @@ class Updater:
             data = json.load(f)
             self.app_current_version = data['main']
 
-    def compare_version(self):
+    def check_for_latest_app_version(self):
         """ Compare app's current version with the latest version on Github repo."""
-
+        self.get_current_app_version()
+        self.get_latest_app_version()
         if self.app_current_version != self.app_latest_version:
-            self.download_files()
+            self.update_available = True
+            self.status_message.config(
+                text='Status: Update available!', fg='green'
+            )
+            self.b_check_update.config(
+                text='Download', command=self.download_files, fg='green'
+            )
+        else:
+            self.status_message.config(
+                text='Status: No update available.'
+            )
+
+        # print(f'updater_current_version: {self.updater_current_version}')
+        # print(f'app_current_version: {self.app_current_version}')
+        # print(f'app_latest_version: {self.app_latest_version}')
+        # print(f'latest_version_available: {self.latest_version_available}')
 
     def download_files(self):
         """Download the latest file(s) from Github repo to root directory."""
@@ -71,12 +90,18 @@ class Updater:
             updater_path = os.path.dirname(sys.executable)
         else:
             updater_path = os.path.dirname(os.path.abspath(__file__))
-
-        destination_path = f'{updater_path[:-5]}\main.exe'
+        # Download main.exe
+        root_path = f'{updater_path[:-5]}\main.exe'
         response = requests.get(self.latest_app_dl_url, stream=True)
         block_size = 1024
-
-        with open(destination_path, 'wb') as f:
+        with open(root_path, 'wb') as f:
+            for data in response.iter_content(block_size):
+                f.write(data)
+        # Download current_version.json
+        current_version_path = f'{updater_path}\current_version\current_version.json'
+        response = requests.get(self.latest_version_url, stream=True)
+        block_size = 4
+        with open(current_version_path, 'wb') as f:
             for data in response.iter_content(block_size):
                 f.write(data)
 
