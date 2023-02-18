@@ -64,6 +64,16 @@ class Updater:
         )
         self.b_check_update.grid(columnspan=2, pady=(0, 20))
 
+        # Center root window
+        self.root.update_idletasks()
+        win_width = self.root.winfo_reqwidth()
+        win_height = self.root.winfo_reqheight()
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        x = int(screen_width/2 - win_width/2)
+        y = int(screen_height/2 - win_width/2)
+        self.root.geometry(f"{win_width}x{win_height}+{x}+{y}")
+        self.root.deiconify()
 
         self.root.mainloop()
 
@@ -137,6 +147,7 @@ class Updater:
         self.e_app_current_version.delete(0, END)
         self.e_app_current_version.insert(0, f'{self.app_current_version}')
         self.e_app_current_version.config(state='disabled')
+            
 
 if __name__ == '__main__':
     Updater()
