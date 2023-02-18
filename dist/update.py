@@ -22,11 +22,16 @@ class Updater:
         """Initialize version number, Github URL, and GUI."""
 
         self.updater_current_version = 'v1.0.0'
-        self.app_current_version = ''
-        self.app_latest_version = ''
         self.latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_version.json'
         self.latest_app_dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/latest_version/main.exe'
+        self.main_app_current_version = ''
+        self.app_latest_version = ''
+        self.current_working_directory = ''
+        self.main_app_path = ''
+        self.updater_path = ''
+        self.current_version_path = ''
 
+        self.get_paths()
         self.get_current_app_version()
 
         # GUI
@@ -46,13 +51,13 @@ class Updater:
             0, f'{self.updater_current_version}')
         self.e_updater_current_version.config(state='disabled')
 
-        self.l_app_current_version = tk.Label(
+        self.l_main_app_current_version = tk.Label(
             self.lf_current_version, text='Main App:', font=FONT)
-        self.l_app_current_version.grid(column=0, row=1, sticky='e', padx=(15, 0), pady=(0, 15))
-        self.e_app_current_version = tk.Entry(self.lf_current_version, width=8, font=FONT)
-        self.e_app_current_version.grid(column=1, row=1, padx=(0, 15), pady=(0, 15))
-        self.e_app_current_version.insert(0, f'{self.app_current_version}')
-        self.e_app_current_version.config(state='disabled')
+        self.l_main_app_current_version.grid(column=0, row=1, sticky='e', padx=(15, 0), pady=(0, 15))
+        self.e_main_app_current_version = tk.Entry(self.lf_current_version, width=8, font=FONT)
+        self.e_main_app_current_version.grid(column=1, row=1, padx=(0, 15), pady=(0, 15))
+        self.e_main_app_current_version.insert(0, f'{self.main_app_current_version}')
+        self.e_main_app_current_version.config(state='disabled')
 
         self.l_status = tk.Label(self.root, text='Status:', font=STATUS_FONT)
         self.l_status.grid(column=0, row=1, padx=(15, 0), pady=(20), sticky='w')
@@ -88,21 +93,16 @@ class Updater:
     def get_current_app_version(self):
         """Retrieve the current version number for the app"""
 
-        if getattr(sys, 'frozen', False):
-            updater_path = os.path.dirname(sys.executable)
-        else:
-            updater_path = os.path.dirname(os.path.abspath(__file__))
-
-        current_version_path = f'{updater_path}\current_version\current_version.json'
+        current_version_path = f'{self.updater_path}\current_version\current_version.json'
         with open(current_version_path) as f:
             data = json.load(f)
-            self.app_current_version = data['main']
+            self.main_app_current_version = data['main']
 
     def check_for_latest_app_version(self):
         """ Compare app's current version with the latest version on Github repo."""
 
         self.get_latest_app_version()
-        if self.app_current_version != self.app_latest_version:
+        if self.main_app_current_version != self.app_latest_version:
             self.l_status_message.config(
                 text=f'{self.app_latest_version} available', fg='green'
             )
@@ -111,7 +111,7 @@ class Updater:
             )
         else:
             self.l_status_message.config(
-                text='No update available'
+                text='No update available', fg='black'
             )
 
     def download_files(self):
@@ -142,11 +142,22 @@ class Updater:
         self.b_check_update.config(
             text='Check for updates', command=self.check_for_latest_app_version, fg='black'
         )
-        self.app_current_version = self.app_latest_version
-        self.e_app_current_version.config(state='normal')
-        self.e_app_current_version.delete(0, END)
-        self.e_app_current_version.insert(0, f'{self.app_current_version}')
-        self.e_app_current_version.config(state='disabled')
+        self.main_app_current_version = self.app_latest_version
+        self.e_main_app_current_version.config(state='normal')
+        self.e_main_app_current_version.delete(0, END)
+        self.e_main_app_current_version.insert(0, f'{self.main_app_current_version}')
+        self.e_main_app_current_version.config(state='disabled')
+    
+    def get_paths(self):
+        """Get paths for current working directory, main app, and updater."""
+
+        if getattr(sys, 'frozen', False):
+            self.updater_path = os.path.dirname(sys.executable)
+        else:
+            self.updater_path = os.path.dirname(os.path.abspath(__file__))
+
+        self.current_working_directory = self.updater_path[:-5]
+        self.main_app_path = f'{self.current_working_directory}\main.exe'
             
 
 if __name__ == '__main__':
