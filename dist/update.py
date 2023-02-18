@@ -3,12 +3,10 @@ latest release on a repository and downloads it to the user's root directory."""
 
 
 import requests
-import subprocess
 import sys
 import os
-import urllib.request
 import tkinter as tk
-import time
+from tkinter import END
 import json
 
 
@@ -62,7 +60,7 @@ class Updater:
         self.l_status_message.grid(column=1, row=1, padx=(0, 15), pady=(20), sticky='w')
 
         self.b_check_update = tk.Button(
-            self.root, text='Check for updates', font=FONT, command=self.check_for_latest_app_version
+            self.root, text='Check for updates', font=FONT, command=self.check_for_latest_app_version, width=17
         )
         self.b_check_update.grid(columnspan=2, pady=(0, 20))
 
@@ -96,20 +94,15 @@ class Updater:
         self.get_latest_app_version()
         if self.app_current_version != self.app_latest_version:
             self.l_status_message.config(
-                text='Update available!', fg='green'
+                text=f'{self.app_latest_version} available', fg='green'
             )
             self.b_check_update.config(
-                text='Download', command=self.download_files, fg='green'
+                text='Update', command=self.download_files
             )
         else:
             self.l_status_message.config(
-                text='No update available.'
+                text='No update available'
             )
-
-        # print(f'updater_current_version: {self.updater_current_version}')
-        # print(f'app_current_version: {self.app_current_version}')
-        # print(f'app_latest_version: {self.app_latest_version}')
-        # print(f'latest_version_available: {self.latest_version_available}')
 
     def download_files(self):
         """Download the latest file(s) from Github repo to root directory."""
@@ -134,12 +127,16 @@ class Updater:
                 f.write(data)
         # Update status message and reset button
         self.l_status_message.config(
-            text=f'App has been updated to {self.app_latest_version}', fg='black'
+            text=f'App has been updated', fg='green'
         )
         self.b_check_update.config(
             text='Check for updates', command=self.check_for_latest_app_version, fg='black'
         )
-
+        self.app_current_version = self.app_latest_version
+        self.e_app_current_version.config(state='normal')
+        self.e_app_current_version.delete(0, END)
+        self.e_app_current_version.insert(0, f'{self.app_current_version}')
+        self.e_app_current_version.config(state='disabled')
 
 if __name__ == '__main__':
     Updater()
