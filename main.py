@@ -1,11 +1,15 @@
 import tkinter as tk
+from tkinter import messagebox
 from PIL import Image, ImageTk
 from wrapup import WrapUpDateCalculator
 from cardpayment import CardPayment
 from map import Map
 from pwmanager import PasswordManager
 from authentication import Authenticator
-from dist.update import Updater
+import os
+import sys
+import json
+import requests
 
 
 FONT = ('Bahnschrift Light', 17, 'normal')
@@ -68,15 +72,15 @@ class MainApp(tk.Tk):
 
     def open_WrapUpDateCalculator(self):
         """Instantiate WrapUpDateCalculator object in a new TopLevel window."""
-        top = WrapUpDateCalculator()
+        WrapUpDateCalculator()
 
     def open_CardPaymentForm(self):
         """Instantiate CardPayment object in a new TopLevel window."""
-        top = CardPayment()
+        CardPayment()
 
     def open_MapSearch(self):
         """Instantiate Map object in a new TopLevel window."""
-        top = Map()
+        Map()
 
     def open_PasswordManager(self):
         """Instantiate Password Manager in a new TopLevel window."""
@@ -89,17 +93,7 @@ class MainApp(tk.Tk):
             self.after(50, self._check_isVerified_flag, authenticator)
         else:
             authenticator.top.destroy()
-            pm = PasswordManager()
-
-    def check_for_updates():
-        """Check if new version of Main App or App Update Manager is available."""
-
-        #
-
-    def open_Updater():
-        """Run App Update Manager"""
-
-        #
+            PasswordManager()
 
     def pointerEnter(self, event):
         """Change button color on mouse hover."""
@@ -110,5 +104,43 @@ class MainApp(tk.Tk):
         event.widget['bg'] = BG_COLOR
 
 
+def check_for_updates() -> bool:
+    """Check if new version of Main App or App Update Manager is available."""
+
+    if getattr(sys, 'frozen', False):
+        root_path = os.path.dirname(sys.executable)
+    else:
+        root_path = os.path.dirname(os.path.abspath(__file__))
+
+    current_version_path = f'{root_path}\dist\current_version\current_version.json'
+    latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_version.json'
+    with open(current_version_path) as f:
+        data = json.load(f)
+        main_app_current_version = data['main']
+
+    latest_version_response = requests.get(latest_version_url)
+    if latest_version_response.status_code == 200:
+        data = json.loads(latest_version_response.content)
+        main_app_latest_version = data['main']
+
+    if main_app_current_version != main_app_latest_version:
+        return messagebox.askyesno(title='New Update Available',
+                                   message=f'{main_app_latest_version} is now available. Do you want to open App Update Manager?')
+    return False
+
+
+def open_Updater():
+    """Run App Update Manager"""
+
+    if getattr(sys, 'frozen', False):
+        root_path = os.path.dirname(sys.executable)
+    else:
+        root_path = os.path.dirname(os.path.abspath(__file__))
+    os.startfile(f'{root_path}/dist/update.exe')
+
+
 if __name__ == '__main__':
-    MainApp().mainloop()
+    if check_for_updates():
+        open_Updater()
+    else:
+        MainApp().mainloop()

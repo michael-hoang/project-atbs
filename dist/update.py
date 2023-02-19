@@ -65,6 +65,9 @@ class Updater:
         self.center_root_window_to_screen()
         self.get_paths()
         self.get_current_main_app_version()
+        # GUI icon
+        icon_path = self.root_directory.replace('\\', '/')
+        self.root.iconphoto(False, tk.PhotoImage(file=f'{icon_path}/assets/img/update.png'))
         
         self.root.mainloop()
 
