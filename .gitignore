@@ -2,3 +2,5 @@ __pycache__/
 .cred/
 .data/
 .tmp/
+main.exe
+update.exe
