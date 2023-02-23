@@ -140,7 +140,10 @@ def open_Updater():
 
 
 if __name__ == '__main__':
-    if check_for_updates():
-        open_Updater()
-    else:
+    try:
+        if check_for_updates():
+            open_Updater()
+        else:
+            MainApp().mainloop()
+    except:
         MainApp().mainloop()
