@@ -150,7 +150,7 @@ class Updater:
         with open(self.main_app_path, 'wb') as f:
             for data in response.iter_content(block_size):
                 f.write(data)
-        # Download current_version.json
+        # Download current_main_version.json
         response = requests.get(self.latest_main_version_url, stream=True)
         block_size = 4
         with open(self.current_main_version_path, 'wb') as f:
