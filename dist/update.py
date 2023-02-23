@@ -22,12 +22,14 @@ class Updater:
         """Initialize version number, Github URL, paths, and GUI."""
 
         self.updater_current_version = 'v1.0.0'
-        self.latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_version.json'
+        self.latest_main_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
+        self.latest_updater_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_updater_version.json'
         self.latest_app_dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/latest_version/main.exe'
         self.updater_path = ''
         self.root_directory = ''
         self.main_app_path = ''
-        self.current_version_path = ''
+        self.current_main_version_path = ''
+        self.current_updater_version_path = ''
         self.main_app_current_version = ''
         self.main_app_latest_version = ''
 
@@ -96,12 +98,13 @@ class Updater:
 
         self.root_directory = self.updater_path[:-5]
         self.main_app_path = f'{self.root_directory}\main.exe'
-        self.current_version_path = f'{self.updater_path}\current_version\current_version.json'
+        self.current_main_version_path = f'{self.updater_path}\current_version\current_main_version.json'
+        self.current_updater_version_path = f'{self.updater_path}\current_version\current_updater_version.json'
 
     def get_current_main_app_version(self):
         """Retrieve the current version number for the main app"""
 
-        with open(self.current_version_path) as f:
+        with open(self.current_main_version_path) as f:
             data = json.load(f)
             self.main_app_current_version = data['main']
 
@@ -113,9 +116,9 @@ class Updater:
     def get_latest_main_app_version(self):
         """Retrieve the latest version number for the main app."""
 
-        latest_version_response = requests.get(self.latest_version_url)
-        if latest_version_response.status_code == 200:
-            data = json.loads(latest_version_response.content)
+        latest_main_version_response = requests.get(self.latest_main_version_url)
+        if latest_main_version_response.status_code == 200:
+            data = json.loads(latest_main_version_response.content)
             self.main_app_latest_version = data['main']
 
     def update_status_message(self, message, font_color):
@@ -148,9 +151,9 @@ class Updater:
             for data in response.iter_content(block_size):
                 f.write(data)
         # Download current_version.json
-        response = requests.get(self.latest_version_url, stream=True)
+        response = requests.get(self.latest_main_version_url, stream=True)
         block_size = 4
-        with open(self.current_version_path, 'wb') as f:
+        with open(self.current_main_version_path, 'wb') as f:
             for data in response.iter_content(block_size):
                 f.write(data)
 
