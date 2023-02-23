@@ -49,6 +49,11 @@ class MainApp(tk.Tk):
         self.bind('<Enter>', self.pointerEnter)
         self.bind('<Leave>', self.pointerLeave)
 
+        try:
+            self.check_new_updater_version()
+        except:
+            pass
+
         # Center window to screen
         self.update_idletasks()
         win_width = self.winfo_reqwidth()
@@ -112,7 +117,7 @@ class MainApp(tk.Tk):
         else:
             root_path = os.path.dirname(os.path.abspath(__file__))
 
-        current_updater_version_path = f'{root_path}\dist\current_version\current_updater_version.json'
+        current_updater_version_path = f'{root_path}/dist/current_version/current_updater_version.json'
         latest_updater_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_updater_version.json'
         with open(current_updater_version_path) as f:
             data = json.load(f)
@@ -124,7 +129,7 @@ class MainApp(tk.Tk):
             updater_latest_version = data['updater']
 
         if updater_current_version != updater_latest_version:
-            updater_path = f'{root_path}\dist\update.exe'
+            updater_path = f'{root_path}/dist/update.exe'
             block_size = 1024
             updater_dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/update.exe'
             response = requests.get(updater_dl_url, stream=True)
