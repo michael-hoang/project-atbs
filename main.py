@@ -112,15 +112,15 @@ class MainApp(tk.Tk):
         else:
             root_path = os.path.dirname(os.path.abspath(__file__))
 
-        current_version_path = f'{root_path}\dist\current_version\current_version.json'
-        latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_version.json'
-        with open(current_version_path) as f:
+        current_updater_version_path = f'{root_path}\dist\current_version\current_updater_version.json'
+        latest_updater_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_updater_version.json'
+        with open(current_updater_version_path) as f:
             data = json.load(f)
             updater_current_version = data['updater']
 
-        latest_version_response = requests.get(latest_version_url)
-        if latest_version_response.status_code == 200:
-            data = json.loads(latest_version_response.content)
+        latest_updater_version_response = requests.get(latest_updater_version_url)
+        if latest_updater_version_response.status_code == 200:
+            data = json.loads(latest_updater_version_response.content)
             updater_latest_version = data['updater']
 
         if updater_current_version != updater_latest_version:
@@ -131,10 +131,10 @@ class MainApp(tk.Tk):
             with open(updater_path, 'wb') as f:
                 for data in response.iter_content(block_size):
                     f.write(data)
-            # Download current_version.json
+            # Download current_updater_version.json
             block_size = 4
-            with open(current_version_path, 'wb') as f:
-                for data in latest_version_response.iter_content(block_size):
+            with open(current_updater_version_path, 'wb') as f:
+                for data in latest_updater_version_response.iter_content(block_size):
                     f.write(data)
         
     def _check_for_updates_loop(self):
@@ -151,9 +151,9 @@ def check_for_main_app_update() -> bool:
     else:
         root_path = os.path.dirname(os.path.abspath(__file__))
 
-    current_version_path = f'{root_path}\dist\current_version\current_version.json'
-    latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_version.json'
-    with open(current_version_path) as f:
+    current_main_version_path = f'{root_path}\dist\current_version\current_main_version.json'
+    latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
+    with open(current_main_version_path) as f:
         data = json.load(f)
         main_app_current_version = data['main']
 
