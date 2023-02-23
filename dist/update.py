@@ -33,6 +33,7 @@ class Updater:
 
         # GUI
         self.root = tk.Tk()
+        self.root.withdraw()
         self.root.title('App Update Manager')
         self.root.resizable(width=False, height=False)
 
