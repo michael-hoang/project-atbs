@@ -143,7 +143,7 @@ class MainApp(tk.Tk):
             latest_main_app_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
             new_main_version_path = f'{root_path}/dist/current_version/current_main_version.json'
             latest_main_app_version_response = requests.get(latest_main_app_version_url)
-            with open(new_main_version_path) as f:
+            with open(new_main_version_path, 'wb') as f:
                 for data in latest_main_app_version_response.iter_content(block_size):
                     f.write(data)
         
