@@ -142,14 +142,15 @@ class MainApp(tk.Tk):
         """Run with Tkinter after method to check for updates periodically."""
         try:
             self.check_for_new_updater_version()
-            if self.check_for_main_app_update():
+            if self.check_for_main_app_update(yesno_update_message=2):
                 self.open_Updater()
+                self.quit()
         except:
             pass
 
         self.after(ms=86_400_000, func=self._check_for_updates_loop) # every 24 hours 
 
-    def check_for_main_app_update(self) -> bool:
+    def check_for_main_app_update(self, yesno_update_message=1) -> bool:
         """Check if new version of Main App is available."""
         if getattr(sys, 'frozen', False):
             root_path = os.path.dirname(sys.executable)
@@ -168,8 +169,13 @@ class MainApp(tk.Tk):
             main_app_latest_version = data['main']
 
         if main_app_current_version != main_app_latest_version:
-            return messagebox.askyesno(title='New Update Available',
-                                    message=f'{main_app_latest_version} is now available. Do you want to open App Update Manager?')
+            if yesno_update_message == 1:
+                message=f'{main_app_latest_version} is now available. Do you want to open App Update Manager?'
+            elif yesno_update_message == 2:
+                message=f'{main_app_latest_version} is now available. Do you want to close the app and open App Update Manager?'
+
+            return messagebox.askyesno(title='New Update Available', message=message)
+                                       
         return False
 
     def open_Updater(self):
