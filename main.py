@@ -49,11 +49,6 @@ class MainApp(tk.Tk):
         self.bind('<Enter>', self.pointerEnter)
         self.bind('<Leave>', self.pointerLeave)
 
-        try:
-            self.check_new_updater_version()
-        except:
-            pass
-
         # Center window to screen
         self.update_idletasks()
         win_width = self.winfo_reqwidth()
@@ -110,7 +105,7 @@ class MainApp(tk.Tk):
         """Change button color back to normal when mouse leave button."""
         event.widget['bg'] = BG_COLOR
 
-    def check_new_updater_version(self):
+    def check_for_new_updater_version(self):
         """Check for new version and update the App Update Manager"""
         if getattr(sys, 'frozen', False):
             root_path = os.path.dirname(sys.executable)
@@ -130,8 +125,9 @@ class MainApp(tk.Tk):
 
         if updater_current_version != updater_latest_version:
             updater_path = f'{root_path}/dist/update.exe'
-            block_size = 1024
             updater_dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/update.exe'
+            # Download latest update.exe
+            block_size = 1024
             response = requests.get(updater_dl_url, stream=True)
             with open(updater_path, 'wb') as f:
                 for data in response.iter_content(block_size):
@@ -145,47 +141,47 @@ class MainApp(tk.Tk):
     def _check_for_updates_loop(self):
         """Run with Tkinter after method to check for updates periodically."""
         try:
-            self.check_new_updater_version()
+            self.check_for_new_updater_version()
         except:
             pass
 
-def check_for_main_app_update() -> bool:
-    """Check if new version of Main App is available."""
-    if getattr(sys, 'frozen', False):
-        root_path = os.path.dirname(sys.executable)
-    else:
-        root_path = os.path.dirname(os.path.abspath(__file__))
+    def check_for_main_app_update(self) -> bool:
+        """Check if new version of Main App is available."""
+        if getattr(sys, 'frozen', False):
+            root_path = os.path.dirname(sys.executable)
+        else:
+            root_path = os.path.dirname(os.path.abspath(__file__))
 
-    current_main_version_path = f'{root_path}\dist\current_version\current_main_version.json'
-    latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
-    with open(current_main_version_path) as f:
-        data = json.load(f)
-        main_app_current_version = data['main']
+        current_main_version_path = f'{root_path}\dist\current_version\current_main_version.json'
+        latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
+        with open(current_main_version_path) as f:
+            data = json.load(f)
+            main_app_current_version = data['main']
 
-    latest_version_response = requests.get(latest_version_url)
-    if latest_version_response.status_code == 200:
-        data = json.loads(latest_version_response.content)
-        main_app_latest_version = data['main']
+        latest_version_response = requests.get(latest_version_url)
+        if latest_version_response.status_code == 200:
+            data = json.loads(latest_version_response.content)
+            main_app_latest_version = data['main']
 
-    if main_app_current_version != main_app_latest_version:
-        return messagebox.askyesno(title='New Update Available',
-                                   message=f'{main_app_latest_version} is now available. Do you want to open App Update Manager?')
-    return False
+        if main_app_current_version != main_app_latest_version:
+            return messagebox.askyesno(title='New Update Available',
+                                    message=f'{main_app_latest_version} is now available. Do you want to open App Update Manager?')
+        return False
 
-
-def open_Updater():
-    """Run App Update Manager"""
-    if getattr(sys, 'frozen', False):
-        root_path = os.path.dirname(sys.executable)
-    else:
-        root_path = os.path.dirname(os.path.abspath(__file__))
-    os.startfile(f'{root_path}/dist/update.exe')
+    def open_Updater(self):
+        """Run App Update Manager"""
+        if getattr(sys, 'frozen', False):
+            root_path = os.path.dirname(sys.executable)
+        else:
+            root_path = os.path.dirname(os.path.abspath(__file__))
+        os.startfile(f'{root_path}/dist/update.exe')
 
 
 if __name__ == '__main__':
     try:
-        if check_for_main_app_update():
-            open_Updater()
+        MainApp.check_for_new_updater_version(None)
+        if MainApp.check_for_main_app_update(None):
+            MainApp.open_Updater(None)
         else:
             MainApp().mainloop()
     except:
