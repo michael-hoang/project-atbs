@@ -142,8 +142,12 @@ class MainApp(tk.Tk):
         """Run with Tkinter after method to check for updates periodically."""
         try:
             self.check_for_new_updater_version()
+            if self.check_for_main_app_update():
+                self.open_Updater()
         except:
             pass
+
+        self.after(ms=86_400_000, func=self._check_for_updates_loop) # every 24 hours 
 
     def check_for_main_app_update(self) -> bool:
         """Check if new version of Main App is available."""
