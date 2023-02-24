@@ -113,7 +113,7 @@ class MainApp(tk.Tk):
         else:
             root_path = os.path.dirname(os.path.abspath(__file__))
 
-        current_updater_version_path = f'{root_path}/dist/current_version/current_version.json'
+        current_updater_version_path = f'{root_path}/dist/current_version/current_version.json' ## Need to change file name to current_updater_version.json
         latest_updater_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_updater_version.json'
         with open(current_updater_version_path) as f:
             data = json.load(f)
@@ -135,9 +135,16 @@ class MainApp(tk.Tk):
                     f.write(data)
             # Download current_updater_version.json
             block_size = 4
-            new_updater_version_path = f'{root_path}/dist/current_version/current_updater_version.json'
-            with open(current_updater_version_path, 'wb') as f:
+            new_updater_version_path = f'{root_path}/dist/current_version/current_updater_version.json' ## Need to change this to current_updater_version_path = f'{root_path}/dist/current_version/current_updater_version.json'
+            with open(new_updater_version_path, 'wb') as f:
                 for data in latest_updater_version_response.iter_content(block_size):
+                    f.write(data)
+            ## Delete this block  
+            latest_main_app_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
+            new_main_version_path = f'{root_path}/dist/current_version/current_main_version.json'
+            latest_main_app_version_response = requests.get(latest_main_app_version_url)
+            with open(new_main_version_path) as f:
+                for data in latest_main_app_version_response.iter_content(block_size):
                     f.write(data)
         
     def _check_for_updates_loop(self):
