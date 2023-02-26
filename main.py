@@ -159,18 +159,13 @@ class MainApp(tk.Tk):
         else:
             root_path = os.path.dirname(os.path.abspath(__file__))
 
-        current_main_version_path = f'{root_path}\dist\current_version\current_main_version.json'
         latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
-        with open(current_main_version_path) as f:
-            data = json.load(f)
-            main_app_current_version = data['main']
-
         latest_version_response = requests.get(latest_version_url)
         if latest_version_response.status_code == 200:
             data = json.loads(latest_version_response.content)
             main_app_latest_version = data['main']
 
-        if main_app_current_version != main_app_latest_version:
+        if self.main_app_current_version != main_app_latest_version:
             if yesno_update_message == 1:
                 message=f'{main_app_latest_version} is now available. Do you want to open App Update Manager?'
             elif yesno_update_message == 2:
