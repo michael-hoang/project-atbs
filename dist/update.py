@@ -20,7 +20,7 @@ class Updater:
 
     def __init__(self):
         """Initialize version number, Github URL, paths, and GUI."""
-        self.updater_current_version = 'v1.1.0'
+        self.updater_current_version = 'v1.1.1'
         self.latest_main_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
         self.latest_updater_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_updater_version.json'
         self.latest_app_dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/latest_version/main.exe'
