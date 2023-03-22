@@ -3,6 +3,7 @@
 import tkinter as tk
 from tkinter import messagebox, END
 from PIL import Image, ImageTk
+from win32 import win32clipboard
 
 
 class RefillTemplate:
@@ -11,12 +12,28 @@ class RefillTemplate:
     def __init__(self):
         """Initialize template window and refill questions."""
 
-        self.root = tk.Tk()
-        self.root.title('Refill Coordination')
-        self.root.config(height=500, width=400)
+        self.top = tk.Toplevel()
+        self.top.title('Refill Coordination')
+        
+        # Template
+        self.medication_label = tk.Label(self.top, text='Medication:')
+        self.medication_label.grid(column=0, row=0)
+        self.medication_entry = tk.Entry(self.top)
+        self.medication_entry.grid(column=1, row=0)
 
-        self.root.mainloop()
+        
+
+
+
+        
 
 
 if __name__ == '__main__':
-    RefillTemplate()
+    root = tk.Tk()
+    rt = RefillTemplate()
+
+    root.mainloop()
+
+
+# CF_RTF = win32clipboard.RegisterClipboardFormat("Rich Text Format")
+# rtf = bytearray(fr'{{\rtf1\ansi\deff0 {{\fonttbl {{\f0 Times New Roman;}}}}{{\colortbl;\red0\green0\blue0;\red255\green0\blue0;\red255\green255\blue0;}} {text}}}', 'utf8')
