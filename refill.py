@@ -100,6 +100,55 @@ class RefillTemplate:
         self.due_start_entry = tk.Entry(self.injection_cycle_canvas)
         self.due_start_entry.grid(column=3, row=0)
 
+        # === Dispense date label frame === #
+        self.dispense_date_labelFrame = tk.LabelFrame(self.top, text='Dispense Date')
+        self.dispense_date_labelFrame.grid(column=0, row=4, sticky='w')
+        #   Dispense btn canvas
+        self.dispense_btn_canvas = tk.Canvas(self.dispense_date_labelFrame)
+        self.dispense_btn_canvas.grid(column=0, row=0, sticky='w')
+        # DCS button
+        self.dispense_dcs_btn = tk.Button(self.dispense_btn_canvas, text='DCS')
+        self.dispense_dcs_btn.grid(column=0, row=0)
+        # FedEx button
+        self.dispense_fedex_btn = tk.Button(self.dispense_btn_canvas, text='FedEx')
+        self.dispense_fedex_btn.grid(column=1, row=0)
+        # Pickup button
+        self.dispense_pickup_btn = tk.Button(self.dispense_btn_canvas, text='Pickup')
+        self.dispense_pickup_btn.grid(column=2, row=0)
+        # Walkover button
+        self.dispense_walkover_btn = tk.Button(self.dispense_btn_canvas, text='Walkover')
+        self.dispense_walkover_btn.grid(column=3, row=0)
+        # Walkover location label
+        self.dispense_walkover_label = tk.Label(self.dispense_btn_canvas, text='Inpatient')
+        self.dispense_walkover_label.grid(column=4, row=0) ### Create top level window to select walk over location
+        #   Dispense date canvas
+        self.dispense_date_canvas = tk.Canvas(self.dispense_date_labelFrame)
+        self.dispense_date_canvas.grid(column=0, row=1, sticky='w')
+        self.dispense_date_label = tk.Label(self.dispense_date_canvas, text='Ready to dispense date:')
+        self.dispense_date_label.grid(column=0, row=1)
+        self.dispense_date_entry = tk.Entry(self.dispense_date_canvas)
+        self.dispense_date_entry.grid(column=3, row=1)
+        #   Signature canvas
+        self.dispense_signature_canvas = tk.Canvas(self.dispense_date_labelFrame)
+        self.dispense_signature_canvas.grid(column=0, row=2, sticky='w')
+        self.dispense_signature_label = tk.Label(self.dispense_signature_canvas, text='Signature required?')
+        self.dispense_signature_label.grid(column=0, row=0)
+        # Yes button
+        self.dispense_signature_yes_btn = tk.Button(self.dispense_signature_canvas, text='Yes')
+        self.dispense_signature_yes_btn.grid(column=1, row=0)
+        # No button
+        self.dispense_signature_no_btn = tk.Button(self.dispense_signature_canvas, text='No')
+        self.dispense_signature_no_btn.grid(column=2, row=0)
+        #   Comments canvas
+        self.dispense_comments_canvas = tk.Canvas(self.dispense_date_labelFrame)
+        self.dispense_comments_canvas.grid(column=0, row=3, sticky='w')
+        # Comments label
+        self.dispense_comments_label = tk.Label(self.dispense_comments_canvas, text='Comments:')
+        self.dispense_comments_label.grid(column=0, row=0)
+        # Comments entry
+        self.dispense_comments_entry = tk.Entry(self.dispense_comments_canvas)
+        self.dispense_comments_entry.grid(column=1, row=0)    
+
 
         
 
