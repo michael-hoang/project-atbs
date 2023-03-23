@@ -18,13 +18,13 @@ class RefillTemplate:
         
         # === Medication label frame === #
         self.medication_labelFrame = tk.LabelFrame(self.top, text='Medication')
-        self.medication_labelFrame.grid(column=0, row=0, sticky='w')
+        self.medication_labelFrame.grid(column=0, row=1, sticky='w')
         self.medication_entry = tk.Entry(self.medication_labelFrame)
         self.medication_entry.grid(column=1, row=0, sticky='w')
 
         # === HIPPA label frame === #
         self.hipaa_labelFrame = tk.LabelFrame(self.top, text='Methods of HIPAA Verfication')
-        self.hipaa_labelFrame.grid(column=0, row=1, sticky='w')
+        self.hipaa_labelFrame.grid(column=0, row=2, sticky='w')
         #   Check button canvas
         self.hipaa_checkbtn_canvas = tk.Canvas(self.hipaa_labelFrame)
         self.hipaa_checkbtn_canvas.grid(column=1, row=0, sticky='w')
@@ -51,7 +51,7 @@ class RefillTemplate:
         
         # === Changes label frame === #
         self.changes_labelFrame = tk.LabelFrame(self.top, text='Changes Since Last Visit')
-        self.changes_labelFrame.grid(column=0, row=2, sticky='w')
+        self.changes_labelFrame.grid(column=0, row=3, sticky='w')
         #   Check button canvas
         self.changes_checkbtn_canvas = tk.Canvas(self.changes_labelFrame)
         self.changes_checkbtn_canvas.grid(column=1, row=2, sticky='w')
@@ -80,7 +80,7 @@ class RefillTemplate:
 
         # === Medication on hand label frame === #
         self.medication_on_hand_labelFrame = tk.LabelFrame(self.top, text='Medication On Hand')
-        self.medication_on_hand_labelFrame.grid(column=0, row=3, sticky='w')
+        self.medication_on_hand_labelFrame.grid(column=0, row=4, sticky='w')
         #   Day supply canvas
         self.day_supply_canvas = tk.Canvas(self.medication_on_hand_labelFrame)
         self.day_supply_canvas.grid(column=0, row=0, sticky='w')
@@ -102,7 +102,7 @@ class RefillTemplate:
 
         # === Dispense date label frame === #
         self.dispense_date_labelFrame = tk.LabelFrame(self.top, text='Dispense Date')
-        self.dispense_date_labelFrame.grid(column=0, row=4, sticky='w')
+        self.dispense_date_labelFrame.grid(column=0, row=5, sticky='w')
         #   Dispense btn canvas
         self.dispense_btn_canvas = tk.Canvas(self.dispense_date_labelFrame)
         self.dispense_btn_canvas.grid(column=0, row=0, sticky='w')
@@ -152,7 +152,7 @@ class RefillTemplate:
 
         # === Medication efficacy label frame === #
         self.medication_efficacy_labelFrame = tk.LabelFrame(self.top, text='Medication Efficacy')
-        self.medication_efficacy_labelFrame.grid(column=0, row=5, sticky='w')
+        self.medication_efficacy_labelFrame.grid(column=0, row=6, sticky='w')
         #   Medication efficacy canvas
         self.medication_efficacy_canvas = tk.Canvas(self.medication_efficacy_labelFrame)
         self.medication_efficacy_canvas.grid(column=0, row=0, sticky='w')
