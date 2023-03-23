@@ -131,6 +131,7 @@ class RefillTemplate:
         #   Signature canvas
         self.dispense_signature_canvas = tk.Canvas(self.dispense_date_labelFrame)
         self.dispense_signature_canvas.grid(column=0, row=2, sticky='w')
+        # Signature label
         self.dispense_signature_label = tk.Label(self.dispense_signature_canvas, text='Signature required?')
         self.dispense_signature_label.grid(column=0, row=0)
         # Yes button
@@ -147,7 +148,28 @@ class RefillTemplate:
         self.dispense_comments_label.grid(column=0, row=0)
         # Comments entry
         self.dispense_comments_entry = tk.Entry(self.dispense_comments_canvas)
-        self.dispense_comments_entry.grid(column=1, row=0)    
+        self.dispense_comments_entry.grid(column=1, row=0)
+
+        # === Medication efficacy label frame === #
+        self.medication_efficacy_labelFrame = tk.LabelFrame(self.top, text='Medication Efficacy')
+        self.medication_efficacy_labelFrame.grid(column=0, row=5, sticky='w')
+        #   Medication efficacy canvas
+        self.medication_efficacy_canvas = tk.Canvas(self.medication_efficacy_labelFrame)
+        self.medication_efficacy_canvas.grid(column=0, row=0, sticky='w')
+        # Medication efficacy label
+        self.medication_efficacy_label = tk.Label(self.medication_efficacy_canvas, text='Is medication working?')
+        self.medication_efficacy_label.grid(column=0, row=0)
+        # A little button
+        self.medication_efficacy_alittle_btn = tk.Button(self.medication_efficacy_canvas, text='A little')
+        self.medication_efficacy_alittle_btn.grid(column=1, row=0)
+        # A lot button
+        self.medication_efficacy_alot_btn = tk.Button(self.medication_efficacy_canvas, text='A lot')
+        self.medication_efficacy_alot_btn.grid(column=2, row=0)
+        # Can't tell button
+        self.medication_efficacy_cantTell_btn = tk.Button(self.medication_efficacy_canvas, text='Can\'t tell')
+        self.medication_efficacy_cantTell_btn.grid(column=3, row=0)
+        
+
 
 
         
