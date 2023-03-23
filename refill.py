@@ -10,11 +10,32 @@ class RefillTemplate:
     """This class represents a GUI template that handles refill questions and formatting."""
 
     def __init__(self):
-        """Initialize template window and refill questions."""
+        """Initialize variables, template GUI and refill questions."""
 
         self.top = tk.Toplevel()
         self.top.title('Refill Coordination')
         self.top.config(padx=20, pady=20)
+
+        # Initialize variables
+        self.medication_name = ''
+        self.hipaa_verification = ''
+        self.changes = 'None'
+        self.ready_to_fill = 'Yes, refill initiated in WAM.'
+        self.days_supply = ''
+        self.injection_cycle = ''
+        self.due_start = ''
+        self.dispense_method = ''
+        self.dispense_date = ''
+        self.signature_required = ''
+        self.dispense_comments = ''
+        self.allergies_review = 'Yes'
+        self.new_allergies = 'No'
+        self.medication_review = 'Yes'
+        self.spoke_with = ''
+        
+
+
+
         
         # === Medication label frame === #
         self.medication_labelFrame = tk.LabelFrame(self.top, text='Medication')
@@ -22,7 +43,7 @@ class RefillTemplate:
         self.medication_entry = tk.Entry(self.medication_labelFrame)
         self.medication_entry.grid(column=1, row=0, sticky='w')
 
-        # # === HIPPA label frame === #
+        # # === HIPAA label frame === #
         # self.hipaa_labelFrame = tk.LabelFrame(self.top, text='Methods of HIPAA Verfication')
         # self.hipaa_labelFrame.grid(column=0, row=2, sticky='w')
         # #   Check button canvas
@@ -31,23 +52,23 @@ class RefillTemplate:
         # # Name
         # self.hipaa_name_checkbtn = tk.Checkbutton(self.hipaa_checkbtn_canvas)
         # self.hipaa_name_checkbtn.grid(column=0, row=0)
-        # self.hippa_name_label = tk.Label(self.hipaa_checkbtn_canvas, text='Name')
-        # self.hippa_name_label.grid(column=1, row=0)
+        # self.hipaa_name_label = tk.Label(self.hipaa_checkbtn_canvas, text='Name')
+        # self.hipaa_name_label.grid(column=1, row=0)
         # # DOB
         # self.hipaa_dob_checkbtn = tk.Checkbutton(self.hipaa_checkbtn_canvas)
         # self.hipaa_dob_checkbtn.grid(column=2, row=0)
-        # self.hippa_dob_label = tk.Label(self.hipaa_checkbtn_canvas, text='DOB')
-        # self.hippa_dob_label.grid(column=3, row=0)
+        # self.hipaa_dob_label = tk.Label(self.hipaa_checkbtn_canvas, text='DOB')
+        # self.hipaa_dob_label.grid(column=3, row=0)
         # # Address
         # self.hipaa_address_checkbtn = tk.Checkbutton(self.hipaa_checkbtn_canvas)
         # self.hipaa_address_checkbtn.grid(column=4, row=0)
-        # self.hippa_address_label = tk.Label(self.hipaa_checkbtn_canvas, text='Address')
-        # self.hippa_address_label.grid(column=5, row=0)
+        # self.hipaa_address_label = tk.Label(self.hipaa_checkbtn_canvas, text='Address')
+        # self.hipaa_address_label.grid(column=5, row=0)
         # # Drug prescribed
         # self.hipaa_drug_checkbtn = tk.Checkbutton(self.hipaa_checkbtn_canvas)
         # self.hipaa_drug_checkbtn.grid(column=6, row=0)
-        # self.hippa_drug_label = tk.Label(self.hipaa_checkbtn_canvas, text='Drug Prescribed')
-        # self.hippa_drug_label.grid(column=7, row=0)
+        # self.hipaa_drug_label = tk.Label(self.hipaa_checkbtn_canvas, text='Drug Prescribed')
+        # self.hipaa_drug_label.grid(column=7, row=0)
         
         # # === Changes label frame === #
         # self.changes_labelFrame = tk.LabelFrame(self.top, text='Changes Since Last Visit')
@@ -168,6 +189,16 @@ class RefillTemplate:
         # Can't tell button
         self.medication_efficacy_cantTell_btn = tk.Button(self.medication_efficacy_canvas, text='Can\'t tell')
         self.medication_efficacy_cantTell_btn.grid(column=3, row=0)
+
+        # === Spoke with label frame === #
+        self.spoke_with_labelFrame = tk.LabelFrame(self.top, text='Spoke with:')
+        self.spoke_with_labelFrame.grid(column=0, row=7, sticky='w')
+        #   Spoke with canvas
+        self.spoke_with_canvas = tk.Canvas(self.spoke_with_labelFrame)
+        self.spoke_with_canvas.grid(column=0, row=0, sticky='w')
+        # Spoke with entry
+        self.spoke_with_entry = tk.Entry(self.spoke_with_canvas)
+        self.spoke_with_entry.grid(column=0, row=0)
         
 
 
