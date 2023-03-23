@@ -80,8 +80,25 @@ class RefillTemplate:
 
         # === Medication on hand label frame === #
         self.medication_on_hand_labelFrame = tk.LabelFrame(self.top, text='Medication On Hand')
-        self.medication_on_hand_labelFrame.grid(column=0, row=3)
-        
+        self.medication_on_hand_labelFrame.grid(column=0, row=3, sticky='w')
+        #   Day supply canvas
+        self.day_supply_canvas = tk.Canvas(self.medication_on_hand_labelFrame)
+        self.day_supply_canvas.grid(column=0, row=0, sticky='w')
+        self.day_supply_entry = tk.Entry(self.day_supply_canvas)
+        self.day_supply_entry.grid(column=0, row=0)
+        self.day_supply_label = tk.Label(self.day_supply_canvas, text='day(s)')
+        self.day_supply_label.grid(column=1, row=0)
+        #   Injection/cycle canvas
+        self.injection_cycle_canvas = tk.Canvas(self.medication_on_hand_labelFrame)
+        self.injection_cycle_canvas.grid(column=0, row=1, sticky='w')
+        self.injection_btn = tk.Button(self.injection_cycle_canvas, text='Injection')
+        self.injection_btn.grid(column=0, row=0)
+        self.cycle_btn = tk.Button(self.injection_cycle_canvas, text='Cycle')
+        self.cycle_btn.grid(column=1, row=0)
+        self.due_start_label = tk.Label(self.injection_cycle_canvas, text='due/starts')
+        self.due_start_label.grid(column=2, row=0)
+        self.due_start_entry = tk.Entry(self.injection_cycle_canvas)
+        self.due_start_entry.grid(column=3, row=0)
 
 
         
