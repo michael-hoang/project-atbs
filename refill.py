@@ -195,7 +195,7 @@ class RefillTemplate:
         self.dispense_btn_canvas.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # DCS button
         self.dispense_dcs_btn = tk.Button(
-            self.dispense_btn_canvas, text='DCS', command='',
+            self.dispense_btn_canvas, text='DCS', command=self.select_dcs,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -203,7 +203,7 @@ class RefillTemplate:
         self.dispense_dcs_btn.grid(column=0, row=0)
         # FedEx button
         self.dispense_fedex_btn = tk.Button(
-            self.dispense_btn_canvas, text='FedEx', command='',
+            self.dispense_btn_canvas, text='FedEx', command=self.select_fedex,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -211,7 +211,7 @@ class RefillTemplate:
         self.dispense_fedex_btn.grid(column=1, row=0)
         # Pickup button
         self.dispense_pickup_btn = tk.Button(
-            self.dispense_btn_canvas, text='Pickup', command='',
+            self.dispense_btn_canvas, text='Pickup', command=self.select_pickup,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -219,7 +219,7 @@ class RefillTemplate:
         self.dispense_pickup_btn.grid(column=2, row=0)
         # Walkover button
         self.dispense_walkover_btn = tk.Button(
-            self.dispense_btn_canvas, text='Walkover', command='',
+            self.dispense_btn_canvas, text='Walkover', command=self.select_walkover,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -339,30 +339,65 @@ class RefillTemplate:
         
 
     def select_injection(self):
-        """Select injection"""
-        self.injection_btn.config(bg=self.select_btn_bg_color, command=self.unselect_injection)
+        """Select injection button."""
+        self.injection_btn.config(bg=self.select_btn_bg_color, command=self._unselect_injection_cycle)
         self.cycle_btn.config(bg=self.btn_bg_color, command=self.select_cycle)
         self.injection_cycle = 'Injection is due on'
 
-    def unselect_injection(self):
-        """Unselect injection"""
-        self.injection_btn.config(bg=self.btn_bg_color, command=self.select_injection)
-        self.cycle_btn.config(bg=self.btn_bg_color, command=self.select_cycle)
-        self.injection_cycle = ''
-
     def select_cycle(self):
-        """Select cycle"""
+        """Select cycle button."""
         self.injection_btn.config(bg=self.btn_bg_color, command=self.select_injection)
-        self.cycle_btn.config(bg=self.select_btn_bg_color, command=self.unselect_cycle)
+        self.cycle_btn.config(bg=self.select_btn_bg_color, command=self._unselect_injection_cycle)
         self.injection_cycle = 'Next cycle starts on'
     
-    def unselect_cycle(self):
-        """Unselect cycle"""
+    def _unselect_injection_cycle(self):
+        """Unselect injection/cycle button."""
         self.injection_btn.config(bg=self.btn_bg_color, command=self.select_injection)
         self.cycle_btn.config(bg=self.btn_bg_color, command=self.select_cycle)
         self.injection_cycle = ''
 
-        
+    def select_dcs(self):
+        """Select DCS button."""
+        self.dispense_dcs_btn.config(bg=self.select_btn_bg_color, command=self._unselect_dcs_fedex_pickup_walkover)
+        self.dispense_fedex_btn.config(bg=self.btn_bg_color, command=self.select_fedex)
+        self.dispense_pickup_btn.config(bg=self.btn_bg_color, command=self.select_pickup)
+        self.dispense_walkover_btn.config(bg=self.btn_bg_color, command=self.select_walkover)
+        self.dispense_method = 'DCS'
+
+    def select_fedex(self):
+        """Select FedEx button."""
+        self.dispense_dcs_btn.config(bg=self.btn_bg_color, command=self.select_dcs)
+        self.dispense_fedex_btn.config(bg=self.select_btn_bg_color, command=self._unselect_dcs_fedex_pickup_walkover)
+        self.dispense_pickup_btn.config(bg=self.btn_bg_color, command=self.select_pickup)
+        self.dispense_walkover_btn.config(bg=self.btn_bg_color, command=self.select_walkover)
+        self.dispense_method = 'FedEx'
+
+    def select_pickup(self):
+        """Select Pickup button."""
+        self.dispense_dcs_btn.config(bg=self.btn_bg_color, command=self.select_dcs)
+        self.dispense_fedex_btn.config(bg=self.btn_bg_color, command=self.select_fedex)
+        self.dispense_pickup_btn.config(bg=self.select_btn_bg_color, command=self._unselect_dcs_fedex_pickup_walkover)
+        self.dispense_walkover_btn.config(bg=self.btn_bg_color, command=self.select_walkover)
+        self.dispense_method = 'Pick up'
+
+    def select_walkover(self):
+        """Select Walkover button."""
+        self.dispense_dcs_btn.config(bg=self.btn_bg_color, command=self.select_dcs)
+        self.dispense_fedex_btn.config(bg=self.btn_bg_color, command=self.select_fedex)
+        self.dispense_pickup_btn.config(bg=self.btn_bg_color, command=self.select_pickup)
+        self.dispense_walkover_btn.config(bg=self.select_btn_bg_color, command=self._unselect_dcs_fedex_pickup_walkover)
+        self.dispense_method = 'Walk over'
+
+    def _unselect_dcs_fedex_pickup_walkover(self):
+        """Unselect DCS button."""
+        self.dispense_dcs_btn.config(bg=self.btn_bg_color, command=self.select_dcs)
+        self.dispense_fedex_btn.config(bg=self.btn_bg_color, command=self.select_fedex)
+        self.dispense_pickup_btn.config(bg=self.btn_bg_color, command=self.select_pickup)
+        self.dispense_walkover_btn.config(bg=self.btn_bg_color, command=self.select_walkover)
+        self.dispense_method = ''
+
+
+
 
 
 
