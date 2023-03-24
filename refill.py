@@ -78,7 +78,10 @@ class RefillTemplate:
             )
         self.medication_canvas.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Medication entry
-        self.medication_entry = tk.Entry(self.medication_canvas, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief)
+        self.medication_entry = tk.Entry(
+            self.medication_canvas, font=self.entry_font, bg=self.entry_bg_color,
+            relief=self.entry_relief, width=30
+            )
         self.medication_entry.grid(column=1, row=0, sticky='w')
 
         # # === HIPAA label frame === #
@@ -300,7 +303,7 @@ class RefillTemplate:
         self.medication_efficacy_label.grid(column=0, row=0)
         # A little button
         self.medication_efficacy_alittle_btn = tk.Button(
-            self.medication_efficacy_canvas, text='A little', command='',
+            self.medication_efficacy_canvas, text='A little', command=self.select_a_little,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -308,7 +311,7 @@ class RefillTemplate:
         self.medication_efficacy_alittle_btn.grid(column=1, row=0)
         # A lot button
         self.medication_efficacy_alot_btn = tk.Button(
-            self.medication_efficacy_canvas, text='A lot', command='',
+            self.medication_efficacy_canvas, text='A lot', command=self.select_a_lot,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -316,7 +319,7 @@ class RefillTemplate:
         self.medication_efficacy_alot_btn.grid(column=2, row=0)
         # Can't tell button
         self.medication_efficacy_cantTell_btn = tk.Button(
-            self.medication_efficacy_canvas, text='Can\'t tell', command='',
+            self.medication_efficacy_canvas, text='Can\'t tell', command=self.select_cant_tell,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -401,19 +404,47 @@ class RefillTemplate:
         self.dispense_signature_yes_btn.config(bg=self.select_btn_bg_color, command=self._unselect_yes_no_sig) 
         self.dispense_signature_no_btn.config(bg=self.btn_bg_color, command=self.select_no_sig)
         self.signature_required = 'signature required'
-        
+
     def select_no_sig(self):
         """Select No signature button."""
         self.dispense_signature_yes_btn.config(bg=self.btn_bg_color, command=self.select_yes_sig) 
         self.dispense_signature_no_btn.config(bg=self.select_btn_bg_color, command=self._unselect_yes_no_sig)
         self.signature_required = 'no signature'
-        
+
     def _unselect_yes_no_sig(self):
         """Unselect Yes/No signature button."""
         self.dispense_signature_yes_btn.config(bg=self.btn_bg_color, command=self.select_yes_sig) 
         self.dispense_signature_no_btn.config(bg=self.btn_bg_color, command=self.select_no_sig)
         self.signature_required = ''
-        
+
+    def select_a_little(self):
+        """Select working 'A little' button."""
+        self.medication_efficacy_alittle_btn.config(bg=self.select_btn_bg_color, command=self._unselect_alittle_alot_cant_tell)
+        self.medication_efficacy_alot_btn.config(bg=self.btn_bg_color, command=self.select_a_lot)
+        self.medication_efficacy_cantTell_btn.config(bg=self.btn_bg_color, command=self.select_cant_tell)
+        self.medication_working = 'Yes, it\'s working a little.'
+
+    def select_a_lot(self):
+        """Select working 'A lot' button."""
+        self.medication_efficacy_alittle_btn.config(bg=self.btn_bg_color, command=self.select_a_little)
+        self.medication_efficacy_alot_btn.config(bg=self.select_btn_bg_color, command=self._unselect_alittle_alot_cant_tell)
+        self.medication_efficacy_cantTell_btn.config(bg=self.btn_bg_color, command=self.select_cant_tell)
+        self.medication_working = 'Yes, it\'s working a lot.'
+
+    def select_cant_tell(self):
+        """Select "Can't tell" button."""
+        self.medication_efficacy_alittle_btn.config(bg=self.btn_bg_color, command=self.select_a_little)
+        self.medication_efficacy_alot_btn.config(bg=self.btn_bg_color, command=self.select_a_lot)
+        self.medication_efficacy_cantTell_btn.config(bg=self.select_btn_bg_color, command=self._unselect_alittle_alot_cant_tell)
+        self.medication_working = 'No, I don\'t feel a difference.'
+
+    def _unselect_alittle_alot_cant_tell(self):
+        """Unselect a little/a lot/can't tell button."""
+        self.medication_efficacy_alittle_btn.config(bg=self.btn_bg_color, command=self.select_a_little)
+        self.medication_efficacy_alot_btn.config(bg=self.btn_bg_color, command=self.select_a_lot)
+        self.medication_efficacy_cantTell_btn.config(bg=self.btn_bg_color, command=self.select_cant_tell)
+        self.medication_working = ''
+
 
 
 
