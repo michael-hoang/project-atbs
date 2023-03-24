@@ -37,6 +37,7 @@ class RefillTemplate:
         self.top = tk.Toplevel()
         self.top.title('Refill Coordination')
         self.top.config(bg=self.background_color, padx=20, pady=20)
+        self.top.resizable(False, False)
 
         # Initialize variables
         self.user = ''
@@ -98,7 +99,7 @@ class RefillTemplate:
             fg='red', font=self.btn_font, activebackground='ghost white',
             activeforeground='red', width=9
             )
-        self.clear_btn.grid(column=1, row=0, padx=20)
+        self.clear_btn.grid(column=1, row=0, padx=(20,0))
 
         # # === HIPAA label frame === #
         # self.hipaa_labelFrame = tk.LabelFrame(self.top, text='Methods of HIPAA Verfication')
@@ -160,7 +161,7 @@ class RefillTemplate:
         self.medication_on_hand_labelFrame = tk.LabelFrame(
             self.top, text='Medication On Hand', bg=self.background_color, font=self.labelFrame_font
             )
-        self.medication_on_hand_labelFrame.grid(column=0, row=4, sticky='w', pady=(self.labelFrame_space_btwn, 0))
+        self.medication_on_hand_labelFrame.grid(column=0, row=4, sticky='we', pady=(self.labelFrame_space_btwn, 0))
         #   Day supply canvas
         self.day_supply_canvas = tk.Canvas(
             self.medication_on_hand_labelFrame, bg=self.background_color, highlightthickness=0
@@ -195,13 +196,15 @@ class RefillTemplate:
         self.cycle_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
         # Due/start label
         self.due_start_label = tk.Label(
-            self.injection_cycle_canvas, text='due/starts', bg=self.background_color, font=self.label_font
+            self.injection_cycle_canvas, text='', bg=self.background_color,
+            font=self.label_font, width=8
             )
         self.due_start_label.grid(column=2, row=0)
         # Due/start entry
         self.due_start_entry = tk.Entry(
             self.injection_cycle_canvas, font=self.entry_font, bg=self.entry_bg_color,
-            relief=self.entry_relief, width=19
+            relief=self.entry_relief, width=19, disabledbackground=self.background_color,
+            state='disabled'
             )
         self.due_start_entry.grid(column=3, row=0)
 
@@ -374,18 +377,32 @@ class RefillTemplate:
         self.injection_btn.config(bg=self.select_btn_bg_color, command=self._unselect_injection_cycle)
         self.cycle_btn.config(bg=self.btn_bg_color, command=self.select_cycle)
         self.injection_cycle = 'Injection is due on'
+        self.due_start_label.config(text='is due on')
+        self.due_start_entry.config(state='normal')
+        self.top.focus()
+        if not self.day_supply_entry.get().strip():
+            self.day_supply_entry.insert(0, '0')
 
     def select_cycle(self):
         """Select cycle button."""
         self.injection_btn.config(bg=self.btn_bg_color, command=self.select_injection)
         self.cycle_btn.config(bg=self.select_btn_bg_color, command=self._unselect_injection_cycle)
         self.injection_cycle = 'Next cycle starts on'
+        self.due_start_label.config(text='starts on')
+        self.due_start_entry.config(state='normal')
+        self.top.focus()
+        if not self.day_supply_entry.get().strip():
+            self.day_supply_entry.insert(0, '0')
     
     def _unselect_injection_cycle(self):
         """Unselect injection/cycle button."""
         self.injection_btn.config(bg=self.btn_bg_color, command=self.select_injection)
         self.cycle_btn.config(bg=self.btn_bg_color, command=self.select_cycle)
         self.injection_cycle = ''
+        self.due_start_label.config(text='')
+        self.due_start_entry.delete(0, 'end')
+        self.due_start_entry.config(state='disabled')
+
 
     def select_dcs(self):
         """Select DCS button."""
