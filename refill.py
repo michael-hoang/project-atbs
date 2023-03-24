@@ -95,7 +95,7 @@ class RefillTemplate:
         
         # Clear button
         self.clear_btn = tk.Button(
-            self.container_top, text='Clear', command='', bg='ghost white', relief='raised',
+            self.container_top, text='Clear', command=self.clear, bg='ghost white', relief='raised',
             fg='red', font=self.btn_font, activebackground='ghost white',
             activeforeground='red', width=9
             )
@@ -505,10 +505,19 @@ class RefillTemplate:
         self.medication_efficacy_cantTell_btn.config(bg=self.btn_bg_color, command=self.select_cant_tell)
         self.medication_working = ''
 
-
-
-
-
+    def clear(self):
+        """Clear all inputs."""
+        self.medication_entry.delete(0, 'end')
+        self.day_supply_entry.delete(0, 'end')
+        self.dispense_date_entry.delete(0, 'end')
+        self.dispense_comments_entry.delete(0, 'end')
+        self.spoke_with_entry.delete(0, 'end')
+        
+        self._unselect_injection_cycle()
+        self._unselect_dcs_fedex_pickup_walkover()
+        self._unselect_yes_no_sig()
+        self._unselect_alittle_alot_cant_tell()
+        self.medication_entry.focus()
         
 
 
