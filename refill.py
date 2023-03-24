@@ -184,7 +184,10 @@ class RefillTemplate:
             )
         self.due_start_label.grid(column=2, row=0)
         # Due/start entry
-        self.due_start_entry = tk.Entry(self.injection_cycle_canvas, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief)
+        self.due_start_entry = tk.Entry(
+            self.injection_cycle_canvas, font=self.entry_font, bg=self.entry_bg_color,
+            relief=self.entry_relief, width=19
+            )
         self.due_start_entry.grid(column=3, row=0)
 
         # === Dispense date label frame === #
@@ -232,7 +235,8 @@ class RefillTemplate:
         # Walkover location entry
         self.dispense_walkover_entry = tk.Entry(
             self.dispense_btn_canvas, font=self.entry_font, bg=self.entry_bg_color,
-            relief=self.entry_relief, state='disabled'
+            relief=self.entry_relief, width=15, disabledbackground=self.background_color,
+            state='disabled'
             )
         self.dispense_walkover_entry.grid(column=4, row=0, padx=(self.btn_space_btwn, 0))
         #   Dispense date canvas
@@ -344,6 +348,10 @@ class RefillTemplate:
             relief=self.entry_relief, width=25
             )
         self.spoke_with_entry.grid(column=0, row=0)
+
+
+        # ~ ~ ~ bind ~ ~ ~ #
+        self.dispense_walkover_entry.bind('<FocusIn>', self.remove_temp_text)
         
 
     def select_injection(self):
@@ -371,6 +379,8 @@ class RefillTemplate:
         self.dispense_pickup_btn.config(bg=self.btn_bg_color, command=self.select_pickup)
         self.dispense_walkover_btn.config(bg=self.btn_bg_color, command=self.select_walkover)
         self.dispense_method = 'DCS'
+        self.dispense_walkover_entry.delete(0, 'end')
+        self.dispense_walkover_entry.config(state='disabled')
 
     def select_fedex(self):
         """Select FedEx button."""
@@ -379,6 +389,8 @@ class RefillTemplate:
         self.dispense_pickup_btn.config(bg=self.btn_bg_color, command=self.select_pickup)
         self.dispense_walkover_btn.config(bg=self.btn_bg_color, command=self.select_walkover)
         self.dispense_method = 'FedEx'
+        self.dispense_walkover_entry.delete(0, 'end')
+        self.dispense_walkover_entry.config(state='disabled')
 
     def select_pickup(self):
         """Select Pickup button."""
@@ -387,6 +399,8 @@ class RefillTemplate:
         self.dispense_pickup_btn.config(bg=self.select_btn_bg_color, command=self._unselect_dcs_fedex_pickup_walkover)
         self.dispense_walkover_btn.config(bg=self.btn_bg_color, command=self.select_walkover)
         self.dispense_method = 'Pick up'
+        self.dispense_walkover_entry.delete(0, 'end')
+        self.dispense_walkover_entry.config(state='disabled')
 
     def select_walkover(self):
         """Select Walkover button."""
@@ -395,6 +409,13 @@ class RefillTemplate:
         self.dispense_pickup_btn.config(bg=self.btn_bg_color, command=self.select_pickup)
         self.dispense_walkover_btn.config(bg=self.select_btn_bg_color, command=self._unselect_dcs_fedex_pickup_walkover)
         self.dispense_method = 'Walk over'
+        self.dispense_walkover_entry.config(state='normal')
+        self.dispense_walkover_entry.insert(0, '-> enter location <-')
+        self.dispense_walkover_btn.focus()
+        
+    def remove_temp_text(self, e):
+        """Remove temporary text from walk over entry box."""
+        self.dispense_walkover_entry.delete(0, 'end')
 
     def _unselect_dcs_fedex_pickup_walkover(self):
         """Unselect DCS button."""
@@ -403,6 +424,8 @@ class RefillTemplate:
         self.dispense_pickup_btn.config(bg=self.btn_bg_color, command=self.select_pickup)
         self.dispense_walkover_btn.config(bg=self.btn_bg_color, command=self.select_walkover)
         self.dispense_method = ''
+        self.dispense_walkover_entry.delete(0, 'end')
+        self.dispense_walkover_entry.config(state='disabled')
 
     def select_yes_sig(self):
         """Select Yes signature button."""
