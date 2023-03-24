@@ -412,7 +412,7 @@ class RefillTemplate:
         self.dispense_method = 'Walk over'
         self.dispense_walkover_entry.config(state='normal')
         self.dispense_walkover_entry.insert(0, '-> enter location <-')
-        self.dispense_walkover_btn.focus()
+        self.top.focus()
         
     def remove_temp_text(self, e):
         """Remove temporary text from walk over entry box."""
