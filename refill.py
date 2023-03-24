@@ -24,6 +24,7 @@ class RefillTemplate:
         self.btn_relief = 'sunken' # sunken, raised, groove, ridge
         self.btn_space_btwn = 5
         self.labelFrame_font = ('Comic Sans MS', 11, 'normal')
+        self.labelFrame_space_btwn = 5
         self.label_font = ('Comic Sans MS', 11, 'normal')
         self.entry_font = ('Comic Sans MS', 11, 'normal')
         self.canvas_padx = 10
@@ -145,7 +146,7 @@ class RefillTemplate:
         self.medication_on_hand_labelFrame = tk.LabelFrame(
             self.top, text='Medication On Hand', bg=self.background_color, font=self.labelFrame_font
             )
-        self.medication_on_hand_labelFrame.grid(column=0, row=4, sticky='w')
+        self.medication_on_hand_labelFrame.grid(column=0, row=4, sticky='w', pady=(self.labelFrame_space_btwn, 0))
         #   Day supply canvas
         self.day_supply_canvas = tk.Canvas(
             self.medication_on_hand_labelFrame, bg=self.background_color, highlightthickness=0
@@ -194,7 +195,7 @@ class RefillTemplate:
         self.dispense_date_labelFrame = tk.LabelFrame(
             self.top, text='Dispense Date', bg=self.background_color, font=self.labelFrame_font
             )
-        self.dispense_date_labelFrame.grid(column=0, row=5, sticky='w')
+        self.dispense_date_labelFrame.grid(column=0, row=5, sticky='w', pady=(self.labelFrame_space_btwn, 0))
         #   Dispense btn canvas
         self.dispense_btn_canvas = tk.Canvas(
             self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0
@@ -296,7 +297,7 @@ class RefillTemplate:
         self.medication_efficacy_labelFrame = tk.LabelFrame(
             self.top, text='Medication Efficacy', bg=self.background_color, font=self.labelFrame_font
             )
-        self.medication_efficacy_labelFrame.grid(column=0, row=6, sticky='w')
+        self.medication_efficacy_labelFrame.grid(column=0, row=6, sticky='w', pady=(self.labelFrame_space_btwn, 0))
         #   Medication efficacy canvas
         self.medication_efficacy_canvas = tk.Canvas(
             self.medication_efficacy_labelFrame, bg=self.background_color, highlightthickness=0
@@ -336,7 +337,7 @@ class RefillTemplate:
         self.spoke_with_labelFrame = tk.LabelFrame(
             self.top, text='Spoke with:', bg=self.background_color, font=self.labelFrame_font
             )
-        self.spoke_with_labelFrame.grid(column=0, row=7, sticky='w')
+        self.spoke_with_labelFrame.grid(column=0, row=7, sticky='w', pady=(self.labelFrame_space_btwn, 0))
         #   Spoke with canvas
         self.spoke_with_canvas = tk.Canvas(
             self.spoke_with_labelFrame, bg=self.background_color, highlightthickness=0
