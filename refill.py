@@ -22,6 +22,7 @@ class RefillTemplate:
         self.select_btn_bg_color = 'RoyalBlue4'
         self.btn_borderwidth = 0
         self.btn_relief = 'sunken' # sunken, raised, groove, ridge
+        self.btn_space_btwn = 5
         self.labelFrame_font = ('Comic Sans MS', 11, 'normal')
         self.label_font = ('Comic Sans MS', 11, 'normal')
         self.entry_font = ('Comic Sans MS', 11, 'normal')
@@ -176,7 +177,7 @@ class RefillTemplate:
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
-        self.cycle_btn.grid(column=1, row=0)
+        self.cycle_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
         # Due/start label
         self.due_start_label = tk.Label(
             self.injection_cycle_canvas, text='due/starts', bg=self.background_color, font=self.label_font
@@ -211,7 +212,7 @@ class RefillTemplate:
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
-        self.dispense_fedex_btn.grid(column=1, row=0)
+        self.dispense_fedex_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
         # Pickup button
         self.dispense_pickup_btn = tk.Button(
             self.dispense_btn_canvas, text='Pickup', command=self.select_pickup,
@@ -219,7 +220,7 @@ class RefillTemplate:
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
-        self.dispense_pickup_btn.grid(column=2, row=0)
+        self.dispense_pickup_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
         # Walkover button
         self.dispense_walkover_btn = tk.Button(
             self.dispense_btn_canvas, text='Walkover', command=self.select_walkover,
@@ -227,12 +228,13 @@ class RefillTemplate:
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
-        self.dispense_walkover_btn.grid(column=3, row=0)
-        # Walkover location label
-        self.dispense_walkover_label = tk.Label(
-            self.dispense_btn_canvas, text='Inpatient', bg=self.background_color, font=self.label_font
+        self.dispense_walkover_btn.grid(column=3, row=0, padx=(self.btn_space_btwn, 0))
+        # Walkover location entry
+        self.dispense_walkover_entry = tk.Entry(
+            self.dispense_btn_canvas, font=self.entry_font, bg=self.entry_bg_color,
+            relief=self.entry_relief, state='disabled'
             )
-        self.dispense_walkover_label.grid(column=4, row=0) ### Create top level window to select walk over location
+        self.dispense_walkover_entry.grid(column=4, row=0, padx=(self.btn_space_btwn, 0))
         #   Dispense date canvas
         self.dispense_date_canvas = tk.Canvas(
             self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0
@@ -271,7 +273,7 @@ class RefillTemplate:
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
-        self.dispense_signature_no_btn.grid(column=2, row=0)
+        self.dispense_signature_no_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
         #   Comments canvas
         self.dispense_comments_canvas = tk.Canvas(
             self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0
@@ -316,7 +318,7 @@ class RefillTemplate:
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
-        self.medication_efficacy_alot_btn.grid(column=2, row=0)
+        self.medication_efficacy_alot_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
         # Can't tell button
         self.medication_efficacy_cantTell_btn = tk.Button(
             self.medication_efficacy_canvas, text='Can\'t tell', command=self.select_cant_tell,
@@ -324,7 +326,7 @@ class RefillTemplate:
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
-        self.medication_efficacy_cantTell_btn.grid(column=3, row=0)
+        self.medication_efficacy_cantTell_btn.grid(column=3, row=0, padx=(self.btn_space_btwn, 0))
 
         # === Spoke with label frame === #
         self.spoke_with_labelFrame = tk.LabelFrame(
