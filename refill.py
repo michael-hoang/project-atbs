@@ -337,7 +337,10 @@ class RefillTemplate:
             )
         self.spoke_with_canvas.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Spoke with entry
-        self.spoke_with_entry = tk.Entry(self.spoke_with_canvas, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief)
+        self.spoke_with_entry = tk.Entry(
+            self.spoke_with_canvas, font=self.entry_font, bg=self.entry_bg_color,
+            relief=self.entry_relief, width=25
+            )
         self.spoke_with_entry.grid(column=0, row=0)
         
 
