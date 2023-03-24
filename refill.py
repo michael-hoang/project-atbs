@@ -69,11 +69,17 @@ class RefillTemplate:
 
         
         
+        # === Container for Medication label frame and Clear button === #
+        self.container_top = tk.Canvas(
+            self.top, bg=self.background_color, highlightthickness=0
+            )
+        self.container_top.grid(column=0, row=1, sticky='w')
+
         # === Medication label frame === #
         self.medication_labelFrame = tk.LabelFrame(
-            self.top, text='Medication', bg=self.background_color, font=self.labelFrame_font
+            self.container_top, text='Medication', bg=self.background_color, font=self.labelFrame_font
             )
-        self.medication_labelFrame.grid(column=0, row=1, sticky='w')
+        self.medication_labelFrame.grid(column=0, row=0, sticky='w')
         #   Medication canvas
         self.medication_canvas = tk.Canvas(
             self.medication_labelFrame, bg=self.background_color, highlightthickness=0
@@ -85,6 +91,14 @@ class RefillTemplate:
             relief=self.entry_relief, width=30
             )
         self.medication_entry.grid(column=1, row=0, sticky='w')
+        
+        # Clear button
+        self.clear_btn = tk.Button(
+            self.container_top, text='Clear', command='', bg='ghost white', relief='raised',
+            fg='red', font=self.btn_font, activebackground='ghost white',
+            activeforeground='red', width=9
+            )
+        self.clear_btn.grid(column=1, row=0, padx=20)
 
         # # === HIPAA label frame === #
         # self.hipaa_labelFrame = tk.LabelFrame(self.top, text='Methods of HIPAA Verfication')
