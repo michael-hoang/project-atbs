@@ -255,7 +255,7 @@ class RefillTemplate:
         self.dispense_signature_label.grid(column=0, row=0)
         # Yes button
         self.dispense_signature_yes_btn = tk.Button(
-            self.dispense_signature_canvas, text='Yes', command='',
+            self.dispense_signature_canvas, text='Yes', command=self.select_yes_sig,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -263,7 +263,7 @@ class RefillTemplate:
         self.dispense_signature_yes_btn.grid(column=1, row=0)
         # No button
         self.dispense_signature_no_btn = tk.Button(
-            self.dispense_signature_canvas, text='No', command='',
+            self.dispense_signature_canvas, text='No', command=self.select_no_sig,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -396,7 +396,24 @@ class RefillTemplate:
         self.dispense_walkover_btn.config(bg=self.btn_bg_color, command=self.select_walkover)
         self.dispense_method = ''
 
-
+    def select_yes_sig(self):
+        """Select Yes signature button."""
+        self.dispense_signature_yes_btn.config(bg=self.select_btn_bg_color, command=self._unselect_yes_no_sig) 
+        self.dispense_signature_no_btn.config(bg=self.btn_bg_color, command=self.select_no_sig)
+        self.signature_required = 'signature required'
+        
+    def select_no_sig(self):
+        """Select No signature button."""
+        self.dispense_signature_yes_btn.config(bg=self.btn_bg_color, command=self.select_yes_sig) 
+        self.dispense_signature_no_btn.config(bg=self.select_btn_bg_color, command=self._unselect_yes_no_sig)
+        self.signature_required = 'no signature'
+        
+    def _unselect_yes_no_sig(self):
+        """Unselect Yes/No signature button."""
+        self.dispense_signature_yes_btn.config(bg=self.btn_bg_color, command=self.select_yes_sig) 
+        self.dispense_signature_no_btn.config(bg=self.btn_bg_color, command=self.select_no_sig)
+        self.signature_required = ''
+        
 
 
 
