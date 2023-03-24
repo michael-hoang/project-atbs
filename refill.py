@@ -14,7 +14,7 @@ class RefillTemplate:
 
         # Initialize settings
         self.background_color = 'white'
-        self.btn_font = ('Comic Sans MS', 12, 'normal')
+        self.btn_font = ('Comic Sans MS', 11, 'normal')
         self.btn_text_color = 'white'
         self.btn_active_fg_color = 'white'
         self.btn_bg_color = 'RoyalBlue1'
@@ -22,9 +22,9 @@ class RefillTemplate:
         self.select_btn_bg_color = 'RoyalBlue4'
         self.btn_borderwidth = 0
         self.btn_relief = 'sunken' # sunken, raised, groove, ridge
-        self.labelFrame_font = ('Comic Sans MS', 12, 'normal')
-        self.label_font = ('Comic Sans MS', 12, 'normal')
-        self.entry_font = ('Comic Sans MS', 12, 'normal')
+        self.labelFrame_font = ('Comic Sans MS', 11, 'normal')
+        self.label_font = ('Comic Sans MS', 11, 'normal')
+        self.entry_font = ('Comic Sans MS', 11, 'normal')
         self.canvas_padx = 10
         self.canvas_pady = 10
         self.entry_bg_color = 'gray92'
@@ -161,14 +161,14 @@ class RefillTemplate:
             )
         self.injection_cycle_canvas.grid(column=0, row=1, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         self.injection_btn = tk.Button(
-            self.injection_cycle_canvas, text='Injection', command=self.injection,
+            self.injection_cycle_canvas, text='Injection', command=self.select_injection,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
         self.injection_btn.grid(column=0, row=0)
         self.cycle_btn = tk.Button(
-            self.injection_cycle_canvas, text='Cycle', command=self.cycle,
+            self.injection_cycle_canvas, text='Cycle', command=self.select_cycle,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -338,18 +338,29 @@ class RefillTemplate:
         self.spoke_with_entry.grid(column=0, row=0)
         
 
-    def injection(self):
-        """Injection"""
-        self.injection_btn.config(bg=self.select_btn_bg_color)
-        self.cycle_btn.config(bg=self.btn_bg_color)
+    def select_injection(self):
+        """Select injection"""
+        self.injection_btn.config(bg=self.select_btn_bg_color, command=self.unselect_injection)
+        self.cycle_btn.config(bg=self.btn_bg_color, command=self.select_cycle)
         self.injection_cycle = 'Injection is due on'
 
-    def cycle(self):
-        """Cycle"""
-        self.injection_btn.config(bg=self.btn_bg_color)
-        self.cycle_btn.config(bg=self.select_btn_bg_color)
+    def unselect_injection(self):
+        """Unselect injection"""
+        self.injection_btn.config(bg=self.btn_bg_color, command=self.select_injection)
+        self.cycle_btn.config(bg=self.btn_bg_color, command=self.select_cycle)
+        self.injection_cycle = ''
+
+    def select_cycle(self):
+        """Select cycle"""
+        self.injection_btn.config(bg=self.btn_bg_color, command=self.select_injection)
+        self.cycle_btn.config(bg=self.select_btn_bg_color, command=self.unselect_cycle)
         self.injection_cycle = 'Next cycle starts on'
-        
+    
+    def unselect_cycle(self):
+        """Unselect cycle"""
+        self.injection_btn.config(bg=self.btn_bg_color, command=self.select_injection)
+        self.cycle_btn.config(bg=self.btn_bg_color, command=self.select_cycle)
+        self.injection_cycle = ''
 
         
 
