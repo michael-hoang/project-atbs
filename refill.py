@@ -244,15 +244,15 @@ class RefillTemplate:
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
         self.dispense_fedex_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
-        # Pickup button
+        # Pick up button
         self.dispense_pickup_btn = tk.Button(
-            self.dispense_btn_canvas, text='Pickup', command=self.select_pickup,
+            self.dispense_btn_canvas, text='Pick Up', command=self.select_pickup,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
         self.dispense_pickup_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
-        # Walkover button
+        # Walk over button
         self.dispense_walkover_btn = tk.Button(
             self.dispense_btn_canvas, text='Walk Over', command=self.select_walkover,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
@@ -462,7 +462,7 @@ class RefillTemplate:
         self.dispense_walkover_entry.config(state='disabled')
 
     def select_pickup(self):
-        """Select Pickup button."""
+        """Select Pick Up button."""
         self.dispense_dcs_btn.config(bg=self.btn_bg_color, command=lambda: [self.select_dcs(), self._enable_yes_no_btn()])
         self.dispense_fedex_btn.config(bg=self.btn_bg_color, command=lambda: [self.select_fedex(), self._enable_yes_no_btn()])
         self.dispense_pickup_btn.config(bg=self.select_btn_bg_color, command=self._unselect_pickup_walkover)
@@ -503,7 +503,7 @@ class RefillTemplate:
         self.dispense_walkover_entry.config(state='disabled')
   
     def _unselect_pickup_walkover(self):
-        """Unselect Pickup/Walk Over button."""
+        """Unselect Pick Up/Walk Over button."""
         self.dispense_dcs_btn.config(bg=self.btn_bg_color, command=self.select_dcs)
         self.dispense_fedex_btn.config(bg=self.btn_bg_color, command=self.select_fedex)
         self.dispense_pickup_btn.config(bg=self.btn_bg_color, command=self.select_pickup)
@@ -515,7 +515,7 @@ class RefillTemplate:
         self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
 
     def _enable_yes_no_btn(self):
-        """Enable Yes and No buttons when selecting away from Pickup or Walk Over."""
+        """Enable Yes and No buttons when selecting away from Pick Up or Walk Over."""
         self.dispense_signature_yes_btn.config(
             state='normal', bg=self.btn_bg_color, command=self.select_yes_sig,
             fg=self.btn_text_color
@@ -593,7 +593,16 @@ class RefillTemplate:
 
     def _check_copy_wam_notes_conditions(self) -> bool:
         """Check if Copy WAM Notes conditions are met."""
-        print(self.signature_required)
+        dispense_date_entry_not_empty = self.dispense_date_entry.get().strip()
+        walkover_location = self.dispense_walkover_entry.get().strip()
+        if self.dispense_method in ('DCS', 'FedEx') and dispense_date_entry_not_empty and self.signature_required:
+            self.copy_wam_notes_btn.config(state='normal')
+        elif self.dispense_method == 'Pick up' and dispense_date_entry_not_empty:
+            self.copy_wam_notes_btn.config(state='normal')
+        elif self.dispense_method == 'Walk over' and dispense_date_entry_not_empty and walkover_location not in ('-> enter location <-', ''):
+            self.copy_wam_notes_btn.config(state='normal')
+        else:
+            self.copy_wam_notes_btn.config(state='disabled')  
 
     def _check_copy_template_conditions(self) -> bool:
         """Check if Copy Template conditions are met."""
