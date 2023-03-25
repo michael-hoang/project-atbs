@@ -14,6 +14,7 @@ class RefillTemplate:
 
         # Initialize settings
         self.background_color = 'white'
+            # Buttons
         self.btn_font = ('Comic Sans MS', 11, 'normal')
         self.btn_text_color = 'white'
         self.btn_active_fg_color = 'white'
@@ -23,14 +24,23 @@ class RefillTemplate:
         self.btn_borderwidth = 0
         self.btn_relief = 'sunken' # sunken, raised, groove, ridge
         self.btn_space_btwn = 5
+            # Label frames
         self.labelFrame_font = ('Comic Sans MS', 11, 'normal')
         self.labelFrame_space_btwn = 5
         self.label_font = ('Comic Sans MS', 11, 'normal')
+            # Entry
         self.entry_font = ('Comic Sans MS', 11, 'normal')
-        self.canvas_padx = 10
-        self.canvas_pady = 10
         self.entry_bg_color = 'gray92'
         self.entry_relief = 'flat'
+            # Canvas
+        self.canvas_padx = 10
+        self.canvas_pady = 10
+            # Copy buttons
+        self.copy_btn_bg_color = 'ghost white'
+        self.copy_btn_fg_color = 'medium sea green'
+        self.copy_btn_active_bg_color = '#ebfff3'
+        self.copy_btn_active_fg_color = 'medium sea green'
+        self.copy_btn_disabled_fg_color = 'snow3'
     
 
         # Initialize GUI window
@@ -274,9 +284,10 @@ class RefillTemplate:
         # Copy WAM notes button (@ canvas widget level, master is top level window)
         self.copy_wam_notes_btn = tk.Button(
             self.dispense_date_labelFrame, text='Copy WAM Notes', command='',
-            bg='ghost white', relief='raised', fg='medium sea green', font=self.btn_font,
-            activebackground='#ebfff3', activeforeground='medium sea green', width=11,
-            wraplength=80
+            bg=self.copy_btn_bg_color, relief='raised', fg=self.copy_btn_fg_color,
+            font=self.btn_font, activebackground=self.copy_btn_active_bg_color,
+            activeforeground=self.copy_btn_active_fg_color, width=11,
+            wraplength=80, state='disabled', disabledforeground=self.copy_btn_disabled_fg_color
             )
         self.copy_wam_notes_btn.grid(column=0, row=2, rowspan=3, padx=(275,0), pady=(20,0))
 
@@ -380,9 +391,11 @@ class RefillTemplate:
 
         # Copy template button
         self.copy_template_btn = tk.Button(
-            self.top, text='Copy Template', command='',
-            bg='ghost white', relief='raised', fg='medium sea green', font=self.btn_font,
-            activebackground='#ebfff3', activeforeground='medium sea green', width=14,
+            self.top, text='Copy Template', command='', bg=self.copy_btn_bg_color,
+            relief='raised', fg=self.copy_btn_fg_color, font=self.btn_font,
+            activebackground=self.copy_btn_active_bg_color,
+            activeforeground=self.copy_btn_active_fg_color, width=14, state='disabled',
+            disabledforeground=self.copy_btn_disabled_fg_color
             )
         self.copy_template_btn.grid(column=0, row=7, padx=(260,0), pady=(15,0))
 
