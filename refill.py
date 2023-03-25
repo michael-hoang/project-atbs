@@ -96,7 +96,7 @@ class RefillTemplate:
         # Clear button
         self.clear_btn = tk.Button(
             self.container_top, text='Clear', command=self.clear, bg='ghost white', relief='raised',
-            fg='firebrick1', font=self.btn_font, activebackground='ghost white',
+            fg='firebrick1', font=self.btn_font, activebackground='#ffebeb',
             activeforeground='firebrick1', width=9
             )
         self.clear_btn.grid(column=1, row=0, padx=(20,0))
@@ -273,9 +273,9 @@ class RefillTemplate:
 
         # Copy WAM notes button (@ canvas widget level, master is top level window)
         self.copy_wam_notes_btn = tk.Button(
-            self.dispense_date_labelFrame, text='Copy WAM Notes', command=self.clear,
+            self.dispense_date_labelFrame, text='Copy WAM Notes', command='',
             bg='ghost white', relief='raised', fg='medium sea green', font=self.btn_font,
-            activebackground='ghost white', activeforeground='medium sea green', width=11,
+            activebackground='#ebfff3', activeforeground='medium sea green', width=11,
             wraplength=80
             )
         self.copy_wam_notes_btn.grid(column=0, row=2, rowspan=3, padx=(275,0), pady=(20,0))
@@ -377,6 +377,14 @@ class RefillTemplate:
             relief=self.entry_relief, width=25
             )
         self.spoke_with_entry.grid(column=0, row=0)
+
+        # Copy template button
+        self.copy_template_btn = tk.Button(
+            self.top, text='Copy Template', command='',
+            bg='ghost white', relief='raised', fg='medium sea green', font=self.btn_font,
+            activebackground='#ebfff3', activeforeground='medium sea green', width=14,
+            )
+        self.copy_template_btn.grid(column=0, row=7, padx=(260,0), pady=(15,0))
 
 
         # ~ ~ ~ bind ~ ~ ~ #
