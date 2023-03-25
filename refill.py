@@ -404,6 +404,8 @@ class RefillTemplate:
         self.dispense_walkover_entry.bind('<FocusIn>', self.remove_temp_text)
         self.top.bind('<Delete>', self.clear)
         
+        # ~ ~ ~ after ~ ~ ~ #
+        self.top.after(ms=50, func=self.validate_copy_btns)
 
     def select_injection(self):
         """Select injection button."""
@@ -552,6 +554,20 @@ class RefillTemplate:
         self._unselect_alittle_alot_cant_tell()
         self.medication_entry.focus()
         
+    def validate_copy_btns(self):
+        """Check and enable copy buttons if conditions are met."""
+        self._check_copy_wam_notes_conditions()
+
+        self.top.after(ms=50, func=self.validate_copy_btns)
+
+    def _check_copy_wam_notes_conditions(self) -> bool:
+        """Check if Copy WAM Notes conditions are met."""
+        if self.dispense_method and self.dispense_date_entry.get().split() and self.signature_required:
+            self.copy_wam_notes_btn.config(state='normal')
+
+    def _check_copy_template_conditions(self) -> bool:
+        """Check if Copy Template conditions are met."""
+
 
 
 if __name__ == '__main__':
