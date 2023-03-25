@@ -370,6 +370,7 @@ class RefillTemplate:
 
         # ~ ~ ~ bind ~ ~ ~ #
         self.dispense_walkover_entry.bind('<FocusIn>', self.remove_temp_text)
+        self.top.bind('<Delete>', self.clear)
         
 
     def select_injection(self):
@@ -505,7 +506,7 @@ class RefillTemplate:
         self.medication_efficacy_cantTell_btn.config(bg=self.btn_bg_color, command=self.select_cant_tell)
         self.medication_working = ''
 
-    def clear(self):
+    def clear(self, e=None):
         """Clear all inputs."""
         self.medication_entry.delete(0, 'end')
         self.day_supply_entry.delete(0, 'end')
