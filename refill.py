@@ -38,7 +38,7 @@ class RefillTemplate:
             # Copy buttons
         self.copy_btn_bg_color = 'ghost white'
         self.copy_btn_fg_color = 'medium sea green'
-        self.copy_btn_active_bg_color = '#ebfff3'
+        self.copy_btn_active_bg_color = 'ghost white' # #ebfff3
         self.copy_btn_active_fg_color = 'medium sea green'
         self.copy_btn_disabled_fg_color = 'snow3'
     
@@ -106,7 +106,7 @@ class RefillTemplate:
         # Clear button
         self.clear_btn = tk.Button(
             self.container_top, text='Clear', command=self.clear, bg='ghost white', relief='raised',
-            fg='firebrick1', font=self.btn_font, activebackground='#ffebeb',
+            fg='firebrick1', font=self.btn_font, activebackground='ghost white',
             activeforeground='firebrick1', width=9
             )
         self.clear_btn.grid(column=1, row=0, padx=(20,0))
@@ -287,7 +287,7 @@ class RefillTemplate:
             bg=self.copy_btn_bg_color, relief='raised', fg=self.copy_btn_fg_color,
             font=self.btn_font, activebackground=self.copy_btn_active_bg_color,
             activeforeground=self.copy_btn_active_fg_color, width=11,
-            wraplength=80, state='disabled', disabledforeground=self.copy_btn_disabled_fg_color
+            wraplength=80, disabledforeground=self.copy_btn_disabled_fg_color
             )
         self.copy_wam_notes_btn.grid(column=0, row=2, rowspan=3, padx=(275,0), pady=(20,0))
 
@@ -396,7 +396,7 @@ class RefillTemplate:
             self.top, text='Copy Template', command='', bg=self.copy_btn_bg_color,
             relief='raised', fg=self.copy_btn_fg_color, font=self.btn_font,
             activebackground=self.copy_btn_active_bg_color,
-            activeforeground=self.copy_btn_active_fg_color, width=14, state='disabled',
+            activeforeground=self.copy_btn_active_fg_color, width=14,
             disabledforeground=self.copy_btn_disabled_fg_color
             )
         self.copy_template_btn.grid(column=0, row=7, padx=(260,0), pady=(15,0))
@@ -595,11 +595,9 @@ class RefillTemplate:
         """Check if Copy WAM Notes conditions are met."""
         dispense_date_entry_not_empty = self.dispense_date_entry.get().strip()
         walkover_location = self.dispense_walkover_entry.get().strip()
-        if self.dispense_method in ('DCS', 'FedEx') and dispense_date_entry_not_empty and self.signature_required:
-            self.copy_wam_notes_btn.config(state='normal')
-        elif self.dispense_method == 'Pick up' and dispense_date_entry_not_empty:
-            self.copy_wam_notes_btn.config(state='normal')
-        elif self.dispense_method == 'Walk over' and dispense_date_entry_not_empty and walkover_location not in ('-> enter location <-', ''):
+        if self.dispense_method in ('DCS', 'FedEx') and dispense_date_entry_not_empty and self.signature_required\
+        or self.dispense_method == 'Pick up' and dispense_date_entry_not_empty\
+        or self.dispense_method == 'Walk over' and dispense_date_entry_not_empty and walkover_location not in ('-> enter location <-', ''):
             self.copy_wam_notes_btn.config(state='normal')
         else:
             self.copy_wam_notes_btn.config(state='disabled')  
