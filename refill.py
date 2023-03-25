@@ -96,8 +96,8 @@ class RefillTemplate:
         # Clear button
         self.clear_btn = tk.Button(
             self.container_top, text='Clear', command=self.clear, bg='ghost white', relief='raised',
-            fg='red', font=self.btn_font, activebackground='ghost white',
-            activeforeground='red', width=9
+            fg='firebrick1', font=self.btn_font, activebackground='ghost white',
+            activeforeground='firebrick1', width=9
             )
         self.clear_btn.grid(column=1, row=0, padx=(20,0))
 
@@ -244,7 +244,7 @@ class RefillTemplate:
         self.dispense_pickup_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
         # Walkover button
         self.dispense_walkover_btn = tk.Button(
-            self.dispense_btn_canvas, text='Walkover', command=self.select_walkover,
+            self.dispense_btn_canvas, text='Walk Over', command=self.select_walkover,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -270,11 +270,21 @@ class RefillTemplate:
         # Dispense date entry
         self.dispense_date_entry = tk.Entry(self.dispense_date_canvas, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief)
         self.dispense_date_entry.grid(column=3, row=1)
+
+        # Copy WAM notes button (@ canvas widget level, master is top level window)
+        self.copy_wam_notes_btn = tk.Button(
+            self.dispense_date_labelFrame, text='Copy WAM Notes', command=self.clear,
+            bg='ghost white', relief='raised', fg='medium sea green', font=self.btn_font,
+            activebackground='ghost white', activeforeground='medium sea green', width=11,
+            wraplength=80
+            )
+        self.copy_wam_notes_btn.grid(column=0, row=2, rowspan=3, padx=(275,0), pady=(20,0))
+
         #   Signature canvas
         self.dispense_signature_canvas = tk.Canvas(
             self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0
             )
-        self.dispense_signature_canvas.grid(column=0, row=2, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
+        self.dispense_signature_canvas.grid(column=0, row=3, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Signature label
         self.dispense_signature_label = tk.Label(
             self.dispense_signature_canvas, text='Signature required?', bg=self.background_color, font=self.label_font
@@ -296,11 +306,12 @@ class RefillTemplate:
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
         self.dispense_signature_no_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
+
         #   Comments canvas
         self.dispense_comments_canvas = tk.Canvas(
             self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0
             )
-        self.dispense_comments_canvas.grid(column=0, row=3, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
+        self.dispense_comments_canvas.grid(column=0, row=4, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Comments label
         self.dispense_comments_label = tk.Label(
             self.dispense_comments_canvas, text='Comments:', bg=self.background_color, font=self.label_font
