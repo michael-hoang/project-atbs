@@ -641,6 +641,7 @@ class RefillTemplate:
         """Recursively execute various validation methods."""
         self._validate_copy_btns()
         self._validate_fedex_delivery_label()
+        self._update_variables()
 
         self.top.after(ms=50, func=self.run_validations)
     
@@ -672,7 +673,7 @@ class RefillTemplate:
         """Check if Copy Template conditions are met."""
         medication_entry_not_empty = self.medication_entry.get().strip()
         day_supply_entry_not_empty = self.day_supply_entry.get().strip()
-        if medication_entry_not_empty and day_supply_entry_not_empty and self.medication_working:
+        if medication_entry_not_empty and day_supply_entry_not_empty and self.medication_working and self.spoke_with:
             return True
         else:
             return False
@@ -719,6 +720,10 @@ class RefillTemplate:
         except:
             return ''
         
+    def _update_variables(self):
+        """Update variables from user entry."""
+        self.spoke_with = self.spoke_with_entry.get().strip()
+    
 
 if __name__ == '__main__':
     root = tk.Tk()
