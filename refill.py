@@ -1,6 +1,7 @@
 """ This module contains a class that represents Refill Coordination form."""
 
 import tkinter as tk
+import datetime as dt
 from tkinter import messagebox, END
 from PIL import Image, ImageTk
 from win32 import win32clipboard
@@ -67,6 +68,7 @@ class RefillTemplate:
         self.signature_required = ''
         self.dispense_comments = ''
         self.walkover_location = ''
+        self.fedex_delivery_date = ''
         self.allergies_review = 'Yes'
         self.new_allergies = 'No'
         self.medication_review = 'Yes'
@@ -638,6 +640,7 @@ class RefillTemplate:
     def run_validations(self):
         """Recursively execute various validation methods."""
         self._validate_copy_btns()
+        self._validate_fedex_delivery_label()
 
         self.top.after(ms=50, func=self.run_validations)
     
@@ -674,6 +677,48 @@ class RefillTemplate:
         else:
             return False
 
+    def _validate_fedex_delivery_label(self):
+        """Check and enable FedEx delivery date label."""
+        if self.dispense_method == 'FedEx':
+            valid_delivery_date = self._calculate_fedex_delivery_date()
+            if valid_delivery_date:
+                self.fedex_delivery_date = valid_delivery_date
+                self.fedex_delivery_label.config(text=f'for {self.fedex_delivery_date} delivery')
+            else:
+                self.fedex_delivery_date = ''
+                self.fedex_delivery_label.config(text='')
+        else:
+            self.fedex_delivery_date = ''
+            self.fedex_delivery_label.config(text='')
+
+
+    def _calculate_fedex_delivery_date(self) -> str:
+        """Calculate FedEx delivery date."""
+        current_date = dt.datetime.now()
+        split_ship_date = []
+        try:
+            entered_ship_date = self.dispense_date_entry.get().strip()
+            if '/' in entered_ship_date:
+                split_ship_date = entered_ship_date.split('/')
+            elif '-' in entered_ship_date:
+                split_ship_date = entered_ship_date.split('-')
+
+            if split_ship_date:
+                ship_month = int(split_ship_date[0])
+                ship_day = int(split_ship_date[1])
+                if current_date.month == 12:
+                    if ship_month != 12:
+                        ship_year = current_date.year + 1 # next year
+                    else:
+                        ship_year = current_date.year
+                else:
+                    ship_year = current_date.year
+
+            delivery_date = dt.date(ship_year, ship_month, ship_day) + dt.timedelta(days=1)
+            return f'{delivery_date.month}/{delivery_date.day}'
+        except:
+            return ''
+        
 
 if __name__ == '__main__':
     root = tk.Tk()
