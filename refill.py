@@ -2,6 +2,7 @@
 
 import tkinter as tk
 import datetime as dt
+import os, sys, subprocess, json
 from tkinter import messagebox
 from PIL import Image, ImageTk
 from win32 import win32clipboard
@@ -47,15 +48,16 @@ class RefillTemplate:
         self.copy_btn_active_fg_color = 'medium sea green'
         self.copy_btn_disabled_fg_color = 'snow3'
     
-
         # Initialize GUI window
         self.top = tk.Toplevel()
+        self.top.withdraw()
+        self.top.attributes('-topmost', 0)
         self.top.title('Refill Coordination')
         self.top.config(bg=self.background_color, padx=20, pady=20)
         self.top.resizable(False, False)
 
         # Initialize variables
-        self.user = ''
+        self.user = self.get_existing_user()
         self.medication_name = ''
         self.hipaa_verification = ''
         self.changes = 'None'
@@ -95,7 +97,7 @@ class RefillTemplate:
         img = Image.open(img_path)
         self.edit_user_img = ImageTk.PhotoImage(img)
         self.edit_user_btn = tk.Button(
-            self.container_top_buttons, image=self.edit_user_img, command='',
+            self.container_top_buttons, image=self.edit_user_img, command=self.user_setup_window,
             bg=self.copy_btn_bg_color
             )
         self.edit_user_btn.grid(column=0, row=0, padx=(0, 15))
@@ -432,13 +434,40 @@ class RefillTemplate:
             )
         self.copy_template_btn.grid(column=0, row=7, padx=(260,0), pady=(15,0))
 
-
         # ~ ~ ~ bind ~ ~ ~ #
         self.dispense_walkover_entry.bind('<FocusIn>', self.remove_temp_text)
         self.top.bind('<Delete>', self.clear)
         
         # ~ ~ ~ after ~ ~ ~ #
         self.top.after(ms=50, func=self.run_validations)
+
+        # ~ ~ ~ Center window ~ ~ ~ #
+        self.top.update_idletasks()
+        win_width = self.top.winfo_reqwidth()
+        win_height = self.top.winfo_reqheight()
+        screen_width = self.top.winfo_screenwidth()
+        screen_height = self.top.winfo_screenheight()
+        x = int(screen_width/2 - win_width/2)
+        y = int(screen_height/2 - win_width/2)
+        self.top.geometry(f"{win_width}x{win_height}+{x}+{y}")
+        if self.user:
+            self.top.deiconify()
+            self.medication_entry.focus()
+
+        # ~ ~ ~ Check user ~ ~ ~ #
+        if self.user == '':
+            relative_path = '.data'
+            if getattr(sys, 'frozen', False):
+                application_path = os.path.dirname(sys.executable)
+            elif __file__:
+                application_path = os.path.dirname(__file__)
+
+            absolute_path = os.path.join(application_path, relative_path)
+            if not os.path.exists(absolute_path):
+                self._create_data_dir(absolute_path)
+
+            self.user_setup_window()
+
 
     def select_injection(self):
         """Select injection button."""
@@ -737,7 +766,103 @@ class RefillTemplate:
     def _update_variables(self):
         """Update variables from user entry."""
         self.spoke_with = self.spoke_with_entry.get().strip()
+
+    def get_existing_user(self) -> str:
+        """Get existing user from user.json file."""
+        try:
+            with open('.data/user.json', 'r') as f:
+                data = json.load(f)
+                first_name = data['first_name'].title()
+                last_name = data['last_name'].title()
+                return f'{first_name} {last_name}'
+        except:
+            return ''
+
+    def _create_user_json(self, first_name: str, last_name: str):
+        """Create user.json file."""
+        with open('.data/user.json', 'w') as f:
+            data = {'first_name': first_name, 'last_name': last_name}
+            json.dump(data, f, indent=4)
     
+    def _create_data_dir(self, path: str):
+        """Create .data directory."""
+        os.mkdir(path)
+        subprocess.call(["attrib", "+h", path]) # hidden directory
+
+    def user_setup_window(self):
+        """Graphic user interface for setting up a new user."""
+        setup_window = tk.Toplevel(self.top)
+        setup_window.withdraw()
+        setup_window.title('User')
+        setup_window.config(bg=self.background_color, padx=20, pady=20)
+        setup_window.resizable(False, False)
+
+        first_name_label = tk.Label(
+            setup_window, text='First Name:', bg=self.background_color, font=self.label_font
+            )
+        first_name_label.grid(column=0, row=0)
+        first_name_entry = tk.Entry(
+            setup_window, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief
+            )
+        first_name_entry.grid(column=1, row=0)
+        
+        last_name_label = tk.Label(
+            setup_window, text='Last Name:', bg=self.background_color, font=self.label_font
+            )
+        last_name_label.grid(column=0, row=1)
+        last_name_entry = tk.Entry(
+            setup_window, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief
+            )
+        last_name_entry.grid(column=1, row=1)
+
+        ok_btn = tk.Button(
+            setup_window, text='OK', bg=self.copy_btn_bg_color, relief='raised',
+            font=self.btn_font, activebackground=self.copy_btn_bg_color, width=9,
+            command=''
+            )
+        ok_btn.grid(column=0, row=2, columnspan=2)
+
+        # Center setup window to screen
+        if self.user == '':
+            setup_window.update_idletasks()
+            setup_window_width = setup_window.winfo_reqwidth()
+            setup_window_height = setup_window.winfo_reqheight()
+            screen_width = setup_window.winfo_screenwidth()
+            screen_height = setup_window.winfo_screenheight()
+            x = int(screen_width/2 - setup_window_width/2)
+            y = int(screen_height/2 - setup_window_width/2)
+            setup_window.geometry(f"{setup_window_width}x{setup_window_height}+{x}+{y}")
+            
+        else: # center setup window to top window
+            setup_window.update_idletasks()
+            top_x = self.top.winfo_x()
+            top_y = self.top.winfo_y()
+            top_width = self.top.winfo_reqwidth()
+            top_height = self.top.winfo_reqheight()
+            setup_window_width = setup_window.winfo_reqwidth()
+            setup_window_height = setup_window.winfo_reqheight()
+            dx = int((top_width / 2) - (setup_window_width / 2))
+            dy = int((top_height / 2) - (setup_window_height / 2))
+            setup_window.geometry('+%d+%d' % (top_x + dx, top_y + dy))
+
+        self.top.attributes('-disabled', 1)
+        setup_window.wm_transient(self.top)
+        setup_window.attributes('-topmost', 1)
+        setup_window.deiconify()
+        first_name_entry.focus()
+        
+        setup_window.protocol('WM_DELETE_WINDOW', lambda: self.on_closing_user_setup_window(setup_window))
+
+    def on_closing_user_setup_window(self, setup_window):
+        """Enable top window on closing user setup window."""
+        if self.user == '':
+            sys.exit()
+            
+        self.top.attributes('-disabled', 0)
+        self.top.deiconify()
+        self.medication_entry.focus()
+        setup_window.destroy()
+
 
 if __name__ == '__main__':
     root = tk.Tk()
