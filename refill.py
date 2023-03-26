@@ -24,10 +24,14 @@ class RefillTemplate:
         self.btn_borderwidth = 0
         self.btn_relief = 'sunken' # sunken, raised, groove, ridge
         self.btn_space_btwn = 5
+        self.btn_disabled_fg_color = 'snow3'
+        self.btn_disabled_bg_color = 'ghost white'
             # Label frames
         self.labelFrame_font = ('Comic Sans MS', 11, 'normal')
         self.labelFrame_space_btwn = 5
         self.label_font = ('Comic Sans MS', 11, 'normal')
+        self.disabled_text_color = 'snow3'
+        self.text_color = 'black'
             # Entry
         self.entry_font = ('Comic Sans MS', 11, 'normal')
         self.entry_bg_color = 'gray92'
@@ -274,12 +278,15 @@ class RefillTemplate:
         self.dispense_date_canvas.grid(column=0, row=1, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Dispense date label
         self.dispense_date_label = tk.Label(
-            self.dispense_date_canvas, text='Ready to dispense date:',
-            bg=self.background_color, font=self.label_font, width=18
+            self.dispense_date_canvas, text='Dispense Date:',
+            bg=self.background_color, font=self.label_font, width=13, fg='snow3'
             )
         self.dispense_date_label.grid(column=0, row=1)
         # Dispense date entry
-        self.dispense_date_entry = tk.Entry(self.dispense_date_canvas, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief)
+        self.dispense_date_entry = tk.Entry(
+            self.dispense_date_canvas,font=self.entry_font, bg=self.entry_bg_color,
+            relief=self.entry_relief, width=10, state='disabled'
+            )
         self.dispense_date_entry.grid(column=3, row=1)
 
         # Copy WAM notes button (@ canvas widget level, master is top level window)
@@ -299,25 +306,26 @@ class RefillTemplate:
         self.dispense_signature_canvas.grid(column=0, row=3, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Signature label
         self.dispense_signature_label = tk.Label(
-            self.dispense_signature_canvas, text='Signature required?', bg=self.background_color, font=self.label_font
+            self.dispense_signature_canvas, text='Signature required?',
+            bg=self.background_color, font=self.label_font, fg=self.disabled_text_color
             )
         self.dispense_signature_label.grid(column=0, row=0)
         # Yes button
         self.dispense_signature_yes_btn = tk.Button(
             self.dispense_signature_canvas, text='Yes', command=self.select_yes_sig,
-            bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
+            bg=self.btn_disabled_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color,
-            disabledforeground=self.copy_btn_disabled_fg_color
+            disabledforeground=self.copy_btn_disabled_fg_color, state='disabled'
             )
         self.dispense_signature_yes_btn.grid(column=1, row=0)
         # No button
         self.dispense_signature_no_btn = tk.Button(
             self.dispense_signature_canvas, text='No', command=self.select_no_sig,
-            bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
+            bg=self.btn_disabled_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color,
-            disabledforeground=self.copy_btn_disabled_fg_color
+            disabledforeground=self.copy_btn_disabled_fg_color, state='disabled'
             )
         self.dispense_signature_no_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
 
@@ -451,6 +459,11 @@ class RefillTemplate:
         self.dispense_method = 'DCS'
         self.dispense_walkover_entry.delete(0, 'end')
         self.dispense_walkover_entry.config(state='disabled')
+        self.dispense_date_label.config(text='Shiping out on', fg=self.text_color)
+        self.dispense_date_entry.config(state='normal')
+        self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
+        self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
+        self.dispense_signature_label.config(fg=self.text_color)
 
     def select_fedex(self):
         """Select FedEx button."""
@@ -461,6 +474,10 @@ class RefillTemplate:
         self.dispense_method = 'FedEx'
         self.dispense_walkover_entry.delete(0, 'end')
         self.dispense_walkover_entry.config(state='disabled')
+        self.dispense_date_label.config(text='Shiping out on', fg=self.text_color)
+        self.dispense_date_entry.config(state='normal')
+        self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
+        self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
 
     def select_pickup(self):
         """Select Pick Up button."""
@@ -471,9 +488,12 @@ class RefillTemplate:
         self.dispense_method = 'Pick up'
         self.dispense_walkover_entry.delete(0, 'end')
         self.dispense_walkover_entry.config(state='disabled')
-        self.dispense_signature_yes_btn.config(state='disabled', bg='ghost white')
-        self.dispense_signature_no_btn.config(state='disabled', bg='ghost white')
+        self.dispense_signature_yes_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
+        self.dispense_signature_no_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
         self.signature_required = ''
+        self.dispense_signature_label.config(fg=self.disabled_text_color)
+        self.dispense_date_label.config(text='Picking up on', fg=self.text_color)
+        self.dispense_date_entry.config(state='normal')
 
     def select_walkover(self):
         """Select Walkover button."""
@@ -484,9 +504,12 @@ class RefillTemplate:
         self.dispense_method = 'Walk over'
         self.dispense_walkover_entry.config(state='normal')
         self.dispense_walkover_entry.insert(0, '-> enter location <-')
-        self.dispense_signature_yes_btn.config(state='disabled', bg='ghost white')
-        self.dispense_signature_no_btn.config(state='disabled', bg='ghost white')
+        self.dispense_signature_yes_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
+        self.dispense_signature_no_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
         self.signature_required = ''
+        self.dispense_signature_label.config(fg=self.disabled_text_color)
+        self.dispense_date_label.config(text='Walking over on', fg=self.text_color)
+        self.dispense_date_entry.config(state='normal')
         self.top.focus()
         
     def remove_temp_text(self, e):
@@ -502,6 +525,13 @@ class RefillTemplate:
         self.dispense_method = ''
         self.dispense_walkover_entry.delete(0, 'end')
         self.dispense_walkover_entry.config(state='disabled')
+        self.dispense_date_label.config(text='Dispense Date:', fg=self.btn_disabled_fg_color)
+        self.dispense_date_entry.delete(0, 'end')
+        self.dispense_date_entry.config(state='disabled')
+        self.signature_required = ''
+        self.dispense_signature_label.config(fg=self.disabled_text_color)
+        self.dispense_signature_yes_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
+        self.dispense_signature_no_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
   
     def _unselect_pickup_walkover(self):
         """Unselect Pick Up/Walk Over button."""
@@ -514,6 +544,13 @@ class RefillTemplate:
         self.dispense_walkover_entry.config(state='disabled')
         self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
         self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
+        self.dispense_date_label.config(text='Dispense Date:', fg=self.btn_disabled_fg_color)
+        self.dispense_date_entry.delete(0, 'end')
+        self.dispense_date_entry.config(state='disabled')
+        self.signature_required = ''
+        self.dispense_signature_label.config(fg=self.disabled_text_color)
+        self.dispense_signature_yes_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
+        self.dispense_signature_no_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
 
     def _enable_yes_no_btn(self):
         """Enable Yes and No buttons when selecting away from Pick Up or Walk Over."""
@@ -581,8 +618,8 @@ class RefillTemplate:
         self.spoke_with_entry.delete(0, 'end')
         
         self._unselect_injection_cycle()
-        self._unselect_dcs_fedex()
         self._unselect_yes_no_sig()
+        self._unselect_dcs_fedex()
         self._unselect_alittle_alot_cant_tell()
         self.medication_entry.focus()
         
