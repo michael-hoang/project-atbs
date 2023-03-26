@@ -92,6 +92,13 @@ class RefillTemplate:
             )
         self.container_top_buttons.grid(column=0, row=0, sticky='e')
 
+        # Refill coordination label
+        self.refill_coordination_label = tk.Label(
+            self.container_top_buttons, text='Refill Coordination',
+            bg=self.background_color, font=('Comic Sans MS', 15, 'normal')
+            )
+        self.refill_coordination_label.grid(column=0, row=0, padx=(0, 90))
+
         # Edit user button
         img_path = './assets/img/edit-user.png'
         img = Image.open(img_path)
@@ -100,7 +107,7 @@ class RefillTemplate:
             self.container_top_buttons, image=self.edit_user_img, command=self.user_setup_window,
             bg=self.copy_btn_bg_color
             )
-        self.edit_user_btn.grid(column=0, row=0, padx=(0, 15))
+        self.edit_user_btn.grid(column=1, row=0, padx=(0, 15))
 
         # === Container for Medication label frame and Clear button === #
         self.container_med_clear = tk.Canvas(
@@ -450,12 +457,13 @@ class RefillTemplate:
         x = int(screen_width/2 - win_width/2)
         y = int(screen_height/2 - win_width/2)
         self.top.geometry(f"{win_width}x{win_height}+{x}+{y}")
-        if self.user:
-            self.top.deiconify()
-            self.medication_entry.focus()
 
         # ~ ~ ~ Check user ~ ~ ~ #
-        if self.user == '':
+        if self.user:
+            self.top.title(f'Refill Coordination - {self.user}')
+            self.top.deiconify()
+            self.medication_entry.focus()
+        else:
             relative_path = '.data'
             if getattr(sys, 'frozen', False):
                 application_path = os.path.dirname(sys.executable)
@@ -772,9 +780,12 @@ class RefillTemplate:
         try:
             with open('.data/user.json', 'r') as f:
                 data = json.load(f)
-                first_name = data['first_name'].title()
-                last_name = data['last_name'].title()
-                return f'{first_name} {last_name}'
+                first_name = data['first_name']
+                last_name = data['last_name']
+                if first_name and last_name:
+                    return f'{first_name} {last_name}'
+                else:
+                    raise Exception()
         except:
             return ''
 
@@ -791,25 +802,44 @@ class RefillTemplate:
 
     def user_setup_window(self):
         """Graphic user interface for setting up a new user."""
+
+        def confirm_user():
+            """Confirm user first and last name."""
+            first_name = first_name_entry.get().strip()
+            last_name = last_name_entry.get().strip()
+
+            if first_name and last_name:
+                first_name_title = first_name.title()
+                last_name_title = last_name.title()
+                self._create_user_json(first_name_title, last_name_title)
+                self.user = f'{first_name_title} {last_name_title}'
+                self.top.title(f'Refill Coordination - {self.user}')
+                self.top.attributes('-disabled', 0)
+                self.top.deiconify()
+                self.medication_entry.focus()
+                setup_window.destroy()
+            else:
+                pass
+
         setup_window = tk.Toplevel(self.top)
         setup_window.withdraw()
-        setup_window.title('User')
+        setup_window.title('User Setup')
         setup_window.config(bg=self.background_color, padx=20, pady=20)
         setup_window.resizable(False, False)
 
         first_name_label = tk.Label(
             setup_window, text='First Name:', bg=self.background_color, font=self.label_font
             )
-        first_name_label.grid(column=0, row=0)
+        first_name_label.grid(column=0, row=0, padx=5)
         first_name_entry = tk.Entry(
             setup_window, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief
             )
-        first_name_entry.grid(column=1, row=0)
+        first_name_entry.grid(column=1, row=0, pady=(0, 5))
         
         last_name_label = tk.Label(
             setup_window, text='Last Name:', bg=self.background_color, font=self.label_font
             )
-        last_name_label.grid(column=0, row=1)
+        last_name_label.grid(column=0, row=1, padx=5)
         last_name_entry = tk.Entry(
             setup_window, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief
             )
@@ -818,9 +848,9 @@ class RefillTemplate:
         ok_btn = tk.Button(
             setup_window, text='OK', bg=self.copy_btn_bg_color, relief='raised',
             font=self.btn_font, activebackground=self.copy_btn_bg_color, width=9,
-            command=''
+            command=confirm_user
             )
-        ok_btn.grid(column=0, row=2, columnspan=2)
+        ok_btn.grid(column=0, row=2, columnspan=2, pady=(5, 0))
 
         # Center setup window to screen
         if self.user == '':
@@ -857,7 +887,7 @@ class RefillTemplate:
         """Enable top window on closing user setup window."""
         if self.user == '':
             sys.exit()
-            
+
         self.top.attributes('-disabled', 0)
         self.top.deiconify()
         self.medication_entry.focus()
