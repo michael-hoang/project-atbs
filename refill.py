@@ -211,7 +211,7 @@ class RefillTemplate:
         # Due/start label
         self.due_start_label = tk.Label(
             self.injection_cycle_canvas, text='', bg=self.background_color,
-            font=self.label_font, width=8
+            font=self.label_font, width=7
             )
         self.due_start_label.grid(column=2, row=0)
         # Due/start entry
@@ -279,7 +279,7 @@ class RefillTemplate:
         # Dispense date label
         self.dispense_date_label = tk.Label(
             self.dispense_date_canvas, text='Dispense Date:',
-            bg=self.background_color, font=self.label_font, width=13, fg='snow3'
+            bg=self.background_color, font=self.label_font, width=13, fg=self.disabled_text_color
             )
         self.dispense_date_label.grid(column=0, row=1)
         # Dispense date entry
@@ -288,6 +288,12 @@ class RefillTemplate:
             relief=self.entry_relief, width=10, state='disabled'
             )
         self.dispense_date_entry.grid(column=3, row=1)
+        # FedEx delivery label
+        self.fedex_delivery_label = tk.Label(
+            self.dispense_date_canvas, font=self.label_font, bg=self.background_color,
+            text='for 3/31 delivery'
+            )
+        self.fedex_delivery_label.grid(column=4, row=1)
 
         # Copy WAM notes button (@ canvas widget level, master is top level window)
         self.copy_wam_notes_btn = tk.Button(
@@ -416,14 +422,14 @@ class RefillTemplate:
         self.top.bind('<Delete>', self.clear)
         
         # ~ ~ ~ after ~ ~ ~ #
-        self.top.after(ms=50, func=self.validate_copy_btns)
+        self.top.after(ms=50, func=self.run_validations)
 
     def select_injection(self):
         """Select injection button."""
         self.injection_btn.config(bg=self.select_btn_bg_color, command=self._unselect_injection_cycle)
         self.cycle_btn.config(bg=self.btn_bg_color, command=self.select_cycle)
-        self.injection_cycle = 'Injection is due on'
-        self.due_start_label.config(text='is due on')
+        self.injection_cycle = 'Injection is due'
+        self.due_start_label.config(text='is due')
         self.due_start_entry.config(state='normal')
         self.top.focus()
         if not self.day_supply_entry.get().strip():
@@ -433,8 +439,8 @@ class RefillTemplate:
         """Select cycle button."""
         self.injection_btn.config(bg=self.btn_bg_color, command=self.select_injection)
         self.cycle_btn.config(bg=self.select_btn_bg_color, command=self._unselect_injection_cycle)
-        self.injection_cycle = 'Next cycle starts on'
-        self.due_start_label.config(text='starts on')
+        self.injection_cycle = 'Next cycle starts'
+        self.due_start_label.config(text='starts')
         self.due_start_entry.config(state='normal')
         self.top.focus()
         if not self.day_supply_entry.get().strip():
@@ -464,6 +470,7 @@ class RefillTemplate:
         self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
         self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
         self.dispense_signature_label.config(fg=self.text_color)
+        self.fedex_delivery_label.config(text='')
 
     def select_fedex(self):
         """Select FedEx button."""
@@ -478,6 +485,8 @@ class RefillTemplate:
         self.dispense_date_entry.config(state='normal')
         self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
         self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
+        self.dispense_signature_label.config(fg=self.text_color)
+
 
     def select_pickup(self):
         """Select Pick Up button."""
@@ -494,6 +503,7 @@ class RefillTemplate:
         self.dispense_signature_label.config(fg=self.disabled_text_color)
         self.dispense_date_label.config(text='Picking up on', fg=self.text_color)
         self.dispense_date_entry.config(state='normal')
+        self.fedex_delivery_label.config(text='')
 
     def select_walkover(self):
         """Select Walkover button."""
@@ -510,6 +520,7 @@ class RefillTemplate:
         self.dispense_signature_label.config(fg=self.disabled_text_color)
         self.dispense_date_label.config(text='Walking over on', fg=self.text_color)
         self.dispense_date_entry.config(state='normal')
+        self.fedex_delivery_label.config(text='')
         self.top.focus()
         
     def remove_temp_text(self, e):
@@ -532,6 +543,7 @@ class RefillTemplate:
         self.dispense_signature_label.config(fg=self.disabled_text_color)
         self.dispense_signature_yes_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
         self.dispense_signature_no_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
+        self.fedex_delivery_label.config(text='')
   
     def _unselect_pickup_walkover(self):
         """Unselect Pick Up/Walk Over button."""
@@ -622,12 +634,24 @@ class RefillTemplate:
         self._unselect_dcs_fedex()
         self._unselect_alittle_alot_cant_tell()
         self.medication_entry.focus()
-        
-    def validate_copy_btns(self):
-        """Check and enable copy buttons if conditions are met."""
-        self._check_copy_wam_notes_conditions()
 
-        self.top.after(ms=50, func=self.validate_copy_btns)
+    def run_validations(self):
+        """Recursively execute various validation methods."""
+        self._validate_copy_btns()
+
+        self.top.after(ms=50, func=self.run_validations)
+    
+    def _validate_copy_btns(self):
+        """Check and enable copy buttons if conditions are met."""
+        copy_wam_notes_conditions_met = self._check_copy_wam_notes_conditions()
+        copy_template_conditions_met = self._check_copy_template_conditions()
+        if copy_wam_notes_conditions_met:
+            self.copy_wam_notes_btn.config(state='normal')
+            if copy_template_conditions_met:
+                self.copy_template_btn.config(state='normal')
+        else:
+            self.copy_wam_notes_btn.config(state='disabled')
+            self.copy_template_btn.config(state='disabled')
 
     def _check_copy_wam_notes_conditions(self) -> bool:
         """Check if Copy WAM Notes conditions are met."""
@@ -636,13 +660,19 @@ class RefillTemplate:
         if self.dispense_method in ('DCS', 'FedEx') and dispense_date_entry_not_empty and self.signature_required\
         or self.dispense_method == 'Pick up' and dispense_date_entry_not_empty\
         or self.dispense_method == 'Walk over' and dispense_date_entry_not_empty and walkover_location not in ('-> enter location <-', ''):
-            self.copy_wam_notes_btn.config(state='normal')
+            return True
         else:
-            self.copy_wam_notes_btn.config(state='disabled')  
+            return False
+        
 
     def _check_copy_template_conditions(self) -> bool:
         """Check if Copy Template conditions are met."""
-
+        medication_entry_not_empty = self.medication_entry.get().strip()
+        day_supply_entry_not_empty = self.day_supply_entry.get().strip()
+        if medication_entry_not_empty and day_supply_entry_not_empty and self.medication_working:
+            return True
+        else:
+            return False
 
 
 if __name__ == '__main__':
