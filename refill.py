@@ -274,7 +274,8 @@ class RefillTemplate:
         self.dispense_date_canvas.grid(column=0, row=1, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Dispense date label
         self.dispense_date_label = tk.Label(
-            self.dispense_date_canvas, text='Ready to dispense date:', bg=self.background_color, font=self.label_font
+            self.dispense_date_canvas, text='Ready to dispense date:',
+            bg=self.background_color, font=self.label_font, width=18
             )
         self.dispense_date_label.grid(column=0, row=1)
         # Dispense date entry
