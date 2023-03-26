@@ -2,7 +2,7 @@
 
 import tkinter as tk
 import datetime as dt
-from tkinter import messagebox, END
+from tkinter import messagebox
 from PIL import Image, ImageTk
 from win32 import win32clipboard
 
@@ -15,7 +15,7 @@ class RefillTemplate:
 
         # Initialize settings
         self.background_color = 'white'
-            # Buttons
+            # Select buttons
         self.btn_font = ('Comic Sans MS', 11, 'normal')
         self.btn_text_color = 'white'
         self.btn_active_fg_color = 'white'
@@ -40,7 +40,7 @@ class RefillTemplate:
             # Canvas
         self.canvas_padx = 10
         self.canvas_pady = 10
-            # Copy buttons
+            # Other buttons
         self.copy_btn_bg_color = 'ghost white'
         self.copy_btn_fg_color = 'medium sea green'
         self.copy_btn_active_bg_color = 'ghost white' # #ebfff3
@@ -84,17 +84,31 @@ class RefillTemplate:
         self.goal_met = 'Yes'
         self.speak_rph = 'No'
 
-        
-        
-        # === Container for Medication label frame and Clear button === #
-        self.container_top = tk.Canvas(
+        # === Container for top buttons === #
+        self.container_top_buttons = tk.Canvas(
             self.top, bg=self.background_color, highlightthickness=0
             )
-        self.container_top.grid(column=0, row=1, sticky='w')
+        self.container_top_buttons.grid(column=0, row=0, sticky='e')
+
+        # Edit user button
+        img_path = './assets/img/edit-user.png'
+        img = Image.open(img_path)
+        self.edit_user_img = ImageTk.PhotoImage(img)
+        self.edit_user_btn = tk.Button(
+            self.container_top_buttons, image=self.edit_user_img, command='',
+            bg=self.copy_btn_bg_color
+            )
+        self.edit_user_btn.grid(column=0, row=0, padx=(0, 15))
+
+        # === Container for Medication label frame and Clear button === #
+        self.container_med_clear = tk.Canvas(
+            self.top, bg=self.background_color, highlightthickness=0
+            )
+        self.container_med_clear.grid(column=0, row=1, sticky='w')
 
         # === Medication label frame === #
         self.medication_labelFrame = tk.LabelFrame(
-            self.container_top, text='Medication', bg=self.background_color, font=self.labelFrame_font
+            self.container_med_clear, text='Medication', bg=self.background_color, font=self.labelFrame_font
             )
         self.medication_labelFrame.grid(column=0, row=0, sticky='w')
         #   Medication canvas
@@ -111,8 +125,8 @@ class RefillTemplate:
         
         # Clear button
         self.clear_btn = tk.Button(
-            self.container_top, text='Clear', command=self.clear, bg='ghost white', relief='raised',
-            fg='firebrick1', font=self.btn_font, activebackground='ghost white',
+            self.container_med_clear, text='Clear', command=self.clear, bg=self.copy_btn_bg_color, relief='raised',
+            fg='firebrick1', font=self.btn_font, activebackground=self.copy_btn_bg_color,
             activeforeground='firebrick1', width=9
             )
         self.clear_btn.grid(column=1, row=0, padx=(20,0))
