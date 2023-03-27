@@ -803,7 +803,7 @@ class RefillTemplate:
     def user_setup_window(self):
         """Graphic user interface for setting up a new user."""
 
-        def confirm_user():
+        def confirm_user(e=None):
             """Confirm user first and last name."""
             first_name = first_name_entry.get().strip()
             last_name = last_name_entry.get().strip()
@@ -882,6 +882,8 @@ class RefillTemplate:
         first_name_entry.focus()
         
         setup_window.protocol('WM_DELETE_WINDOW', lambda: self.on_closing_user_setup_window(setup_window))
+
+        setup_window.bind('<Return>', confirm_user)
 
     def on_closing_user_setup_window(self, setup_window):
         """Enable top window on closing user setup window."""
