@@ -444,6 +444,7 @@ class RefillTemplate:
         # ~ ~ ~ bind ~ ~ ~ #
         self.dispense_walkover_entry.bind('<FocusIn>', self.remove_temp_text)
         self.top.bind('<Delete>', self.clear)
+        self.top.bind('<Control-u>', self.user_setup_window)
         
         # ~ ~ ~ after ~ ~ ~ #
         self.top.after(ms=50, func=self.run_validations)
@@ -800,7 +801,7 @@ class RefillTemplate:
         os.mkdir(path)
         subprocess.call(["attrib", "+h", path]) # hidden directory
 
-    def user_setup_window(self):
+    def user_setup_window(self, e=None):
         """Graphic user interface for setting up a new user."""
 
         def confirm_user(e=None):
@@ -884,8 +885,9 @@ class RefillTemplate:
         setup_window.protocol('WM_DELETE_WINDOW', lambda: self.on_closing_user_setup_window(setup_window))
 
         setup_window.bind('<Return>', confirm_user)
+        setup_window.bind('<Escape>', lambda e: self.on_closing_user_setup_window(setup_window, e))
 
-    def on_closing_user_setup_window(self, setup_window):
+    def on_closing_user_setup_window(self, setup_window, e=None):
         """Enable top window on closing user setup window."""
         if self.user == '':
             sys.exit()
