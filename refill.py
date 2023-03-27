@@ -804,6 +804,16 @@ class RefillTemplate:
     def user_setup_window(self, e=None):
         """Graphic user interface for setting up a new user."""
 
+        def flash(entry_box, counter=4, color='#ffd7d0'):
+            """Flash the given entry box a certain number of times."""
+            duration1 = 100
+            duration2 = 200
+            for _ in range(counter):
+                setup_window.after(duration1, lambda: entry_box.config(bg=color))
+                setup_window.after(duration2, lambda: entry_box.config(bg=self.entry_bg_color))
+                duration1 += 200
+                duration2 += 200
+
         def confirm_user(e=None):
             """Confirm user first and last name."""
             first_name = first_name_entry.get().strip()
@@ -820,7 +830,10 @@ class RefillTemplate:
                 self.medication_entry.focus()
                 setup_window.destroy()
             else:
-                pass
+                if first_name == '':
+                    flash(first_name_entry)
+                if last_name == '':
+                    flash(last_name_entry)
 
         setup_window = tk.Toplevel(self.top)
         setup_window.withdraw()
