@@ -891,7 +891,6 @@ class RefillTemplate:
 
         self.top.attributes('-disabled', 1)
         setup_window.wm_transient(self.top)
-        setup_window.attributes('-topmost', 1)
         setup_window.deiconify()
         first_name_entry.focus()
         
