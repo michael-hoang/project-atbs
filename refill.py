@@ -965,8 +965,15 @@ class RefillTemplate:
                 wam_notes += fr'{{{dispense_comments}}}'
 
         elif self.dispense_method == 'Pick up':
-            pass
-
+            pickup_time = self.dispense_pickup_time_entry.get().strip()
+            if pickup_time[0].isdigit():
+                wam_notes += fr' at'
+            
+            wam_notes += fr' {{{pickup_time}}}\
+'
+            if dispense_comments:
+                wam_notes += fr'{{{dispense_comments}}}'
+                
         else:
             wam_notes += fr' to {{{self.dispense_walkover_entry.get().upper()}}}\
 '
