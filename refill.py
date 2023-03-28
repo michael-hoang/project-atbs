@@ -3,7 +3,6 @@
 import tkinter as tk
 import datetime as dt
 import os, sys, subprocess, json
-from tkinter import messagebox
 from PIL import Image, ImageTk
 from win32 import win32clipboard
 
@@ -55,6 +54,9 @@ class RefillTemplate:
         self.top.title('Refill Coordination')
         self.top.config(bg=self.background_color, padx=20, pady=20)
         self.top.resizable(False, False)
+
+        # Initialize win32clipboard
+        self.cf_rtf = win32clipboard.RegisterClipboardFormat('Rich Text Format')
 
         # Initialize variables
         self.user = self.get_existing_user()
@@ -306,23 +308,30 @@ class RefillTemplate:
             self.dispense_date_canvas, text='Dispense Date:',
             bg=self.background_color, font=self.label_font, width=13, fg=self.disabled_text_color
             )
-        self.dispense_date_label.grid(column=0, row=1)
+        self.dispense_date_label.grid(column=0, row=0)
         # Dispense date entry
         self.dispense_date_entry = tk.Entry(
             self.dispense_date_canvas,font=self.entry_font, bg=self.entry_bg_color,
             relief=self.entry_relief, width=10, state='disabled'
             )
-        self.dispense_date_entry.grid(column=3, row=1)
-        # FedEx delivery label
-        self.fedex_delivery_label = tk.Label(
+        self.dispense_date_entry.grid(column=1, row=0)
+        # FedEx delivery / Pickup time label
+        self.fedex_delivery_pick_time_label = tk.Label(
             self.dispense_date_canvas, font=self.label_font, bg=self.background_color,
-            text='for 3/31 delivery'
+            text=''
             )
-        self.fedex_delivery_label.grid(column=4, row=1)
+        self.fedex_delivery_pick_time_label.grid(column=2, row=0)
+        # Pick up time entry
+        self.dispense_pickup_time_entry = tk.Entry(
+            self.dispense_date_canvas, font=self.entry_font, bg=self.entry_bg_color,
+            relief=self.entry_relief, width=0, disabledbackground=self.background_color,
+            state='disabled'
+            )
+        self.dispense_pickup_time_entry.grid(column=3, row=0)
 
         # Copy WAM notes button (@ canvas widget level, master is top level window)
         self.copy_wam_notes_btn = tk.Button(
-            self.dispense_date_labelFrame, text='Copy WAM Notes', command='',
+            self.dispense_date_labelFrame, text='Copy WAM Notes', command=self.copy_formatted_wam_notes,
             bg=self.copy_btn_bg_color, relief='raised', fg=self.copy_btn_fg_color,
             font=self.btn_font, activebackground=self.copy_btn_active_bg_color,
             activeforeground=self.copy_btn_active_fg_color, width=11,
@@ -521,10 +530,12 @@ class RefillTemplate:
         self.dispense_walkover_entry.config(state='disabled')
         self.dispense_date_label.config(text='Shiping out on', fg=self.text_color)
         self.dispense_date_entry.config(state='normal')
-        self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
-        self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
+        if self.signature_required == '':
+            self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
+            self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
         self.dispense_signature_label.config(fg=self.text_color)
-        self.fedex_delivery_label.config(text='')
+        self.fedex_delivery_pick_time_label.config(text='')
+        self._remove_pickup_time_label_entry()
 
     def select_fedex(self):
         """Select FedEx button."""
@@ -537,9 +548,11 @@ class RefillTemplate:
         self.dispense_walkover_entry.config(state='disabled')
         self.dispense_date_label.config(text='Shiping out on', fg=self.text_color)
         self.dispense_date_entry.config(state='normal')
-        self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
-        self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
+        if self.signature_required == '':
+            self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
+            self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
         self.dispense_signature_label.config(fg=self.text_color)
+        self._remove_pickup_time_label_entry()
 
 
     def select_pickup(self):
@@ -557,7 +570,7 @@ class RefillTemplate:
         self.dispense_signature_label.config(fg=self.disabled_text_color)
         self.dispense_date_label.config(text='Picking up on', fg=self.text_color)
         self.dispense_date_entry.config(state='normal')
-        self.fedex_delivery_label.config(text='')
+        self.fedex_delivery_pick_time_label.config(text='')
 
     def select_walkover(self):
         """Select Walkover button."""
@@ -574,12 +587,14 @@ class RefillTemplate:
         self.dispense_signature_label.config(fg=self.disabled_text_color)
         self.dispense_date_label.config(text='Walking over on', fg=self.text_color)
         self.dispense_date_entry.config(state='normal')
-        self.fedex_delivery_label.config(text='')
+        self.fedex_delivery_pick_time_label.config(text='')
+        self._remove_pickup_time_label_entry()
         self.top.focus()
         
     def remove_temp_text(self, e):
         """Remove temporary text from walk over entry box."""
-        self.dispense_walkover_entry.delete(0, 'end')
+        if self.dispense_walkover_entry.get() == '-> enter location <-':
+            self.dispense_walkover_entry.delete(0, 'end')
 
     def _unselect_dcs_fedex(self):
         """Unselect DCS/FedEx button."""
@@ -597,7 +612,9 @@ class RefillTemplate:
         self.dispense_signature_label.config(fg=self.disabled_text_color)
         self.dispense_signature_yes_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
         self.dispense_signature_no_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
-        self.fedex_delivery_label.config(text='')
+        self.fedex_delivery_pick_time_label.config(text='')
+        self.dispense_signature_yes_btn.config(command=self.select_yes_sig)
+        self.dispense_signature_no_btn.config(command=self.select_no_sig)
   
     def _unselect_pickup_walkover(self):
         """Unselect Pick Up/Walk Over button."""
@@ -608,8 +625,8 @@ class RefillTemplate:
         self.dispense_method = ''
         self.dispense_walkover_entry.delete(0, 'end')
         self.dispense_walkover_entry.config(state='disabled')
-        self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
-        self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
+        self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color, command=self.select_yes_sig)
+        self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color, command=self.select_no_sig)
         self.dispense_date_label.config(text='Dispense Date:', fg=self.btn_disabled_fg_color)
         self.dispense_date_entry.delete(0, 'end')
         self.dispense_date_entry.config(state='disabled')
@@ -617,6 +634,7 @@ class RefillTemplate:
         self.dispense_signature_label.config(fg=self.disabled_text_color)
         self.dispense_signature_yes_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
         self.dispense_signature_no_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
+        self._remove_pickup_time_label_entry()
 
     def _enable_yes_no_btn(self):
         """Enable Yes and No buttons when selecting away from Pick Up or Walk Over."""
@@ -682,6 +700,7 @@ class RefillTemplate:
         self.dispense_date_entry.delete(0, 'end')
         self.dispense_comments_entry.delete(0, 'end')
         self.spoke_with_entry.delete(0, 'end')
+        self._remove_pickup_time_label_entry()
         
         self._unselect_injection_cycle()
         self._unselect_yes_no_sig()
@@ -692,7 +711,7 @@ class RefillTemplate:
     def run_validations(self):
         """Recursively execute various validation methods."""
         self._validate_copy_btns()
-        self._validate_fedex_delivery_label()
+        self._validate_fedex_delivery_pick_time_label()
         self._update_variables()
 
         self.top.after(ms=50, func=self.run_validations)
@@ -729,20 +748,32 @@ class RefillTemplate:
             return True
         else:
             return False
+        
+    def _remove_pickup_time_label_entry(self):
+        """Remove pick up time label and entry widgets."""
+        self.dispense_pickup_time_entry.delete(0, 'end')
+        self.dispense_pickup_time_entry.config(width=0, state='disable')
+        self.fedex_delivery_pick_time_label.config(text='')
 
-    def _validate_fedex_delivery_label(self):
+    def _validate_fedex_delivery_pick_time_label(self):
         """Check and enable FedEx delivery date label."""
         if self.dispense_method == 'FedEx':
+            self._remove_pickup_time_label_entry()
             valid_delivery_date = self._calculate_fedex_delivery_date()
             if valid_delivery_date:
+                self.dispense_pickup_time_entry.config(width=0)
                 self.fedex_delivery_date = valid_delivery_date
-                self.fedex_delivery_label.config(text=f'for {self.fedex_delivery_date} delivery')
+                self.fedex_delivery_pick_time_label.config(text=f'for {self.fedex_delivery_date} delivery')
+                self.fedex_delivery_pick_time_label.lift()
             else:
                 self.fedex_delivery_date = ''
-                self.fedex_delivery_label.config(text='')
+                self.fedex_delivery_pick_time_label.config(text='')
+        elif self.dispense_method == 'Pick up':
+            self.fedex_delivery_pick_time_label.config(text='Time:')
+            self.dispense_pickup_time_entry.config(width=12, state='normal')
         else:
             self.fedex_delivery_date = ''
-            self.fedex_delivery_label.config(text='')
+            self._remove_pickup_time_label_entry()
 
 
     def _calculate_fedex_delivery_date(self) -> str:
@@ -909,13 +940,48 @@ class RefillTemplate:
         self.medication_entry.focus()
         setup_window.destroy()
 
+    def copy_rtf_to_clipboard(self, formatted_text: str):
+        """Copy formatted rich text to clipboard."""
+        rtf = bytearray(fr'{{\rtf1\ansi\deff0 {{\fonttbl {{\f0 Arial;}}}}{{\colortbl;\red0\green0\blue0;\red255\green0\blue0;\red255\green255\blue0;}} {formatted_text}}}', 'utf8')
+        win32clipboard.OpenClipboard(0)
+        win32clipboard.EmptyClipboard()
+        win32clipboard.SetClipboardData(self.cf_rtf, rtf)
+        win32clipboard.CloseClipboard()
+
+    def format_wam_notes(self) -> str:
+        """Format WAM notes with rich text."""
+        dispense_comments = self.dispense_comments_entry.get().capitalize()
+        wam_notes = fr'{{{self.dispense_method}}} {{{self.dispense_date_entry.get()}}}' 
+        if self.dispense_method == 'DCS':
+            wam_notes += fr', {{{self.signature_required}}}\
+'
+            if dispense_comments:
+                wam_notes += fr'{{{dispense_comments}}}'
+                
+        elif self.dispense_method == 'FedEx':
+            wam_notes += fr' for {{{self.fedex_delivery_date}}} delivery, {{{self.signature_required}}}\
+'           
+            if dispense_comments:
+                wam_notes += fr'{{{dispense_comments}}}'
+
+        elif self.dispense_method == 'Pick up':
+            pass
+
+        else:
+            wam_notes += fr' to {{{self.dispense_walkover_entry.get().upper()}}}\
+'
+            if dispense_comments:
+                wam_notes += fr'{{{dispense_comments}}}'
+                
+        return wam_notes
+
+    def copy_formatted_wam_notes(self):
+        """Copy formatted WAM notes to clipboard."""
+        wam_notes = self.format_wam_notes()
+        self.copy_rtf_to_clipboard(wam_notes)
 
 if __name__ == '__main__':
     root = tk.Tk()
     rt = RefillTemplate()
 
     root.mainloop()
-
-
-# CF_RTF = win32clipboard.RegisterClipboardFormat("Rich Text Format")
-# rtf = bytearray(fr'{{\rtf1\ansi\deff0 {{\fonttbl {{\f0 Times New Roman;}}}}{{\colortbl;\red0\green0\blue0;\red255\green0\blue0;\red255\green255\blue0;}} {text}}}', 'utf8')
