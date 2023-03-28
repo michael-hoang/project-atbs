@@ -731,9 +731,10 @@ class RefillTemplate:
     def _check_copy_wam_notes_conditions(self) -> bool:
         """Check if Copy WAM Notes conditions are met."""
         dispense_date_entry_not_empty = self.dispense_date_entry.get().strip()
+        pickup_time_not_empty = self.dispense_pickup_time_entry.get().strip()
         walkover_location = self.dispense_walkover_entry.get().strip()
         if self.dispense_method in ('DCS', 'FedEx') and dispense_date_entry_not_empty and self.signature_required\
-        or self.dispense_method == 'Pick up' and dispense_date_entry_not_empty\
+        or self.dispense_method == 'Pick up' and dispense_date_entry_not_empty and pickup_time_not_empty\
         or self.dispense_method == 'Walk over' and dispense_date_entry_not_empty and walkover_location not in ('-> enter location <-', ''):
             return True
         else:
@@ -764,7 +765,6 @@ class RefillTemplate:
                 self.dispense_pickup_time_entry.config(width=0)
                 self.fedex_delivery_date = valid_delivery_date
                 self.fedex_delivery_pick_time_label.config(text=f'for {self.fedex_delivery_date} delivery')
-                self.fedex_delivery_pick_time_label.lift()
             else:
                 self.fedex_delivery_date = ''
                 self.fedex_delivery_pick_time_label.config(text='')
@@ -973,7 +973,7 @@ class RefillTemplate:
 '
             if dispense_comments:
                 wam_notes += fr'{{{dispense_comments}}}'
-                
+
         else:
             wam_notes += fr' to {{{self.dispense_walkover_entry.get().upper()}}}\
 '
