@@ -137,8 +137,8 @@ class RefillTemplate:
         # Clear button
         self.clear_btn = tk.Button(
             self.container_med_clear, text='Clear', command=self.clear, bg=self.copy_btn_bg_color, relief='raised',
-            fg='firebrick1', font=self.btn_font, activebackground=self.copy_btn_bg_color,
-            activeforeground='firebrick1', width=9
+            fg='black', font=self.btn_font, activebackground=self.copy_btn_bg_color,
+            activeforeground='black', width=9
             )
         self.clear_btn.grid(column=1, row=0, padx=(20,0))
 
