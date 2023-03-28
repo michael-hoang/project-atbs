@@ -442,7 +442,7 @@ class RefillTemplate:
 
         # Copy template button
         self.copy_template_btn = tk.Button(
-            self.top, text='Copy Template', command='', bg=self.copy_btn_bg_color,
+            self.top, text='Copy Template', command=self.copy_formatted_template_notes, bg=self.copy_btn_bg_color,
             relief='raised', fg=self.copy_btn_fg_color, font=self.btn_font,
             activebackground=self.copy_btn_active_bg_color,
             activeforeground=self.copy_btn_active_fg_color, width=14,
@@ -706,6 +706,10 @@ class RefillTemplate:
         self._unselect_yes_no_sig()
         self._unselect_dcs_fedex()
         self._unselect_alittle_alot_cant_tell()
+
+        win32clipboard.OpenClipboard(0)
+        win32clipboard.EmptyClipboard()
+        win32clipboard.CloseClipboard()
         self.medication_entry.focus()
 
     def run_validations(self):
@@ -720,7 +724,7 @@ class RefillTemplate:
         """Check and enable copy buttons if conditions are met."""
         copy_wam_notes_conditions_met = self._check_copy_wam_notes_conditions()
         copy_template_conditions_met = self._check_copy_template_conditions()
-        if copy_wam_notes_conditions_met:
+        if copy_wam_notes_conditions_met or copy_template_conditions_met:
             self.copy_wam_notes_btn.config(state='normal')
             if copy_template_conditions_met:
                 self.copy_template_btn.config(state='normal')
@@ -981,11 +985,103 @@ class RefillTemplate:
                 wam_notes += fr'{{{dispense_comments}}}'
                 
         return wam_notes
+    
+    def format_template_notes(self) -> str:
+        """Format Template notes with rich text."""
+        medication = self.medication_entry.get().strip().capitalize()
+        if self.dispense_method == 'Pick up':
+            hipaa_verification = 'Name, DOB, Drug Prescribed'
+        else:
+            hipaa_verification = 'Name, DOB, Address, Drug Prescribed'
+        
+        changes = 'None'
+        ready_to_fill = 'Yes, refill initiated in WAM.'
+        days_supply = self.day_supply_entry.get().strip()
+        injection_cycle_date = self.due_start_entry.get().strip()
+        if injection_cycle_date:
+            next_injection_cycle_due = f' {self.injection_cycle} {injection_cycle_date}'
+        else:
+            next_injection_cycle_due = ''
+
+        delivery_pickup = self.dispense_method
+        if delivery_pickup == 'Walk over':
+            delivery_pickup = 'Clinic delivery'
+        dispense_date = self.format_wam_notes()
+        allergies_reviewed = 'Yes'
+        new_allergies = 'No'
+        medication_review = 'Yes'
+        spoke_with = self.spoke_with_entry.get().strip()
+        if spoke_with.lower() in ('patient', 'the patient', 'pt', 'pateint', 'patient', 'thepatient', 'patients'):
+            medication_review_confirmation = 'patient confirmation.'
+        else:
+            medication_review_confirmation = f'other, confirmed with {spoke_with}'
+
+        new_medications = 'No'
+        medical_conditions_review = 'Yes'
+        medical_condition_changes = 'No'
+        continuation_therapy = 'Yes'
+        med_working = self.medication_working
+        review_symptoms = 'No'
+        intervention_necessary = 'No'
+        adherence = 'ADHERENT'
+        goal = 'Yes'
+        speak_to_rph = 'No'
+        user = self.user
+
+        template = fr'\b\fs26 Refill Reminder \b0\fs24\
+\
+\b\fs26 Medication:\b0\fs24  {{{medication}}}\
+\
+Methods of HIPAA Verification: {{{hipaa_verification}}}\
+\
+Changes Since Last Visit: {{{changes}}}\
+\
+Is patient ready to fill? {{{ready_to_fill}}}\
+\
+Patient has {{{days_supply}}} days of medication on hand.{{{next_injection_cycle_due}}}\
+Please select the following: {{{delivery_pickup}}}\
+Ready to dispense date: {{{dispense_date}}}\
+\
+\b\fs26 Allergies Review \b0\fs24\
+Were allergies to medications reviewed: {{{allergies_reviewed}}}\
+Were there any new allergies: {{{new_allergies}}}\
+\
+\b\fs26 Medication Review \b0\fs24\
+Medication review was performed: {{{medication_review}}} through {{{medication_review_confirmation}}}\
+\
+Is patient taking any new medications, OTCs, or herbal supplements? {{{new_medications}}}\
+\
+\b\fs26 Medical Conditions Review \b0\fs24\
+Medical conditions review was performed: {{{medical_conditions_review}}}\
+Were there changes to the medical condition? {{{medical_condition_changes}}}\
+\
+\b\fs26 Is continuation of therapy appropriate: \b0\fs24 {{{continuation_therapy}}}\
+\
+\b\fs26 Do you feel like this medication is working for you:\b0\fs24  {{{med_working}}}\
+\
+Has the patient reported experiencing any of the following? {{{review_symptoms}}}\
+Is intervention necessary (if yes for any above): {{{intervention_necessary}}}\
+\
+Patient is {{{adherence}}} to therapy.\
+\
+GOAL: Is patient meeting goal? {{{goal}}}\
+\
+Does patient need to speak to a pharmacist? {{{speak_to_rph}}}\
+\
+{{{user}}}\
+Specialty Pharmacy'
+
+        return template
 
     def copy_formatted_wam_notes(self):
         """Copy formatted WAM notes to clipboard."""
         wam_notes = self.format_wam_notes()
         self.copy_rtf_to_clipboard(wam_notes)
+
+    def copy_formatted_template_notes(self):
+        """Copy formatted Template notes to clipboard."""
+        template = self.format_template_notes()
+        self.copy_rtf_to_clipboard(template)
 
 if __name__ == '__main__':
     root = tk.Tk()
