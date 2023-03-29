@@ -447,10 +447,67 @@ class RefillTemplate:
         # === Changes label frame === #
         self.changes_labelFrame = tk.LabelFrame(
             self.intervention_window, text='Changes', bg=self.background_color,
-            font=self.labelFrame_font
+            font=self.labelFrame_font, highlightthickness=0
             )
         self.changes_labelFrame.grid(column=0, row=1)
 
+        # Changes button container
+        self.changes_button_container = tk.Label(self.changes_labelFrame, highlightthickness=0)
+        self.changes_button_container.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
+        # Dose/Direction button
+        self.changes_dose_direction_btn = tk.Button(
+            self.changes_button_container, text='Dose/Direction', command=None,
+            bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
+            relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            )
+        self.changes_dose_direction_btn.grid(column=0, row=0)
+        # Medication Profile button
+        self.changes_medication_profile_btn = tk.Button(
+            self.changes_button_container, text='Medication Profile', command=None,
+            bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
+            relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            )
+        self.changes_medication_profile_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
+        # New Allergies button
+        self.changes_allergies_btn = tk.Button(
+            self.changes_button_container, text='New Allergies', command=None,
+            bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
+            relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            )
+        self.changes_allergies_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
+
+        # Changes Other & Medical Condition button container
+        self.changes_other_med_cond_container = tk.Label(self.changes_labelFrame, highlightthickness=0)
+        self.changes_other_med_cond_container.grid(column=0, row=1, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
+        # Medical Condition button
+        self.changes_other_btn = tk.Button(
+            self.changes_other_med_cond_container, text='Medical Condition', command=None,
+            bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
+            relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            )
+        self.changes_other_btn.grid(column=0, row=0)
+        # Other button
+        self.changes_other_btn = tk.Button(
+            self.changes_other_med_cond_container, text='Other', command=None,
+            bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
+            relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            )
+        self.changes_other_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
+
+        # Changes Other & Medical Condition button container
+        self.changes_other_entry_container = tk.Label(self.changes_labelFrame, highlightthickness=0)
+        self.changes_other_entry_container.grid(column=0, row=1, sticky='w', padx=(208, 0), pady=self.canvas_pady)
+        # Other entry
+        self.changes_other_entry = tk.Entry(
+            self.changes_other_entry_container,font=self.entry_font, bg=self.entry_bg_color,
+            relief=self.entry_relief, width=18, state='disabled'
+            )
+        self.changes_other_entry.grid(column=2, row=0)
 
 
         # ~ ~ ~ Check user ~ ~ ~ #
