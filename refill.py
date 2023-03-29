@@ -60,18 +60,10 @@ class RefillTemplate:
 
         # Initialize variables
         self.user = self.get_existing_user()
-        self.medication_name = ''
-        self.hipaa_verification = ''
         self.changes = 'None'
-        self.ready_to_fill = 'Yes, refill initiated in WAM.'
-        self.days_supply = ''
         self.injection_cycle = ''
-        self.due_start = ''
         self.dispense_method = ''
-        self.dispense_date = ''
         self.signature_required = ''
-        self.dispense_comments = ''
-        self.walkover_location = ''
         self.fedex_delivery_date = ''
         self.allergies_review = 'Yes'
         self.new_allergies = 'No'
@@ -142,33 +134,6 @@ class RefillTemplate:
             )
         self.clear_btn.grid(column=1, row=0, padx=(20,0))
 
-        # # === HIPAA label frame === #
-        # self.hipaa_labelFrame = tk.LabelFrame(self.top, text='Methods of HIPAA Verfication')
-        # self.hipaa_labelFrame.grid(column=0, row=2, sticky='w')
-        # #   Check button canvas
-        # self.hipaa_checkbtn_canvas = tk.Canvas(self.hipaa_labelFrame)
-        # self.hipaa_checkbtn_canvas.grid(column=1, row=0, sticky='w')
-        # # Name
-        # self.hipaa_name_checkbtn = tk.Checkbutton(self.hipaa_checkbtn_canvas)
-        # self.hipaa_name_checkbtn.grid(column=0, row=0)
-        # self.hipaa_name_label = tk.Label(self.hipaa_checkbtn_canvas, text='Name')
-        # self.hipaa_name_label.grid(column=1, row=0)
-        # # DOB
-        # self.hipaa_dob_checkbtn = tk.Checkbutton(self.hipaa_checkbtn_canvas)
-        # self.hipaa_dob_checkbtn.grid(column=2, row=0)
-        # self.hipaa_dob_label = tk.Label(self.hipaa_checkbtn_canvas, text='DOB')
-        # self.hipaa_dob_label.grid(column=3, row=0)
-        # # Address
-        # self.hipaa_address_checkbtn = tk.Checkbutton(self.hipaa_checkbtn_canvas)
-        # self.hipaa_address_checkbtn.grid(column=4, row=0)
-        # self.hipaa_address_label = tk.Label(self.hipaa_checkbtn_canvas, text='Address')
-        # self.hipaa_address_label.grid(column=5, row=0)
-        # # Drug prescribed
-        # self.hipaa_drug_checkbtn = tk.Checkbutton(self.hipaa_checkbtn_canvas)
-        # self.hipaa_drug_checkbtn.grid(column=6, row=0)
-        # self.hipaa_drug_label = tk.Label(self.hipaa_checkbtn_canvas, text='Drug Prescribed')
-        # self.hipaa_drug_label.grid(column=7, row=0)
-        
         # # === Changes label frame === #
         # self.changes_labelFrame = tk.LabelFrame(self.top, text='Changes Since Last Visit')
         # self.changes_labelFrame.grid(column=0, row=3, sticky='w')
