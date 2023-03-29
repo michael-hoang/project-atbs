@@ -47,14 +47,20 @@ class RefillTemplate:
         self.copy_btn_active_fg_color = 'medium sea green'
         self.copy_btn_disabled_fg_color = 'snow3'
     
-        # Initialize GUI window
+        # Initialize Refill coordination GUI window
         self.top = tk.Toplevel()
         self.top.withdraw()
-        self.top.attributes('-topmost', 0)
         self.top.title('Refill Coordination')
         self.top.config(bg=self.background_color, padx=20, pady=20)
         self.top.resizable(False, False)
 
+        # Initialize Intervention GUI window
+        self.intervention_window = tk.Toplevel(self.top)
+        # self.top.withdraw()
+        self.intervention_window.title('Intervention')
+        self.intervention_window.config(bg=self.background_color, padx=20, pady=20)
+        self.intervention_window.resizable(False, False)
+        
         # Initialize win32clipboard
         self.cf_rtf = win32clipboard.RegisterClipboardFormat('Rich Text Format')
 
@@ -432,6 +438,18 @@ class RefillTemplate:
         x = int(screen_width/2 - win_width/2)
         y = int(screen_height/2 - win_width/2)
         self.top.geometry(f"{win_width}x{win_height}+{x}+{y}")
+
+
+        # ======================== Intervention ======================== #
+
+        # === Changes label frame === #
+        self.changes_labelFrame = tk.LabelFrame(
+            self.intervention_window, text='Changes', bg=self.background_color,
+            font=self.labelFrame_font
+            )
+        self.changes_labelFrame.grid(column=0, row=1)
+
+
 
         # ~ ~ ~ Check user ~ ~ ~ #
         if self.user:
