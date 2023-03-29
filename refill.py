@@ -724,10 +724,18 @@ class RefillTemplate:
         """Check and enable copy buttons if conditions are met."""
         copy_wam_notes_conditions_met = self._check_copy_wam_notes_conditions()
         copy_template_conditions_met = self._check_copy_template_conditions()
-        if copy_wam_notes_conditions_met or copy_template_conditions_met:
+        if copy_wam_notes_conditions_met:
             self.copy_wam_notes_btn.config(state='normal')
             if copy_template_conditions_met:
                 self.copy_template_btn.config(state='normal')
+            else:
+                self.copy_template_btn.config(state='disabled')
+        elif copy_template_conditions_met:
+            if copy_wam_notes_conditions_met:
+                self.copy_template_btn.config(state='normal')
+            else:
+                self.copy_wam_notes_btn.config(state='disabled')
+                self.copy_template_btn.config(state='disabled')
         else:
             self.copy_wam_notes_btn.config(state='disabled')
             self.copy_template_btn.config(state='disabled')
