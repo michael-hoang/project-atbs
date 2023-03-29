@@ -86,6 +86,8 @@ class RefillTemplate:
         self.goal_met = 'Yes'
         self.speak_rph = 'No'
 
+        self.intervention = False
+
         # === Container for top buttons === #
         self.container_top_buttons = tk.Canvas(
             self.top, bg=self.background_color, highlightthickness=0
