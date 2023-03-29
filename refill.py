@@ -960,37 +960,70 @@ class RefillTemplate:
         win32clipboard.SetClipboardData(self.cf_rtf, rtf)
         win32clipboard.CloseClipboard()
 
-    def format_wam_notes(self) -> str:
-        """Format WAM notes with rich text."""
+    def copy_plaintext_to_clipboard(self, formatted_text: str):
+        """Copy formatted plain text to clipboard."""
+        win32clipboard.OpenClipboard(0)
+        win32clipboard.EmptyClipboard()
+        win32clipboard.SetClipboardText(formatted_text, win32clipboard.CF_TEXT)
+        win32clipboard.CloseClipboard()
+
+    def format_wam_notes(self, format='plain') -> str:
+        """Format WAM notes with plain or rich text."""
         dispense_comments = self.dispense_comments_entry.get().capitalize()
-        wam_notes = fr'{{{self.dispense_method}}} {{{self.dispense_date_entry.get()}}}' 
-        if self.dispense_method == 'DCS':
-            wam_notes += fr', {{{self.signature_required}}}\
-'
-            if dispense_comments:
-                wam_notes += fr'{{{dispense_comments}}}'
+        if format == 'plain':
+            wam_notes = f'{self.dispense_method} {self.dispense_date_entry.get()}' 
+            if self.dispense_method == 'DCS':
+                wam_notes += f', {self.signature_required}'
+                if dispense_comments:
+                    wam_notes += f'\n{dispense_comments}'
+                    
+            elif self.dispense_method == 'FedEx':
+                wam_notes += f' for {self.fedex_delivery_date} delivery, {self.signature_required}'       
+                if dispense_comments:
+                    wam_notes += f'\n{dispense_comments}'
+
+            elif self.dispense_method == 'Pick up':
+                pickup_time = self.dispense_pickup_time_entry.get().strip()
+                if pickup_time[0].isdigit():
+                    wam_notes += f' at'
                 
-        elif self.dispense_method == 'FedEx':
-            wam_notes += fr' for {{{self.fedex_delivery_date}}} delivery, {{{self.signature_required}}}\
+                wam_notes += f' {pickup_time}'
+                if dispense_comments:
+                    wam_notes += f'\n{dispense_comments}'
+            else:
+                wam_notes += f' to {self.dispense_walkover_entry.get().upper()}'
+                if dispense_comments:
+                    wam_notes += f'\n{dispense_comments}'
+                    
+        elif format == 'rich':
+            wam_notes = fr'{{{self.dispense_method}}} {{{self.dispense_date_entry.get()}}}' 
+            if self.dispense_method == 'DCS':
+                wam_notes += fr', {{{self.signature_required}}}\
+'
+                if dispense_comments:
+                    wam_notes += fr'{{{dispense_comments}}}'
+                
+            elif self.dispense_method == 'FedEx':
+                wam_notes += fr' for {{{self.fedex_delivery_date}}} delivery, {{{self.signature_required}}}\
 '           
-            if dispense_comments:
-                wam_notes += fr'{{{dispense_comments}}}'
+                if dispense_comments:
+                    wam_notes += fr'{{{dispense_comments}}}'
 
-        elif self.dispense_method == 'Pick up':
-            pickup_time = self.dispense_pickup_time_entry.get().strip()
-            if pickup_time[0].isdigit():
-                wam_notes += fr' at'
+            elif self.dispense_method == 'Pick up':
+                pickup_time = self.dispense_pickup_time_entry.get().strip()
+                if pickup_time[0].isdigit():
+                    wam_notes += fr' at'
             
-            wam_notes += fr' {{{pickup_time}}}\
+                    wam_notes += fr' {{{pickup_time}}}\
 '
-            if dispense_comments:
-                wam_notes += fr'{{{dispense_comments}}}'
+                if dispense_comments:
+                    wam_notes += fr'{{{dispense_comments}}}'
 
-        else:
-            wam_notes += fr' to {{{self.dispense_walkover_entry.get().upper()}}}\
+            else:
+                wam_notes += fr' to {{{self.dispense_walkover_entry.get().upper()}}}\
 '
-            if dispense_comments:
-                wam_notes += fr'{{{dispense_comments}}}'
+                if dispense_comments:
+                    wam_notes += fr'{{{dispense_comments}}}'
                 
         return wam_notes
     
@@ -1014,31 +1047,32 @@ class RefillTemplate:
         delivery_pickup = self.dispense_method
         if delivery_pickup == 'Walk over':
             delivery_pickup = 'Clinic delivery'
-        dispense_date = self.format_wam_notes()
+        dispense_date = self.format_wam_notes(format='rich')
         allergies_reviewed = 'Yes'
         new_allergies = 'No'
-        medication_review = 'Yes'
+        medication_review = 'Yes,'
         spoke_with = self.spoke_with_entry.get().strip()
         if spoke_with.lower() in ('patient', 'the patient', 'pt', 'pateint', 'patient', 'thepatient', 'patients'):
             medication_review_confirmation = 'patient confirmation.'
         else:
-            medication_review_confirmation = f'other, confirmed with {spoke_with}'
+            medication_review_confirmation = fr'other.\
+Confirmed with {spoke_with}'
 
         new_medications = 'No'
         medical_conditions_review = 'Yes'
         medical_condition_changes = 'No'
         continuation_therapy = 'Yes'
         med_working = self.medication_working
-        review_symptoms = 'No'
+        review_symptoms = 'N/A'
         intervention_necessary = 'No'
         adherence = 'ADHERENT'
         goal = 'Yes'
         speak_to_rph = 'No'
         user = self.user
 
-        template = fr'\b\fs26 Refill Reminder \b0\fs24\
+        template = fr'\b\fs26Refill Reminder \b0\fs24\
 \
-\b\fs26 Medication:\b0\fs24  {{{medication}}}\
+Medication: {{{medication}}}\
 \
 Methods of HIPAA Verification: {{{hipaa_verification}}}\
 \
@@ -1083,8 +1117,8 @@ Specialty Pharmacy'
 
     def copy_formatted_wam_notes(self):
         """Copy formatted WAM notes to clipboard."""
-        wam_notes = self.format_wam_notes()
-        self.copy_rtf_to_clipboard(wam_notes)
+        wam_notes = self.format_wam_notes(format='plain')
+        self.copy_plaintext_to_clipboard(wam_notes)
 
     def copy_formatted_template_notes(self):
         """Copy formatted Template notes to clipboard."""
