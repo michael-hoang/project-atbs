@@ -664,7 +664,7 @@ class RefillTemplate:
         self.dispense_method = 'DCS'
         self.dispense_walkover_entry.delete(0, 'end')
         self.dispense_walkover_entry.config(state='disabled')
-        self.dispense_date_label.config(text='Shiping out on', fg=self.text_color)
+        self.dispense_date_label.config(text='Shipping out on', fg=self.text_color)
         self.dispense_date_entry.config(state='normal')
         if self.signature_required == '':
             self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
@@ -682,7 +682,7 @@ class RefillTemplate:
         self.dispense_method = 'FedEx'
         self.dispense_walkover_entry.delete(0, 'end')
         self.dispense_walkover_entry.config(state='disabled')
-        self.dispense_date_label.config(text='Shiping out on', fg=self.text_color)
+        self.dispense_date_label.config(text='Shipping out on', fg=self.text_color)
         self.dispense_date_entry.config(state='normal')
         if self.signature_required == '':
             self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
