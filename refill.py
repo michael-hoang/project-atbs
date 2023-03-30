@@ -531,7 +531,7 @@ class RefillTemplate:
             self.intervention_window, text='Side Effects', bg=self.background_color,
             font=self.labelFrame_font, highlightthickness=0
             )
-        self.side_effects_labelFrame.grid(column=0, row=2, sticky='we')
+        self.side_effects_labelFrame.grid(column=0, row=2, sticky='we', pady=(self.labelFrame_space_btwn, 0))
 
         # Side effect button container
         self.side_effect_button_container = tk.Frame(
@@ -572,6 +572,15 @@ class RefillTemplate:
             column=0, row=1, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady
             )
         self.side_effects_notes_container.grid_propagate(False)
+         # Side effects Notes container
+        self.side_effects_notes_container = tk.Frame(
+            self.side_effects_labelFrame, highlightthickness=0, width=364, height=64,
+            bg=self.background_color
+            )
+        self.side_effects_notes_container.grid(
+            column=0, row=1, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady
+            )
+        self.side_effects_notes_container.grid_propagate(False)
         # Side effects Notes Text box
         self.side_effects_notes_text_box = tk.Text(
             self.side_effects_notes_container, font=self.entry_font, wrap=WORD,
@@ -580,10 +589,33 @@ class RefillTemplate:
         self.side_effects_notes_text_box.grid(column=0, row=0)
         self.insert_placeholder_intervention_text_box(self.side_effects_notes_text_box)
 
+        # === Adherence label frame === #
+        self.adherence_labelFrame = tk.LabelFrame(
+            self.intervention_window, text='Adherence', bg=self.background_color,
+            font=self.labelFrame_font, highlightthickness=0
+            )
+        self.adherence_labelFrame.grid(column=0, row=3, sticky='we', pady=(self.labelFrame_space_btwn, 0))
+
+         # Adherence notes container
+        self.adherence_notes_container = tk.Frame(
+            self.adherence_labelFrame, highlightthickness=0, width=364, height=64,
+            bg=self.background_color
+            )
+        self.adherence_notes_container.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
+        self.adherence_notes_container.grid_propagate(False)
+        # Adherence Notes Text box
+        self.adherence_notes_text_box = tk.Text(
+            self.adherence_notes_container, font=self.entry_font, wrap=WORD,
+            width=40, height=3
+            )
+        self.adherence_notes_text_box.grid(column=0, row=0)
+        self.insert_placeholder_intervention_text_box(self.adherence_notes_text_box)
+
 
         # ~ ~ ~ bind ~ ~ ~ #
         self.changes_notes_text_box.bind('<FocusIn>', lambda e: self.remove_placeholder_intervention_text_box(self.changes_notes_text_box, e))
         self.side_effects_notes_text_box.bind('<FocusIn>', lambda e: self.remove_placeholder_intervention_text_box(self.side_effects_notes_text_box, e))
+        self.adherence_notes_text_box.bind('<FocusIn>', lambda e: self.remove_placeholder_intervention_text_box(self.adherence_notes_text_box, e))
 
         # ~ ~ ~ Check user ~ ~ ~ #
         if self.user:
