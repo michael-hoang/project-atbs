@@ -601,8 +601,11 @@ class RefillTemplate:
 
         # ~ ~ ~ bind ~ ~ ~ #
         self.changes_notes_text_box.bind('<FocusIn>', lambda e: self.remove_placeholder_intervention_text_box(self.changes_notes_text_box, e))
+        self.changes_notes_text_box.bind('<FocusOut>', lambda e: self.insert_placeholder_intervention_text_box(self.changes_notes_text_box, e))
         self.side_effects_notes_text_box.bind('<FocusIn>', lambda e: self.remove_placeholder_intervention_text_box(self.side_effects_notes_text_box, e))
+        self.side_effects_notes_text_box.bind('<FocusOut>', lambda e: self.insert_placeholder_intervention_text_box(self.side_effects_notes_text_box, e))
         self.adherence_notes_text_box.bind('<FocusIn>', lambda e: self.remove_placeholder_intervention_text_box(self.adherence_notes_text_box, e))
+        self.adherence_notes_text_box.bind('<FocusOut>', lambda e: self.insert_placeholder_intervention_text_box(self.adherence_notes_text_box, e))
 
         # ~ ~ ~ Check user ~ ~ ~ #
         if self.user:
@@ -1262,20 +1265,21 @@ Specialty Pharmacy'
         self.copy_rtf_to_clipboard(template)
 
 
-    def insert_placeholder_intervention_text_box(self, text_widget):
+    def insert_placeholder_intervention_text_box(self, text_widget, e=None):
         """Insert a placeholder text at the center inside intervention text box."""
-        text_widget.config(fg=self.placeholder_text_color, font=self.placeholder_text_font)
-        # text_widget.tag_configure('center_tag', justify='center')
-        text_widget.insert(1.0, '\t    Notes')
-        # text_widget.tag_add('center_tag', 1.0, 'end')
+        if not text_widget.get(1.0, 'end').split():
+            text_widget.config(fg=self.placeholder_text_color, font=self.placeholder_text_font)
+            text_widget.insert(1.0, '\t    Notes')
+       
         
 
     def remove_placeholder_intervention_text_box(self, text_widget, e=None):
         """Remove placeholder text inside intervention text box."""
-        text_widget.delete(1.0, 'end')
-        text_widget.config(
-            fg=self.text_color, font=self.entry_font
-            )
+        if text_widget.get(1.0, 'end').split()[0] == 'Notes':
+            text_widget.delete(1.0, 'end')
+            text_widget.config(
+                fg=self.text_color, font=self.entry_font
+                )
         
     def sync_windows(self, event=None):
         """Attach intervention window to root window on the left."""
