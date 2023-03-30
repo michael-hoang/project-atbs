@@ -113,7 +113,7 @@ class RefillTemplate:
             self.container_top_buttons_labels, text='Refill Coordination',
             bg=self.background_color, font=('Comic Sans MS', 14, 'normal'),
             )
-        self.refill_coordination_label.grid(column=1, row=0, padx=(35, 75))
+        self.refill_coordination_label.grid(column=1, row=0, padx=(40, 90))
 
         # Top buttons inner container
         self.top_buttons_inner_container = tk.Frame(
