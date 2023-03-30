@@ -1292,10 +1292,12 @@ Specialty Pharmacy'
         if self.intervention:
             self.intervention = False
             self.intervention_window.withdraw()
+            self.intervention_btn.config(relief='raised', fg=self.text_color)
         else:
             self.intervention = True
             self.intervention_window.deiconify()
             self.sync_windows()
+            self.intervention_btn.config(relief='sunken', fg='red2')
 
 
 
