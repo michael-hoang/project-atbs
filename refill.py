@@ -148,40 +148,11 @@ class RefillTemplate:
             )
         self.clear_btn.grid(column=1, row=0, padx=(20,0))
 
-        # # === Changes label frame === #
-        # self.changes_labelFrame = tk.LabelFrame(self.top, text='Changes Since Last Visit')
-        # self.changes_labelFrame.grid(column=0, row=3, sticky='w')
-        # #   Check button canvas
-        # self.changes_checkbtn_canvas = tk.Canvas(self.changes_labelFrame)
-        # self.changes_checkbtn_canvas.grid(column=1, row=2, sticky='w')
-        # # None
-        # self.changes_none_checkbtn = tk.Checkbutton(self.changes_checkbtn_canvas)
-        # self.changes_none_checkbtn.grid(column=0, row=0, sticky='w')
-        # self.changes_none_label = tk.Label(self.changes_checkbtn_canvas, text='None')
-        # self.changes_none_label.grid(column=1, row=0, sticky='w', columnspan=4)
-        # # Changes to dose/direction
-        # self.changes_dose_checkbtn = tk.Checkbutton(self.changes_checkbtn_canvas)
-        # self.changes_dose_checkbtn.grid(column=0, row=1, sticky='w')
-        # self.changes_dose_label = tk.Label(self.changes_checkbtn_canvas, text='Changes to dose/directions')
-        # self.changes_dose_label.grid(column=1, row=1, sticky='w', columnspan=4)
-        # # Changes to medication profile
-        # self.changes_medProfile_checkbtn = tk.Checkbutton(self.changes_checkbtn_canvas)
-        # self.changes_medProfile_checkbtn.grid(column=0, row=2, sticky='w')
-        # self.changes_medProfile_label = tk.Label(self.changes_checkbtn_canvas, text='Changes to medication profile')
-        # self.changes_medProfile_label.grid(column=1, row=2, sticky='w', columnspan=4)
-        # # Other
-        # self.changes_other_checkbtn = tk.Checkbutton(self.changes_checkbtn_canvas)
-        # self.changes_other_checkbtn.grid(column=0, row=3, sticky='w')
-        # self.changes_other_label = tk.Label(self.changes_checkbtn_canvas, text='Other:')
-        # self.changes_other_label.grid(column=1, row=3, sticky='w')
-        # self.changes_other_entry = tk.Entry(self.changes_checkbtn_canvas)
-        # self.changes_other_entry.grid(column=2, row=3, columnspan=4, sticky='w')
-
         # === Medication on hand label frame === #
         self.medication_on_hand_labelFrame = tk.LabelFrame(
             self.top, text='Medication On Hand', bg=self.background_color, font=self.labelFrame_font
             )
-        self.medication_on_hand_labelFrame.grid(column=0, row=4, sticky='we', pady=(self.labelFrame_space_btwn, 0))
+        self.medication_on_hand_labelFrame.grid(column=0, row=2, sticky='we', pady=(self.labelFrame_space_btwn, 0))
         #   Day supply canvas
         self.day_supply_canvas = tk.Canvas(
             self.medication_on_hand_labelFrame, bg=self.background_color, highlightthickness=0
@@ -232,7 +203,7 @@ class RefillTemplate:
         self.dispense_date_labelFrame = tk.LabelFrame(
             self.top, text='Dispense Date', bg=self.background_color, font=self.labelFrame_font
             )
-        self.dispense_date_labelFrame.grid(column=0, row=5, sticky='w', pady=(self.labelFrame_space_btwn, 0))
+        self.dispense_date_labelFrame.grid(column=0, row=3, sticky='w', pady=(self.labelFrame_space_btwn, 0))
         #   Dispense btn canvas
         self.dispense_btn_canvas = tk.Canvas(
             self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0
@@ -366,7 +337,7 @@ class RefillTemplate:
         self.medication_efficacy_labelFrame = tk.LabelFrame(
             self.top, text='Medication Efficacy', bg=self.background_color, font=self.labelFrame_font
             )
-        self.medication_efficacy_labelFrame.grid(column=0, row=6, sticky='w', pady=(self.labelFrame_space_btwn, 0))
+        self.medication_efficacy_labelFrame.grid(column=0, row=4, sticky='w', pady=(self.labelFrame_space_btwn, 0))
         #   Medication efficacy canvas
         self.medication_efficacy_canvas = tk.Canvas(
             self.medication_efficacy_labelFrame, bg=self.background_color, highlightthickness=0
@@ -406,7 +377,7 @@ class RefillTemplate:
         self.spoke_with_labelFrame = tk.LabelFrame(
             self.top, text='Spoke with:', bg=self.background_color, font=self.labelFrame_font
             )
-        self.spoke_with_labelFrame.grid(column=0, row=7, sticky='w', pady=(self.labelFrame_space_btwn, 0))
+        self.spoke_with_labelFrame.grid(column=0, row=5, sticky='w', pady=(self.labelFrame_space_btwn, 0))
         #   Spoke with canvas
         self.spoke_with_canvas = tk.Canvas(
             self.spoke_with_labelFrame, bg=self.background_color, highlightthickness=0
@@ -427,12 +398,13 @@ class RefillTemplate:
             activeforeground=self.copy_btn_active_fg_color, width=14,
             disabledforeground=self.copy_btn_disabled_fg_color
             )
-        self.copy_template_btn.grid(column=0, row=7, padx=(260,0), pady=(15,0))
+        self.copy_template_btn.grid(column=0, row=5, padx=(260,0), pady=(15,0))
 
         # ~ ~ ~ bind ~ ~ ~ #
         self.dispense_walkover_entry.bind('<FocusIn>', self.remove_temp_text)
         self.top.bind('<Delete>', self.clear)
         self.top.bind('<Control-u>', self.user_setup_window)
+        self.top.bind('<Configure>', self.sync_windows)
         
         # ~ ~ ~ after ~ ~ ~ #
         self.top.after(ms=50, func=self.run_validations)
@@ -1289,6 +1261,12 @@ Specialty Pharmacy'
         text_widget.config(
             fg=self.text_color, font=self.entry_font
             )
+        
+    def sync_windows(self, event=None):
+        x = self.top.winfo_x() - self.top.winfo_width() + 26
+        y = self.top.winfo_y()
+        self.intervention_window.geometry("+%d+%d" % (x,y))
+        self.intervention_window.lift()
         
 
 
