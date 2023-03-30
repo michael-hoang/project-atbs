@@ -598,6 +598,7 @@ class RefillTemplate:
         self.adherence_notes_text_box.grid(column=0, row=0)
         self.insert_placeholder_intervention_text_box(self.adherence_notes_text_box)
 
+        self.intervention_window.protocol('WM_DELETE_WINDOW', self.toggle_intervention_window)
 
         # ~ ~ ~ bind ~ ~ ~ #
         self.changes_notes_text_box.bind('<FocusIn>', lambda e: self.remove_placeholder_intervention_text_box(self.changes_notes_text_box, e))
