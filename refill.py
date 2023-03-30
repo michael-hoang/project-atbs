@@ -62,7 +62,7 @@ class RefillTemplate:
 
         # Initialize Intervention GUI window
         self.intervention_window = tk.Toplevel(self.top)
-        # self.top.withdraw()
+        self.top.withdraw()
         self.intervention_window.title('Intervention')
         self.intervention_window.config(bg=self.background_color, padx=20, pady=20)
         self.intervention_window.resizable(False, False)
@@ -94,34 +94,49 @@ class RefillTemplate:
 
         self.intervention = False
 
-        # === Container for top buttons === #
-        self.container_top_buttons = tk.Canvas(
+        # === Container for top buttons and label === #
+        self.container_top_buttons_labels = tk.Canvas(
             self.top, bg=self.background_color, highlightthickness=0
             )
-        self.container_top_buttons.grid(column=0, row=0, sticky='e')
+        self.container_top_buttons_labels.grid(column=0, row=0)
 
+        # Intervention button
+        self.intervention_btn = tk.Button(
+            self.container_top_buttons_labels, text='Intervention',command=self.toggle_intervention_window,
+            bg=self.copy_btn_bg_color, relief='raised', fg='black',
+            font=('Comic Sans MS', 8, 'normal'), activebackground=self.copy_btn_bg_color,
+            activeforeground='black'
+            )
+        self.intervention_btn.grid(column=0, row=0)
         # Refill coordination label
         self.refill_coordination_label = tk.Label(
-            self.container_top_buttons, text='Refill Coordination',
-            bg=self.background_color, font=('Comic Sans MS', 15, 'normal')
+            self.container_top_buttons_labels, text='Refill Coordination',
+            bg=self.background_color, font=('Comic Sans MS', 14, 'normal'),
             )
-        self.refill_coordination_label.grid(column=0, row=0, padx=(0, 90))
+        self.refill_coordination_label.grid(column=1, row=0, padx=(35, 75))
 
+        # Top buttons inner container
+        self.top_buttons_inner_container = tk.Frame(
+            self.container_top_buttons_labels, bg=self.background_color
+            )
+        self.top_buttons_inner_container.grid(
+            column=2, row=0, pady=(self.labelFrame_space_btwn, 0), sticky='we'
+            )
         # Edit user button
         img_path = './assets/img/edit-user.png'
         img = Image.open(img_path)
         self.edit_user_img = ImageTk.PhotoImage(img)
         self.edit_user_btn = tk.Button(
-            self.container_top_buttons, image=self.edit_user_img, command=self.user_setup_window,
+            self.top_buttons_inner_container, image=self.edit_user_img, command=self.user_setup_window,
             bg=self.copy_btn_bg_color
             )
-        self.edit_user_btn.grid(column=1, row=0, padx=(0, 15))
+        self.edit_user_btn.grid(column=0, row=0)
 
         # === Container for Medication label frame and Clear button === #
         self.container_med_clear = tk.Canvas(
             self.top, bg=self.background_color, highlightthickness=0
             )
-        self.container_med_clear.grid(column=0, row=1, sticky='w')
+        self.container_med_clear.grid(column=0, row=1, sticky='w', pady=(self.labelFrame_space_btwn, 0))
 
         # === Medication label frame === #
         self.medication_labelFrame = tk.LabelFrame(
@@ -1263,12 +1278,24 @@ Specialty Pharmacy'
             )
         
     def sync_windows(self, event=None):
-        x = self.top.winfo_x() - self.top.winfo_width() + 26
-        y = self.top.winfo_y()
-        self.intervention_window.geometry("+%d+%d" % (x,y))
-        self.intervention_window.lift()
+        """Attach intervention window to root window on the left."""
+        if self.intervention:
+            x = self.top.winfo_x() - self.top.winfo_width() + 26
+            y = self.top.winfo_y()
+            self.intervention_window.geometry("+%d+%d" % (x,y))
+            self.intervention_window.lift()
+        else:
+            self.intervention_window.withdraw()
         
-
+    def toggle_intervention_window(self):
+        """Toggle intervention window."""
+        if self.intervention:
+            self.intervention = False
+            self.intervention_window.withdraw()
+        else:
+            self.intervention = True
+            self.intervention_window.deiconify()
+            self.sync_windows()
 
 
 
