@@ -505,16 +505,6 @@ class RefillTemplate:
             )
         self.changes_other_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
 
-        # Changes Other & Medical Condition button container
-        self.changes_other_entry_container = tk.Frame(self.changes_labelFrame, highlightthickness=0)
-        self.changes_other_entry_container.grid(column=0, row=1, sticky='w', padx=(208, 0), pady=self.canvas_pady)
-        # Other entry
-        self.changes_other_entry = tk.Entry(
-            self.changes_other_entry_container,font=self.entry_font, bg=self.entry_bg_color,
-            relief=self.entry_relief, width=18, state='disabled'
-            )
-        self.changes_other_entry.grid(column=2, row=0)
-
         # Changes Notes container
         self.changes_notes_container = tk.Frame(
             self.changes_labelFrame, highlightthickness=0, width=364, height=64
