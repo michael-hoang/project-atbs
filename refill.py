@@ -5,6 +5,7 @@ import datetime as dt
 import os, sys, subprocess, json
 from PIL import Image, ImageTk
 from win32 import win32clipboard
+from tkinter import WORD
 
 
 class RefillTemplate:
@@ -46,6 +47,11 @@ class RefillTemplate:
         self.copy_btn_active_bg_color = 'ghost white' # #ebfff3
         self.copy_btn_active_fg_color = 'medium sea green'
         self.copy_btn_disabled_fg_color = 'snow3'
+            # Intervention placeholder text
+        self.placeholder_text_color = 'lightgray'
+        self.placeholder_text_font = ('Comic Sans MS', 18, 'normal')
+
+
     
         # Initialize Refill coordination GUI window
         self.top = tk.Toplevel()
@@ -452,7 +458,7 @@ class RefillTemplate:
         self.changes_labelFrame.grid(column=0, row=1)
 
         # Changes button container
-        self.changes_button_container = tk.Label(self.changes_labelFrame, highlightthickness=0)
+        self.changes_button_container = tk.Frame(self.changes_labelFrame, highlightthickness=0)
         self.changes_button_container.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Dose/Direction button
         self.changes_dose_direction_btn = tk.Button(
@@ -480,7 +486,7 @@ class RefillTemplate:
         self.changes_allergies_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
 
         # Changes Other & Medical Condition button container
-        self.changes_other_med_cond_container = tk.Label(self.changes_labelFrame, highlightthickness=0)
+        self.changes_other_med_cond_container = tk.Frame(self.changes_labelFrame, highlightthickness=0)
         self.changes_other_med_cond_container.grid(column=0, row=1, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Medical Condition button
         self.changes_other_btn = tk.Button(
@@ -500,7 +506,7 @@ class RefillTemplate:
         self.changes_other_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
 
         # Changes Other & Medical Condition button container
-        self.changes_other_entry_container = tk.Label(self.changes_labelFrame, highlightthickness=0)
+        self.changes_other_entry_container = tk.Frame(self.changes_labelFrame, highlightthickness=0)
         self.changes_other_entry_container.grid(column=0, row=1, sticky='w', padx=(208, 0), pady=self.canvas_pady)
         # Other entry
         self.changes_other_entry = tk.Entry(
@@ -509,6 +515,53 @@ class RefillTemplate:
             )
         self.changes_other_entry.grid(column=2, row=0)
 
+        # Changes Notes container
+        self.changes_notes_container = tk.Frame(
+            self.changes_labelFrame, highlightthickness=0, width=364, height=64
+            )
+        self.changes_notes_container.grid(
+            column=0, row=2, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady
+            )
+        self.changes_notes_container.grid_propagate(False)
+        # Changes Notes Text box
+        self.changes_notes_text_box = tk.Text(
+            self.changes_notes_container, font=self.entry_font, wrap=WORD,
+            width=40, height=3
+            )
+        self.changes_notes_text_box.grid(column=0, row=0)
+        self.insert_placeholder_intervention_text_box(self.changes_notes_text_box)
+
+        # === Side Effects label frame === #
+        self.side_effects_labelFrame = tk.LabelFrame(
+            self.intervention_window, text='Side Effects', bg=self.background_color,
+            font=self.labelFrame_font, highlightthickness=0 
+            )
+        self.side_effects_labelFrame.grid(column=0, row=2)
+
+        # Side effect button container
+        self.side_effect_button_container = tk.Frame(self.side_effects_labelFrame, highlightthickness=0)
+        self.side_effect_button_container.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
+        # Injection site reaction button
+        self.injection_site_rxn_btn = tk.Button(
+            self.side_effect_button_container, text='Injection site reaction', command=None,
+            bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
+            relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            )
+        self.injection_site_rxn_btn.grid(column=0, row=0)
+        # Hospitalized/ER Visit button
+        self.hospitalize_er_btn = tk.Button(
+            self.side_effect_button_container, text='Hospitalized/ER visit', command=None,
+            bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
+            relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            )
+        self.hospitalize_er_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
+
+
+
+        # ~ ~ ~ bind ~ ~ ~ #
+        self.changes_notes_text_box.bind('<FocusIn>', lambda e: self.remove_placeholder_intervention_text_box(self.changes_notes_text_box, e))
 
         # ~ ~ ~ Check user ~ ~ ~ #
         if self.user:
@@ -1166,6 +1219,27 @@ Specialty Pharmacy'
         """Copy formatted Template notes to clipboard."""
         template = self.format_template_notes()
         self.copy_rtf_to_clipboard(template)
+
+
+    def insert_placeholder_intervention_text_box(self, text_widget):
+        """Insert a placeholder text at the center inside intervention text box."""
+        text_widget.config(fg=self.placeholder_text_color, font=self.placeholder_text_font)
+        # text_widget.tag_configure('center_tag', justify='center')
+        text_widget.insert(1.0, '\t    Notes')
+        # text_widget.tag_add('center_tag', 1.0, 'end')
+        
+
+    def remove_placeholder_intervention_text_box(self, text_widget, e=None):
+        """Remove placeholder text inside intervention text box."""
+        text_widget.delete(1.0, 'end')
+        text_widget.config(
+            fg=self.text_color, font=self.entry_font
+            )
+        
+
+
+
+
 
 if __name__ == '__main__':
     root = tk.Tk()
