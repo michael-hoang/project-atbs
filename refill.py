@@ -451,7 +451,7 @@ class RefillTemplate:
         self.changes_button_container.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Dose/Direction button
         self.changes_dose_direction_btn = tk.Button(
-            self.changes_button_container, text='Dose/Direction', command=None,
+            self.changes_button_container, text='Dose/Direction', command=self._select_dose_direction,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -459,7 +459,7 @@ class RefillTemplate:
         self.changes_dose_direction_btn.grid(column=0, row=0)
         # Medication Profile button
         self.changes_medication_profile_btn = tk.Button(
-            self.changes_button_container, text='Medication Profile', command=None,
+            self.changes_button_container, text='Medication Profile', command=self._select_medication_profile,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -467,7 +467,7 @@ class RefillTemplate:
         self.changes_medication_profile_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
         # New Allergies button
         self.changes_allergies_btn = tk.Button(
-            self.changes_button_container, text='New Allergies', command=None,
+            self.changes_button_container, text='New Allergies', command=self._select_new_allergies,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -480,16 +480,16 @@ class RefillTemplate:
             )
         self.changes_other_med_cond_container.grid(column=0, row=1, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Medical Condition button
-        self.changes_other_btn = tk.Button(
-            self.changes_other_med_cond_container, text='Medical Condition', command=None,
+        self.changes_medical_condition_btn = tk.Button(
+            self.changes_other_med_cond_container, text='Medical Condition', command=self._select_medical_condition,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
-        self.changes_other_btn.grid(column=0, row=0)
+        self.changes_medical_condition_btn.grid(column=0, row=0)
         # Other changes button
         self.changes_other_btn = tk.Button(
-            self.changes_other_med_cond_container, text='Other', command=None,
+            self.changes_other_med_cond_container, text='Other', command=self._select_other_changes,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -527,7 +527,7 @@ class RefillTemplate:
         self.side_effect_button_container.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Injection site reaction button
         self.injection_site_rxn_btn = tk.Button(
-            self.side_effect_button_container, text='Injection site reaction', command=None,
+            self.side_effect_button_container, text='Injection site reaction', command=self._select_injection_site_rxn,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -535,7 +535,7 @@ class RefillTemplate:
         self.injection_site_rxn_btn.grid(column=0, row=0)
         # Hospitalized/ER Visit button
         self.hospitalize_er_btn = tk.Button(
-            self.side_effect_button_container, text='Hospitalized/ER', command=None,
+            self.side_effect_button_container, text='Hospitalized/ER', command=self._select_hospitalized_er,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -543,7 +543,7 @@ class RefillTemplate:
         self.hospitalize_er_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
         # Other side effects button
         self.side_effect_other_btn = tk.Button(
-            self.side_effect_button_container, text='Other', command=None,
+            self.side_effect_button_container, text='Other', command=self._select_other_side_effects,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
@@ -657,7 +657,6 @@ class RefillTemplate:
         self.due_start_label.config(text='')
         self.due_start_entry.delete(0, 'end')
         self.due_start_entry.config(state='disabled')
-
 
     def select_dcs(self):
         """Select DCS button."""
@@ -1200,7 +1199,7 @@ Confirmed with {spoke_with}'
 
         new_medications = 'No'
         medical_conditions_review = 'Yes'
-        medical_condition_changes = 'No'
+        medical_condition_changes = 'None'
         continuation_therapy = 'Yes'
         med_working = self.medication_working
         review_symptoms = 'N/A'
@@ -1304,7 +1303,101 @@ Specialty Pharmacy'
             self.sync_windows()
             self.intervention_btn.config(relief='sunken', fg='red2')
 
+    def _select_dose_direction(self):
+        """Select Dose/Direction button."""
+        self.changes_dose_direction_btn.config(
+            bg=self.select_btn_bg_color, command=self._unselect_dose_direction
+            )
+    
+    def _unselect_dose_direction(self):
+        """Unselect Dose/Direction button."""
+        self.changes_dose_direction_btn.config(
+            bg=self.btn_bg_color, command=self._select_dose_direction
+            )
 
+    def _select_medication_profile(self):
+        """Select Medication Profile button."""
+        self.changes_medication_profile_btn.config(
+            bg=self.select_btn_bg_color, command=self._unselect_medication_profile
+            )
+
+    def _unselect_medication_profile(self):
+        """Unselect Medication Profile button."""
+        self.changes_medication_profile_btn.config(
+            bg=self.btn_bg_color, command=self._select_medication_profile
+            )
+
+    def _select_new_allergies(self):
+        """Select New Allergies button."""
+        self.changes_allergies_btn.config(
+            bg=self.select_btn_bg_color, command=self._unselect_new_allergies
+            )
+
+    def _unselect_new_allergies(self):
+        """Unselect New Allergies button."""
+        self.changes_allergies_btn.config(
+            bg=self.btn_bg_color, command=self._select_new_allergies
+            )
+
+    def _select_medical_condition(self):
+        """Select Medical Condition button."""
+        self.changes_medical_condition_btn.config(
+            bg=self.select_btn_bg_color, command=self._unselect_medical_condition
+            )
+
+    def _unselect_medical_condition(self):
+        """Unselect Medical Condition button."""
+        self.changes_medical_condition_btn.config(
+            bg=self.btn_bg_color, command=self._select_medical_condition
+            )
+
+    def _select_other_changes(self):
+        """Select Other changes button."""
+        self.changes_other_btn.config(
+            bg=self.select_btn_bg_color, command=self._unselect_other_changes
+            )
+
+    def _unselect_other_changes(self):
+        """Unselect Other changes button."""
+        self.changes_other_btn.config(
+            bg=self.btn_bg_color, command=self._select_other_changes
+            )
+
+    def _select_injection_site_rxn(self):
+        """Select Injection Site Reaction button."""
+        self.injection_site_rxn_btn.config(
+            bg=self.select_btn_bg_color, command=self._unselect_injection_site_rxn
+            )
+
+    def _unselect_injection_site_rxn(self):
+        """Unselect Injection Site Reaction button."""
+        self.injection_site_rxn_btn.config(
+            bg=self.btn_bg_color, command=self._select_injection_site_rxn
+            )
+
+    def _select_hospitalized_er(self):
+        """Select Hospitalized/ER button."""
+        self.hospitalize_er_btn.config(
+            bg=self.select_btn_bg_color, command=self._unselect_hospitalized_er
+            )
+
+    def _unselect_hospitalized_er(self):
+        """Unselect Hospitalized/ER button."""
+        self.hospitalize_er_btn.config(
+            bg=self.btn_bg_color, command=self._select_hospitalized_er
+            )
+
+    def _select_other_side_effects(self):
+        """Select Other side effects button."""
+        self.side_effect_other_btn.config(
+            bg=self.select_btn_bg_color, command=self._unselect_other_side_effects
+            )
+
+    def _unselect_other_side_effects(self):
+        """Unselect Other side effects button."""
+        self.side_effect_other_btn.config(
+            bg=self.btn_bg_color, command=self._select_other_side_effects
+            )
 
 
 if __name__ == '__main__':
