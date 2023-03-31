@@ -83,7 +83,7 @@ class RefillTemplate:
         self.spoke_with = ''
         self.new_medication = 'No'
         self.medical_condition_review = 'Yes'
-        self.medical_conditions_changes = 'No'
+        self.medical_conditions_changes = 'None'
         self.therapy_continuation = 'Yes'
         self.medication_working = ''
         self.symptoms_reported = []
@@ -1156,44 +1156,40 @@ class RefillTemplate:
         elif format == 'rich':
             wam_notes = fr'{{{self.dispense_method}}} {{{self.dispense_date_entry.get()}}}' 
             if self.dispense_method == 'DCS':
-                wam_notes += fr', {{{self.signature_required}}}\
-'
+                wam_notes += fr', {{{self.signature_required}}}'
                 if dispense_comments:
-                    wam_notes += fr'{{{dispense_comments}}}'
+                    wam_notes += fr'\line{{{dispense_comments}}}'
                 
             elif self.dispense_method == 'FedEx':
-                wam_notes += fr' for {{{self.fedex_delivery_date}}} delivery, {{{self.signature_required}}}\
-'           
+                wam_notes += fr' for {{{self.fedex_delivery_date}}} delivery, {{{self.signature_required}}}'     
                 if dispense_comments:
-                    wam_notes += fr'{{{dispense_comments}}}'
+                    wam_notes += fr'\line{{{dispense_comments}}}'
 
             elif self.dispense_method == 'Pick up':
                 pickup_time = self.dispense_pickup_time_entry.get().strip()
                 if pickup_time[0].isdigit():
                     wam_notes += fr' at'
-            
-                    wam_notes += fr' {{{pickup_time}}}\
-'
+                    
+                wam_notes += fr' {{{pickup_time}}}'
                 if dispense_comments:
-                    wam_notes += fr'{{{dispense_comments}}}'
+                    wam_notes += fr'\line{{{dispense_comments}}}'
 
             else:
-                wam_notes += fr' to {{{self.dispense_walkover_entry.get().upper()}}}\
-'
+                wam_notes += fr' to {{{self.dispense_walkover_entry.get().upper()}}}'
                 if dispense_comments:
-                    wam_notes += fr'{{{dispense_comments}}}'
+                    wam_notes += fr'\line{{{dispense_comments}}}'
                 
         return wam_notes
     
     def format_template_notes(self) -> str:
         """Format Template notes with rich text."""
+
         medication = self.medication_entry.get().strip().capitalize()
         if self.dispense_method == 'Pick up':
             hipaa_verification = 'Name, DOB, Drug Prescribed'
         else:
             hipaa_verification = 'Name, DOB, Address, Drug Prescribed'
         
-        changes = 'None'
         ready_to_fill = 'Yes, refill initiated in WAM.'
         days_supply = self.day_supply_entry.get().strip()
         injection_cycle_date = self.due_start_entry.get().strip()
@@ -1205,9 +1201,9 @@ class RefillTemplate:
         delivery_pickup = self.dispense_method
         if delivery_pickup == 'Walk over':
             delivery_pickup = 'Clinic delivery'
+
         dispense_date = self.format_wam_notes(format='rich')
         allergies_reviewed = 'Yes'
-        new_allergies = 'No'
         medication_review = 'Yes,'
         spoke_with = self.spoke_with_entry.get().strip()
         if spoke_with.lower() in ('patient', 'the patient', 'pt', 'pateint', 'patient', 'thepatient', 'patients'):
@@ -1215,18 +1211,52 @@ class RefillTemplate:
         else:
             medication_review_confirmation = fr'other.\
 Confirmed with {spoke_with}'
-
-        new_medications = 'No'
+  
         medical_conditions_review = 'Yes'
-        medical_condition_changes = 'None'
         continuation_therapy = 'Yes'
         med_working = self.medication_working
+        goal = 'Yes' 
+        user = self.user
+        # Intervention variables
+        changes = 'None' 
+        new_allergies = 'No' 
+        new_medications = 'No'
+        medical_condition_changes = 'None'
         review_symptoms = 'N/A'
         intervention_necessary = 'No'
         adherence = 'ADHERENT'
-        goal = 'Yes'
         speak_to_rph = 'No'
-        user = self.user
+
+        if self.intervention:
+                speak_to_rph = 'Yes, intervention necessary.'
+                if self.changes:
+                    changes = ''
+                    if len(self.changes) == 1:
+                        changes = self.changes[0]
+                    else:
+                        for _change in self.changes:
+                            changes += _change
+                            changes += ', '
+                        changes = changes[:-2]
+
+                if self.new_allergies == 'Yes':
+                    new_allergies = 'Yes - updated new allergies'
+                if self.new_medication == 'Yes':
+                    new_medications = 'Yes'
+                if self.medical_conditions_changes != 'None':
+                    medical_condition_changes = self.medical_conditions_changes
+                if self.symptoms_reported:
+                    review_symptoms = fr''
+                    if len(self.symptoms_reported) == 1:
+                        review_symptoms = self.symptoms_reported[0]
+                    else:
+                        for _symptom in self.symptoms_reported:
+                            review_symptoms += _symptom
+                            review_symptoms += ', '
+                        review_symptoms = review_symptoms[:-2]
+                        
+                    review_symptoms += fr'\line\tab If side-effect reported, documented by tech. If documented by tech, triage to RPh? Yes.\line'
+                    intervention_necessary = 'Yes. Routed to RPH.'
 
         template = fr'\b\fs26Refill Reminder \b0\fs24\
 \
@@ -1381,7 +1411,7 @@ Specialty Pharmacy'
             bg=self.select_btn_bg_color, command=self._unselect_medical_condition
             )
         self.changes.append('New Medication Condition(s)')
-        self.medical_conditions_changes = 'Yes – Noted new additions of medical conditions and appropriately documented.'
+        self.medical_conditions_changes = 'Yes - Noted new additions of medical conditions and appropriately documented.'
 
     def _unselect_medical_condition(self):
         """Unselect Medical Condition button."""
