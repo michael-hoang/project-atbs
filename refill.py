@@ -72,7 +72,7 @@ class RefillTemplate:
 
         # Initialize variables
         self.user = self.get_existing_user()
-        self.changes = 'None'
+        self.changes = []
         self.injection_cycle = ''
         self.dispense_method = ''
         self.signature_required = ''
@@ -86,7 +86,7 @@ class RefillTemplate:
         self.medical_conditions_changes = 'No'
         self.therapy_continuation = 'Yes'
         self.medication_working = ''
-        self.symptoms_reported = 'No'
+        self.symptoms_reported = []
         self.symptoms_intervention = 'No'
         self.medication_adherence = 'Yes'
         self.goal_met = 'Yes'
@@ -849,6 +849,25 @@ class RefillTemplate:
         win32clipboard.OpenClipboard(0)
         win32clipboard.EmptyClipboard()
         win32clipboard.CloseClipboard()
+
+        
+        for unselect_method in [self._unselect_dose_direction,
+                                self._unselect_medication_profile,
+                                self._unselect_new_allergies,
+                                self._unselect_medical_condition,
+                                self._unselect_other_changes,
+                                self._unselect_injection_site_rxn,
+                                self._unselect_hospitalized_er,
+                                self._unselect_other_side_effects]:
+            try:
+                unselect_method()
+            except ValueError:
+                pass
+        
+        self.clear_intervention_text_box(self.changes_notes_text_box)
+        self.clear_intervention_text_box(self.side_effects_notes_text_box)
+        self.clear_intervention_text_box(self.adherence_notes_text_box)
+
         self.medication_entry.focus()
 
     def run_validations(self):
@@ -1280,6 +1299,12 @@ Specialty Pharmacy'
             text_widget.config(
                 fg=self.text_color, font=self.entry_font
                 )
+    
+    def clear_intervention_text_box(self, text_widget):
+        """Clear contents of intervention text box."""
+        text_widget.delete(1.0, 'end')
+        text_widget.config(fg=self.placeholder_text_color, font=self.placeholder_text_font)
+        text_widget.insert(1.0, '\t    Notes')
         
     def sync_windows(self, event=None):
         """Attach intervention window to root window on the left."""
@@ -1302,102 +1327,125 @@ Specialty Pharmacy'
             self.intervention_window.deiconify()
             self.sync_windows()
             self.intervention_btn.config(relief='sunken', fg='red2')
+            self.intervention_window.focus()
 
     def _select_dose_direction(self):
         """Select Dose/Direction button."""
         self.changes_dose_direction_btn.config(
             bg=self.select_btn_bg_color, command=self._unselect_dose_direction
             )
+        self.changes.append('Change to dose/directions of current medication')
     
     def _unselect_dose_direction(self):
         """Unselect Dose/Direction button."""
         self.changes_dose_direction_btn.config(
             bg=self.btn_bg_color, command=self._select_dose_direction
             )
+        self.changes.remove('Change to dose/directions of current medication')
 
     def _select_medication_profile(self):
         """Select Medication Profile button."""
         self.changes_medication_profile_btn.config(
             bg=self.select_btn_bg_color, command=self._unselect_medication_profile
             )
+        self.changes.append('Change to medication profile')
+        self.new_medication = 'Yes'
 
     def _unselect_medication_profile(self):
         """Unselect Medication Profile button."""
         self.changes_medication_profile_btn.config(
             bg=self.btn_bg_color, command=self._select_medication_profile
             )
+        self.changes.remove('Change to medication profile')
+        self.new_medication = 'No'
 
     def _select_new_allergies(self):
         """Select New Allergies button."""
         self.changes_allergies_btn.config(
             bg=self.select_btn_bg_color, command=self._unselect_new_allergies
             )
+        self.changes.append('Changes in allergies')
+        self.new_allergies = 'Yes'
 
     def _unselect_new_allergies(self):
         """Unselect New Allergies button."""
         self.changes_allergies_btn.config(
             bg=self.btn_bg_color, command=self._select_new_allergies
             )
+        self.changes.remove('Changes in allergies')
+        self.new_allergies = 'No'
 
     def _select_medical_condition(self):
         """Select Medical Condition button."""
         self.changes_medical_condition_btn.config(
             bg=self.select_btn_bg_color, command=self._unselect_medical_condition
             )
+        self.changes.append('New Medication Condition(s)')
+        self.medical_conditions_changes = 'Yes – Noted new additions of medical conditions and appropriately documented.'
 
     def _unselect_medical_condition(self):
         """Unselect Medical Condition button."""
         self.changes_medical_condition_btn.config(
             bg=self.btn_bg_color, command=self._select_medical_condition
             )
+        self.changes.remove('New Medication Condition(s)')
+        self.medical_conditions_changes = 'No'
 
     def _select_other_changes(self):
         """Select Other changes button."""
         self.changes_other_btn.config(
             bg=self.select_btn_bg_color, command=self._unselect_other_changes
             )
+        self.changes.append('Other')
 
     def _unselect_other_changes(self):
         """Unselect Other changes button."""
         self.changes_other_btn.config(
             bg=self.btn_bg_color, command=self._select_other_changes
             )
+        self.changes.remove('Other')
 
     def _select_injection_site_rxn(self):
         """Select Injection Site Reaction button."""
         self.injection_site_rxn_btn.config(
             bg=self.select_btn_bg_color, command=self._unselect_injection_site_rxn
             )
+        self.symptoms_reported.append('Injection site reaction')
 
     def _unselect_injection_site_rxn(self):
         """Unselect Injection Site Reaction button."""
         self.injection_site_rxn_btn.config(
             bg=self.btn_bg_color, command=self._select_injection_site_rxn
             )
+        self.symptoms_reported.remove('Injection site reaction')
 
     def _select_hospitalized_er(self):
         """Select Hospitalized/ER button."""
         self.hospitalize_er_btn.config(
             bg=self.select_btn_bg_color, command=self._unselect_hospitalized_er
             )
+        self.symptoms_reported.append('Hospitalized/ER visit')
 
     def _unselect_hospitalized_er(self):
         """Unselect Hospitalized/ER button."""
         self.hospitalize_er_btn.config(
             bg=self.btn_bg_color, command=self._select_hospitalized_er
             )
+        self.symptoms_reported.remove('Hospitalized/ER visit')
 
     def _select_other_side_effects(self):
         """Select Other side effects button."""
         self.side_effect_other_btn.config(
             bg=self.select_btn_bg_color, command=self._unselect_other_side_effects
             )
+        self.symptoms_reported.append('Other')
 
     def _unselect_other_side_effects(self):
         """Unselect Other side effects button."""
         self.side_effect_other_btn.config(
             bg=self.btn_bg_color, command=self._select_other_side_effects
             )
+        self.symptoms_reported.remove('Other')
 
 
 if __name__ == '__main__':
