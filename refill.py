@@ -598,6 +598,28 @@ class RefillTemplate:
         self.adherence_notes_text_box.grid(column=0, row=0)
         self.insert_placeholder_intervention_text_box(self.adherence_notes_text_box)
 
+        # === Additional Notes label frame === #
+        self.additional_notes_labelFrame = tk.LabelFrame(
+            self.intervention_window, text='Additional Notes', bg=self.background_color,
+            font=self.labelFrame_font, highlightthickness=0
+            )
+        self.additional_notes_labelFrame.grid(column=0, row=4, sticky='we', pady=(self.labelFrame_space_btwn, 0))
+
+         # Additional notes container
+        self.additional_notes_container = tk.Frame(
+            self.additional_notes_labelFrame, highlightthickness=0, width=364, height=70,
+            bg=self.background_color
+            )
+        self.additional_notes_container.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
+        self.additional_notes_container.grid_propagate(False)
+        # Additional Notes Text box
+        self.additional_notes_text_box = tk.Text(
+            self.additional_notes_container, font=self.entry_font, wrap=WORD,
+            width=40, height=4
+            )
+        self.additional_notes_text_box.grid(column=0, row=0)
+        self.insert_placeholder_intervention_text_box(self.additional_notes_text_box)
+
         self.intervention_window.protocol('WM_DELETE_WINDOW', self.toggle_intervention_window)
 
         # ~ ~ ~ bind ~ ~ ~ #
@@ -607,6 +629,8 @@ class RefillTemplate:
         self.side_effects_notes_text_box.bind('<FocusOut>', lambda e: self.insert_placeholder_intervention_text_box(self.side_effects_notes_text_box, e))
         self.adherence_notes_text_box.bind('<FocusIn>', lambda e: self.remove_placeholder_intervention_text_box(self.adherence_notes_text_box, e))
         self.adherence_notes_text_box.bind('<FocusOut>', lambda e: self.insert_placeholder_intervention_text_box(self.adherence_notes_text_box, e))
+        self.additional_notes_text_box.bind('<FocusIn>', lambda e: self.remove_placeholder_intervention_text_box(self.additional_notes_text_box, e))
+        self.additional_notes_text_box.bind('<FocusOut>', lambda e: self.insert_placeholder_intervention_text_box(self.additional_notes_text_box, e))
 
         # ~ ~ ~ Check user ~ ~ ~ #
         if self.user:
@@ -867,6 +891,7 @@ class RefillTemplate:
         self.clear_intervention_text_box(self.changes_notes_text_box)
         self.clear_intervention_text_box(self.side_effects_notes_text_box)
         self.clear_intervention_text_box(self.adherence_notes_text_box)
+        self.clear_intervention_text_box(self.additional_notes_text_box)
 
         self.medication_entry.focus()
 
@@ -1230,14 +1255,23 @@ Confirmed with {spoke_with}'
         if self.intervention:
                 speak_to_rph = 'Yes, intervention necessary.'
                 if self.changes:
+                    number_of_different_changes = len(self.changes)
+                    # Move 'Other' to the end of list
+                    if 'Other' in self.changes and number_of_different_changes > 1:
+                        self.changes.append(self.changes.pop(self.changes.index('Other')))
                     changes = ''
-                    if len(self.changes) == 1:
+                    if number_of_different_changes == 1:
                         changes = self.changes[0]
+                    elif number_of_different_changes == 2:
+                        changes = f'{self.changes[0]} and {self.changes[1]}'
                     else:
                         for _change in self.changes:
+                            if _change == self.changes[-1]:
+                                changes += ', and '
+                            else:
+                                changes += ', '
                             changes += _change
-                            changes += ', '
-                        changes = changes[:-2]
+                        changes = changes[2:]
 
                 if self.new_allergies == 'Yes':
                     new_allergies = 'Yes - updated new allergies'
@@ -1246,14 +1280,23 @@ Confirmed with {spoke_with}'
                 if self.medical_conditions_changes != 'None':
                     medical_condition_changes = self.medical_conditions_changes
                 if self.symptoms_reported:
+                    number_of_different_symptoms = len(self.symptoms_reported)
+                    # Move 'Other' to the end of the list
+                    if 'Other' in self.symptoms_reported and number_of_different_symptoms > 1:
+                        self.symptoms_reported.append(self.symptoms_reported.pop(self.symptoms_reported.index('Other')))
                     review_symptoms = fr''
-                    if len(self.symptoms_reported) == 1:
+                    if number_of_different_symptoms == 1:
                         review_symptoms = self.symptoms_reported[0]
+                    elif number_of_different_symptoms == 2:
+                        review_symptoms = fr'{{{self.symptoms_reported[0]}}} and {{{self.symptoms_reported[1]}}}'
                     else:
                         for _symptom in self.symptoms_reported:
+                            if _symptom == self.symptoms_reported[-1]:
+                                review_symptoms += ', and '
+                            else:
+                                review_symptoms += ', '
                             review_symptoms += _symptom
-                            review_symptoms += ', '
-                        review_symptoms = review_symptoms[:-2]
+                        review_symptoms = review_symptoms[2:]
                         
                     review_symptoms += fr'\line\tab If side-effect reported, documented by tech. If documented by tech, triage to RPh? Yes.\line'
                     intervention_necessary = 'Yes. Routed to RPH.'
