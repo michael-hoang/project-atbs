@@ -6,6 +6,7 @@ import os, sys, subprocess, json
 from PIL import Image, ImageTk
 from win32 import win32clipboard
 from tkinter import WORD
+from tkcalendar import DateEntry
 
 
 class RefillTemplate:
@@ -29,8 +30,8 @@ class RefillTemplate:
         self.btn_disabled_fg_color = 'snow3'
         self.btn_disabled_bg_color = 'ghost white'
             # Label frames
-        self.labelFrame_font = ('Comic Sans MS', 11, 'normal')
-        self.labelFrame_space_btwn = 5
+        self.labelFrame_font = ('Comic Sans MS', 11, 'bold')
+        self.labelFrame_space_btwn = 7
         self.label_font = ('Comic Sans MS', 11, 'normal')
         self.disabled_text_color = 'snow3'
         self.text_color = 'black'
@@ -62,7 +63,7 @@ class RefillTemplate:
 
         # Initialize Intervention GUI window
         self.intervention_window = tk.Toplevel(self.top)
-        self.top.withdraw()
+        self.intervention_window.withdraw()
         self.intervention_window.title('Intervention')
         self.intervention_window.config(bg=self.background_color, padx=20, pady=20)
         self.intervention_window.resizable(False, False)
@@ -88,7 +89,6 @@ class RefillTemplate:
         self.medication_working = ''
         self.symptoms_reported = []
         self.symptoms_intervention = 'No'
-        self.medication_adherence = 'Yes'
         self.goal_met = 'Yes'
         self.speak_rph = 'No'
 
@@ -370,7 +370,7 @@ class RefillTemplate:
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
-        self.medication_efficacy_alittle_btn.grid(column=1, row=0)
+        self.medication_efficacy_alittle_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
         # A lot button
         self.medication_efficacy_alot_btn = tk.Button(
             self.medication_efficacy_canvas, text='A lot', command=self.select_a_lot,
@@ -378,7 +378,7 @@ class RefillTemplate:
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
-        self.medication_efficacy_alot_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
+        self.medication_efficacy_alot_btn.grid(column=1, row=0)
         # Can't tell button
         self.medication_efficacy_cantTell_btn = tk.Button(
             self.medication_efficacy_canvas, text='Can\'t tell', command=self.select_cant_tell,
@@ -390,7 +390,7 @@ class RefillTemplate:
 
         # === Spoke with label frame === #
         self.spoke_with_labelFrame = tk.LabelFrame(
-            self.top, text='Spoke with:', bg=self.background_color, font=self.labelFrame_font
+            self.top, text='Spoke with', bg=self.background_color, font=self.labelFrame_font
             )
         self.spoke_with_labelFrame.grid(column=0, row=5, sticky='w', pady=(self.labelFrame_space_btwn, 0))
         #   Spoke with canvas
@@ -423,16 +423,6 @@ class RefillTemplate:
         
         # ~ ~ ~ after ~ ~ ~ #
         self.top.after(ms=50, func=self.run_validations)
-
-        # ~ ~ ~ Center window ~ ~ ~ #
-        self.top.update_idletasks()
-        win_width = self.top.winfo_reqwidth()
-        win_height = self.top.winfo_reqheight()
-        screen_width = self.top.winfo_screenwidth()
-        screen_height = self.top.winfo_screenheight()
-        x = int(screen_width/2 - win_width/2)
-        y = int(screen_height/2 - win_width/2)
-        self.top.geometry(f"{win_width}x{win_height}+{x}+{y}")
 
 
         # ======================== Intervention ======================== #
@@ -532,7 +522,7 @@ class RefillTemplate:
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
-        self.injection_site_rxn_btn.grid(column=0, row=0)
+        self.injection_site_rxn_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
         # Hospitalized/ER Visit button
         self.hospitalize_er_btn = tk.Button(
             self.side_effect_button_container, text='Hospitalized/ER', command=self._select_hospitalized_er,
@@ -540,7 +530,7 @@ class RefillTemplate:
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
-        self.hospitalize_er_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
+        self.hospitalize_er_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
         # Other side effects button
         self.side_effect_other_btn = tk.Button(
             self.side_effect_button_container, text='Other', command=self._select_other_side_effects,
@@ -548,7 +538,7 @@ class RefillTemplate:
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
             )
-        self.side_effect_other_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
+        self.side_effect_other_btn.grid(column=0, row=0)
 
         # Side effects Notes container
         self.side_effects_notes_container = tk.Frame(
@@ -607,7 +597,7 @@ class RefillTemplate:
 
          # Additional notes container
         self.additional_notes_container = tk.Frame(
-            self.additional_notes_labelFrame, highlightthickness=0, width=364, height=70,
+            self.additional_notes_labelFrame, highlightthickness=0, width=364, height=75,
             bg=self.background_color
             )
         self.additional_notes_container.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
@@ -635,6 +625,7 @@ class RefillTemplate:
         # ~ ~ ~ Check user ~ ~ ~ #
         if self.user:
             self.top.title(f'Refill Coordination - {self.user}')
+            self.center_refill_coordination_window()
             self.top.deiconify()
             self.medication_entry.focus()
         else:
@@ -650,6 +641,17 @@ class RefillTemplate:
 
             self.user_setup_window()
 
+
+    def center_refill_coordination_window(self):
+        """Center Refill Coordination window to monitor screen."""
+        self.top.update_idletasks()
+        win_width = self.top.winfo_reqwidth()
+        win_height = self.top.winfo_reqheight()
+        screen_width = self.top.winfo_screenwidth()
+        screen_height = self.top.winfo_screenheight()
+        x = int(screen_width/2 - win_width/2)
+        y = int(screen_height/2 - win_width/2)
+        self.top.geometry(f"{win_width}x{win_height}+{x}+{y}")
 
     def select_injection(self):
         """Select injection button."""
@@ -874,7 +876,6 @@ class RefillTemplate:
         win32clipboard.EmptyClipboard()
         win32clipboard.CloseClipboard()
 
-        
         for unselect_method in [self._unselect_dose_direction,
                                 self._unselect_medication_profile,
                                 self._unselect_new_allergies,
@@ -892,7 +893,9 @@ class RefillTemplate:
         self.clear_intervention_text_box(self.side_effects_notes_text_box)
         self.clear_intervention_text_box(self.adherence_notes_text_box)
         self.clear_intervention_text_box(self.additional_notes_text_box)
-
+        if self.intervention:
+            self.toggle_intervention_window()
+            
         self.medication_entry.focus()
 
     def run_validations(self):
@@ -999,7 +1002,7 @@ class RefillTemplate:
             return ''
         
     def _update_variables(self):
-        """Update variables from user entry."""
+        """Update variables from entry."""
         self.spoke_with = self.spoke_with_entry.get().strip()
 
     def get_existing_user(self) -> str:
@@ -1231,7 +1234,7 @@ class RefillTemplate:
         allergies_reviewed = 'Yes'
         medication_review = 'Yes,'
         spoke_with = self.spoke_with_entry.get().strip()
-        if spoke_with.lower() in ('patient', 'the patient', 'pt', 'pateint', 'patient', 'thepatient', 'patients'):
+        if spoke_with.lower() in ('patient', 'the patient', 'pt', 'pateint', 'thepatient', 'patients'):
             medication_review_confirmation = 'patient confirmation.'
         else:
             medication_review_confirmation = fr'other.\
@@ -1250,6 +1253,7 @@ Confirmed with {spoke_with}'
         review_symptoms = 'N/A'
         intervention_necessary = 'No'
         adherence = 'ADHERENT'
+        embedded_adherence_notes = ''
         speak_to_rph = 'No'
 
         if self.intervention:
@@ -1272,6 +1276,10 @@ Confirmed with {spoke_with}'
                                 changes += ', '
                             changes += _change
                         changes = changes[2:]
+                    
+                    changes_notes = self.get_notes_from_text_box(self.changes_notes_text_box)
+                    if changes_notes:
+                        changes += f'\line\line\t {changes_notes}'
 
                 if self.new_allergies == 'Yes':
                     new_allergies = 'Yes - updated new allergies'
@@ -1297,11 +1305,19 @@ Confirmed with {spoke_with}'
                                 review_symptoms += ', '
                             review_symptoms += _symptom
                         review_symptoms = review_symptoms[2:]
-                        
-                    review_symptoms += fr'\line\tab If side-effect reported, documented by tech. If documented by tech, triage to RPh? Yes.\line'
+                    
+                    symptom_notes = self.get_notes_from_text_box(self.side_effects_notes_text_box)
+                    if symptom_notes:
+                        review_symptoms += fr'\line\tab {symptom_notes}'
+                    review_symptoms += fr'\line\line\tab If side-effect reported, documented by tech. If documented by tech, triage to RPh? Yes.\line'
                     intervention_necessary = 'Yes. Routed to RPH.'
 
-        template = fr'\b\fs26Refill Reminder \b0\fs24\
+                adherence_notes = self.get_notes_from_text_box(self.adherence_notes_text_box)
+                if adherence_notes:
+                    adherence = 'NOT ADHERENT'
+                    embedded_adherence_notes = fr'\line\line\tab {adherence_notes}'
+
+        template = fr'\b\fs26Refill Reminder\b0\fs24\
 \
 Medication: {{{medication}}}\
 \
@@ -1335,7 +1351,9 @@ Were there changes to the medical condition? {{{medical_condition_changes}}}\
 Has the patient reported experiencing any of the following? {{{review_symptoms}}}\
 Is intervention necessary (if yes for any above): {{{intervention_necessary}}}\
 \
-Patient is {{{adherence}}} to therapy.\
+Patient is {{{adherence}}} to therapy.{{{embedded_adherence_notes}}}\
+\
+***\
 \
 GOAL: Is patient meeting goal? {{{goal}}}\
 \
@@ -1343,6 +1361,10 @@ Does patient need to speak to a pharmacist? {{{speak_to_rph}}}\
 \
 {{{user}}}\
 Specialty Pharmacy'
+
+        additional_notes = self.get_notes_from_text_box(self.additional_notes_text_box)
+        if additional_notes:
+            template = fr'{{{additional_notes}}}\line\line{{{template}}}'
 
         return template
 
@@ -1397,8 +1419,8 @@ Specialty Pharmacy'
             self.intervention_btn.config(relief='raised', fg=self.text_color)
         else:
             self.intervention = True
-            self.intervention_window.deiconify()
             self.sync_windows()
+            self.intervention_window.deiconify()
             self.intervention_btn.config(relief='sunken', fg='red2')
             self.intervention_window.focus()
 
@@ -1519,6 +1541,18 @@ Specialty Pharmacy'
             bg=self.btn_bg_color, command=self._select_other_side_effects
             )
         self.symptoms_reported.remove('Other')
+
+    def get_notes_from_text_box(self, text_widget: tk.Text) -> str:
+        """Retrieve contents of Changes Text widget."""
+        contents =  text_widget.get(1.0, 'end').strip()
+        if contents == 'Notes':
+            contents = ''
+        elif contents:
+            contents = contents[0].capitalize() + contents[1:]
+            if contents[-1] != '.':
+                contents += '.'
+      
+        return contents
 
 
 if __name__ == '__main__':
