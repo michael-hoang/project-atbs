@@ -872,6 +872,8 @@ class RefillTemplate:
         self.dispense_comments_entry.delete(0, 'end')
         self.spoke_with_entry.delete(0, 'end')
         self._remove_pickup_time_label_entry()
+
+        self.dispense_date_entry.set_date(dt.date.today())
         
         self._unselect_injection_cycle()
         self._unselect_yes_no_sig()
@@ -1252,65 +1254,65 @@ Confirmed with {spoke_with}'
         speak_to_rph = 'No'
 
         if self.intervention:
-                speak_to_rph = 'Yes, intervention necessary.'
-                if self.changes:
-                    number_of_different_changes = len(self.changes)
-                    # Move 'Other' to the end of list
-                    if 'Other' in self.changes and number_of_different_changes > 1:
-                        self.changes.append(self.changes.pop(self.changes.index('Other')))
-                    changes = ''
-                    if number_of_different_changes == 1:
-                        changes = self.changes[0]
-                    elif number_of_different_changes == 2:
-                        changes = f'{self.changes[0]} and {self.changes[1]}'
-                    else:
-                        for _change in self.changes:
-                            if _change == self.changes[-1]:
-                                changes += ', and '
-                            else:
-                                changes += ', '
-                            changes += _change
-                        changes = changes[2:]
-                    
-                    changes_notes = self.get_notes_from_text_box(self.changes_notes_text_box)
-                    if changes_notes:
-                        changes += f'\line\line\t {changes_notes}'
+            speak_to_rph = 'Yes, intervention necessary.'
+            if self.changes:
+                number_of_different_changes = len(self.changes)
+                # Move 'Other' to the end of list
+                if 'Other' in self.changes and number_of_different_changes > 1:
+                    self.changes.append(self.changes.pop(self.changes.index('Other')))
+                changes = ''
+                if number_of_different_changes == 1:
+                    changes = self.changes[0]
+                elif number_of_different_changes == 2:
+                    changes = f'{self.changes[0]} and {self.changes[1]}'
+                else:
+                    for _change in self.changes:
+                        if _change == self.changes[-1]:
+                            changes += ', and '
+                        else:
+                            changes += ', '
+                        changes += _change
+                    changes = changes[2:]
+                
+                changes_notes = self.get_notes_from_text_box(self.changes_notes_text_box)
+                if changes_notes:
+                    changes += f'\line\line\t {changes_notes}'
 
-                if self.new_allergies == 'Yes':
-                    new_allergies = 'Yes - updated new allergies'
-                if self.new_medication == 'Yes':
-                    new_medications = 'Yes'
-                if self.medical_conditions_changes != 'None':
-                    medical_condition_changes = self.medical_conditions_changes
-                if self.symptoms_reported:
-                    number_of_different_symptoms = len(self.symptoms_reported)
-                    # Move 'Other' to the end of the list
-                    if 'Other' in self.symptoms_reported and number_of_different_symptoms > 1:
-                        self.symptoms_reported.append(self.symptoms_reported.pop(self.symptoms_reported.index('Other')))
-                    review_symptoms = fr''
-                    if number_of_different_symptoms == 1:
-                        review_symptoms = self.symptoms_reported[0]
-                    elif number_of_different_symptoms == 2:
-                        review_symptoms = fr'{{{self.symptoms_reported[0]}}} and {{{self.symptoms_reported[1]}}}'
-                    else:
-                        for _symptom in self.symptoms_reported:
-                            if _symptom == self.symptoms_reported[-1]:
-                                review_symptoms += ', and '
-                            else:
-                                review_symptoms += ', '
-                            review_symptoms += _symptom
-                        review_symptoms = review_symptoms[2:]
-                    
-                    symptom_notes = self.get_notes_from_text_box(self.side_effects_notes_text_box)
-                    if symptom_notes:
-                        review_symptoms += fr'\line\tab {symptom_notes}'
-                    review_symptoms += fr'\line\line\tab If side-effect reported, documented by tech. If documented by tech, triage to RPh? Yes.\line'
-                    intervention_necessary = 'Yes. Routed to RPH.'
+            if self.new_allergies == 'Yes':
+                new_allergies = 'Yes - updated new allergies'
+            if self.new_medication == 'Yes':
+                new_medications = 'Yes'
+            if self.medical_conditions_changes != 'None':
+                medical_condition_changes = self.medical_conditions_changes
+            if self.symptoms_reported:
+                number_of_different_symptoms = len(self.symptoms_reported)
+                # Move 'Other' to the end of the list
+                if 'Other' in self.symptoms_reported and number_of_different_symptoms > 1:
+                    self.symptoms_reported.append(self.symptoms_reported.pop(self.symptoms_reported.index('Other')))
+                review_symptoms = fr''
+                if number_of_different_symptoms == 1:
+                    review_symptoms = self.symptoms_reported[0]
+                elif number_of_different_symptoms == 2:
+                    review_symptoms = fr'{{{self.symptoms_reported[0]}}} and {{{self.symptoms_reported[1]}}}'
+                else:
+                    for _symptom in self.symptoms_reported:
+                        if _symptom == self.symptoms_reported[-1]:
+                            review_symptoms += ', and '
+                        else:
+                            review_symptoms += ', '
+                        review_symptoms += _symptom
+                    review_symptoms = review_symptoms[2:]
+                
+                symptom_notes = self.get_notes_from_text_box(self.side_effects_notes_text_box)
+                if symptom_notes:
+                    review_symptoms += fr'\line\tab {symptom_notes}'
+                review_symptoms += fr'\line\line\tab If side-effect reported, documented by tech. If documented by tech, triage to RPh? Yes.\line'
+                intervention_necessary = 'Yes. Routed to RPH.'
 
-                adherence_notes = self.get_notes_from_text_box(self.adherence_notes_text_box)
-                if adherence_notes:
-                    adherence = 'NOT ADHERENT'
-                    embedded_adherence_notes = fr'\line\line\tab {adherence_notes}'
+            adherence_notes = self.get_notes_from_text_box(self.adherence_notes_text_box)
+            if adherence_notes:
+                adherence = 'NOT ADHERENT'
+                embedded_adherence_notes = fr'\line\line\tab {adherence_notes}'
 
         template = fr'\b\fs26Refill Reminder\b0\fs24\
 \
@@ -1357,9 +1359,10 @@ Does patient need to speak to a pharmacist? {{{speak_to_rph}}}\
 {{{user}}}\
 Specialty Pharmacy'
 
-        additional_notes = self.get_notes_from_text_box(self.additional_notes_text_box)
-        if additional_notes:
-            template = fr'{{{additional_notes}}}\line\line{{{template}}}'
+        if self.intervention:
+            additional_notes = self.get_notes_from_text_box(self.additional_notes_text_box)
+            if additional_notes:
+                template = fr'{{{additional_notes}}}\line\line{{{template}}}'
 
         return template
 
