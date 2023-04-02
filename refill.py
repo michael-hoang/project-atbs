@@ -275,9 +275,15 @@ class RefillTemplate:
             )
         self.dispense_date_label.grid(column=0, row=0)
         # Dispense date entry
-        self.dispense_date_entry = tk.Entry(
-            self.dispense_date_canvas,font=self.entry_font, bg=self.entry_bg_color,
-            relief=self.entry_relief, width=10, state='disabled'
+        self.dispense_date_entry = DateEntry(
+            self.dispense_date_canvas, selectmode='day', state='disabled',
+            font=self.entry_font, width=9, background=self.btn_bg_color,
+            foreground='white', showweeknumbers=False, firstweekday='sunday',
+            bordercolor='white', headersbackground='white', selectbackground=self.select_btn_bg_color,
+            weekendbackground='gray95', weekendforeground='gray73',
+            othermonthbackground='white', borderwidth=0, othermonthforeground='gray73',
+            disableddaybackground='white', disableddayforeground='gray88',
+            mindate=dt.date.today(), normalforeground='RoyalBlue3'
             )
         self.dispense_date_entry.grid(column=1, row=0)
         # FedEx delivery / Pickup time label
