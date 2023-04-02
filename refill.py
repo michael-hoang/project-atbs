@@ -283,7 +283,7 @@ class RefillTemplate:
             weekendbackground='gray95', weekendforeground='gray73',
             othermonthbackground='white', borderwidth=0, othermonthforeground='gray73',
             disableddaybackground='white', disableddayforeground='gray88',
-            mindate=dt.date.today(), normalforeground='RoyalBlue3'
+            mindate=dt.date.today(), normalforeground='black'
             )
         self.dispense_date_entry.grid(column=1, row=0)
         # FedEx delivery / Pickup time label
@@ -822,13 +822,13 @@ class RefillTemplate:
         """Select Yes signature button."""
         self.dispense_signature_yes_btn.config(bg=self.select_btn_bg_color, command=self._unselect_yes_no_sig) 
         self.dispense_signature_no_btn.config(bg=self.btn_bg_color, command=self.select_no_sig)
-        self.signature_required = 'signature required'
+        self.signature_required = 'SIG REQUIRED'
 
     def select_no_sig(self):
         """Select No signature button."""
         self.dispense_signature_yes_btn.config(bg=self.btn_bg_color, command=self.select_yes_sig) 
         self.dispense_signature_no_btn.config(bg=self.select_btn_bg_color, command=self._unselect_yes_no_sig)
-        self.signature_required = 'no signature'
+        self.signature_required = 'no sig'
 
     def _unselect_yes_no_sig(self):
         """Unselect Yes/No signature button."""
@@ -982,30 +982,13 @@ class RefillTemplate:
 
     def _calculate_fedex_delivery_date(self) -> str:
         """Calculate FedEx delivery date."""
-        current_date = dt.datetime.now()
-        split_ship_date = []
-        try:
-            entered_ship_date = self.dispense_date_entry.get().strip()
-            if '/' in entered_ship_date:
-                split_ship_date = entered_ship_date.split('/')
-            elif '-' in entered_ship_date:
-                split_ship_date = entered_ship_date.split('-')
-
-            if split_ship_date:
-                ship_month = int(split_ship_date[0])
-                ship_day = int(split_ship_date[1])
-                if current_date.month == 12:
-                    if ship_month != 12:
-                        ship_year = current_date.year + 1 # next year
-                    else:
-                        ship_year = current_date.year
-                else:
-                    ship_year = current_date.year
-
-            delivery_date = dt.date(ship_year, ship_month, ship_day) + dt.timedelta(days=1)
+        if self.dispense_date_entry.get().strip():   
+            entered_ship_date = self.dispense_date_entry.get_date()
+            delivery_date = entered_ship_date + dt.timedelta(days=1)
             return f'{delivery_date.month}/{delivery_date.day}'
-        except:
+        else:
             return ''
+      
         
     def _update_variables(self):
         """Update variables from entry."""
@@ -1159,11 +1142,17 @@ class RefillTemplate:
         win32clipboard.SetClipboardText(formatted_text, win32clipboard.CF_TEXT)
         win32clipboard.CloseClipboard()
 
+    def get_formatted_dispense_date(self) -> str:
+        """Get formatted dispense date from datetime object."""
+        dispense_date = self.dispense_date_entry.get_date()
+        return f'{dispense_date.month}/{dispense_date.day}'
+    
+
     def format_wam_notes(self, format='plain') -> str:
         """Format WAM notes with plain or rich text."""
         dispense_comments = self.dispense_comments_entry.get().capitalize()
         if format == 'plain':
-            wam_notes = f'{self.dispense_method} {self.dispense_date_entry.get()}' 
+            wam_notes = f'{self.dispense_method} {self.get_formatted_dispense_date()}' 
             if self.dispense_method == 'DCS':
                 wam_notes += f', {self.signature_required}'
                 if dispense_comments:
@@ -1188,7 +1177,7 @@ class RefillTemplate:
                     wam_notes += f'\n{dispense_comments}'
                     
         elif format == 'rich':
-            wam_notes = fr'{{{self.dispense_method}}} {{{self.dispense_date_entry.get()}}}' 
+            wam_notes = fr'{{{self.dispense_method}}} {{{self.get_formatted_dispense_date()}}}' 
             if self.dispense_method == 'DCS':
                 wam_notes += fr', {{{self.signature_required}}}'
                 if dispense_comments:
