@@ -173,7 +173,11 @@ class MainApp(tk.Tk):
             data = json.loads(latest_version_response.content)
             main_app_latest_version = data['main']
 
-        if self.main_app_current_version != main_app_latest_version:
+        with open('./dist/current_version/current_main_version.json') as f:
+            data = json.load(f)
+            current_main_app_version = data['main']
+
+        if current_main_app_version != main_app_latest_version:
             if yesno_update_message == 1:
                 message=f'{main_app_latest_version} is now available. Do you want to open App Update Manager?'
             elif yesno_update_message == 2:
