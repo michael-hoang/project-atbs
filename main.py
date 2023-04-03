@@ -6,6 +6,7 @@ from cardpayment import CardPayment
 from map import Map
 from pwmanager import PasswordManager
 from authentication import Authenticator
+from refill import RefillTemplate
 import os
 import sys
 import json
@@ -90,7 +91,7 @@ class MainApp(tk.Tk):
 
     def open_RefillCoordination(self):
         """Instantiate Refill Coordination object in a new TopLevel window."""
-
+        RefillTemplate()
 
     def open_PasswordManager(self):
         """Instantiate Password Manager in a new TopLevel window."""
