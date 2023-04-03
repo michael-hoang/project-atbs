@@ -15,8 +15,8 @@ import requests
 FONT = ('Bahnschrift Light', 17, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
-HOVER_BUTTON_COLOR = 'SlateGray4'
-ACTIVE_BG_COLOR = 'SlateGray2'
+HOVER_BUTTON_COLOR = '#424553'
+ACTIVE_BG_COLOR = '#878B9E'
 
 
 class MainApp(tk.Tk):
