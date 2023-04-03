@@ -28,7 +28,7 @@ class MainApp(tk.Tk):
         self.config(bg=BG_COLOR)
         self.resizable(width=False, height=False)
         self.iconphoto(False, tk.PhotoImage(file='assets/img/atbs_icon.png'))
-        self.main_app_current_version = 'v4.6.2'
+        self.main_app_current_version = 'v5.0.0'
 
         self.button_images = []
         # Create buttons
