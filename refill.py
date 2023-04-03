@@ -60,6 +60,8 @@ class RefillTemplate:
         self.top.title('Refill Coordination')
         self.top.config(bg=self.background_color, padx=20, pady=20)
         self.top.resizable(False, False)
+        self.icon = tk.PhotoImage(file='./assets/img/rx_icon.png')
+        self.top.iconphoto(True, self.icon)
 
         # Initialize Intervention GUI window
         self.intervention_window = tk.Toplevel(self.top)
