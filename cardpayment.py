@@ -16,11 +16,14 @@ import time
 
 LABEL_BG = 'white'
 WINDOW_BG = 'white'
-ENTRY_BG = '#F8FAFC'
-BUTTON_BG = '#484B5B'
-FONT = ('Helvetica', 11, 'normal')
-ENTRY_FONT = ('Helvetica', 10, 'normal')
-NOTES_FONT = ('Courier', 13, 'normal')
+ENTRY_BG = 'gray97'
+BUTTON_BG = 'RoyalBlue2'
+ACTIVE_BUTTON_BG = 'RoyalBlue3'
+HOVER_BUTTON_BG = 'RoyalBlue3'
+FONT = ('Calibri', 12, 'normal')
+PRINT_BUTTON_FONT = ('Calibri', 13, 'normal')
+ENTRY_FONT = ('Calibri', 11, 'normal')
+NOTES_FONT = ('Courier', 13, 'bold')
 NOTES_BG_COLOR = 'lemon chiffon'
 
 
@@ -71,11 +74,11 @@ class CardPayment:
 
         # Top buttons frame
         self.top_btn_frame = Frame(self.top, background=WINDOW_BG)
-        self.top_btn_frame.grid(column=1, row=0, columnspan=5)
+        self.top_btn_frame.grid(column=1, row=0, columnspan=5, rowspan=2)
 
         # Always on top Checkbutton
         self.alwaysTopVar = IntVar()
-        self.always_top_check_button = Checkbutton(self.top_btn_frame, text='Always on top', font=('Helvetica', 9, 'normal'),
+        self.always_top_check_button = Checkbutton(self.top_btn_frame, text='Always on top', font=('Calibri', 10, 'normal'),
                                                    variable=self.alwaysTopVar, onvalue=1, offvalue=0,
                                                    command=self.always_top, bg=LABEL_BG, activebackground=LABEL_BG)
         self.always_top_check_button.grid(
@@ -153,10 +156,10 @@ class CardPayment:
 
         self.date_text_label = Label(
             self.top, text="Date:", bg=LABEL_BG, font=FONT)
-        self.date_text_label.grid(column=2, row=1, columnspan=2, sticky="E")
+        self.date_text_label.grid(column=2, row=1, columnspan=2, sticky="E", rowspan=2, pady=(0, 18))
         self.date_num_label = Label(
             self.top, text=datetime.today().strftime('%m-%d-%Y'), bg=LABEL_BG, font=FONT)
-        self.date_num_label.grid(column=4, row=1, sticky="W")
+        self.date_num_label.grid(column=4, row=1, sticky="W", rowspan=2, pady=(0, 18))
 
         self.cc_label = Label(
             self.top, text="Credit Card No.", bg=LABEL_BG, font=FONT)
@@ -262,14 +265,16 @@ class CardPayment:
             self.top, text="", bg=LABEL_BG, font=('Helvetica', 11, 'bold'))
         self.total_num_label.grid(column=4, row=13, sticky="", pady=(8, 0))
 
-        self.done_button = Button(
-            self.top, text="Done", command=lambda: self.message_box(event=None),
-            borderwidth=0, bg=BUTTON_BG, fg='white', width=22, height=1,
-            font=('Helvetica', 12, 'normal'), activebackground='#363945', activeforeground='white')
-        self.done_button.grid(
+        self.print_button = Button(
+            self.top, text="Print", command=lambda: self.message_box(event=None),
+            borderwidth=0, bg=BUTTON_BG, fg='white', padx=50, pady=1,
+            font=PRINT_BUTTON_FONT, activebackground=ACTIVE_BUTTON_BG,
+            activeforeground='white'
+            )
+        self.print_button.grid(
             column=1, row=14, columnspan=4, pady=(15, 0))
-        self.done_button.bind('<Enter>', self.pointerEnter)
-        self.done_button.bind('<Leave>', self.pointerLeave)
+        self.print_button.bind('<Enter>', self.pointerEnter)
+        self.print_button.bind('<Leave>', self.pointerLeave)
 
         # Center window to screen
         self.top.update_idletasks()
@@ -288,7 +293,7 @@ class CardPayment:
 
     def pointerEnter(self, e):
         """Highlight button on mouse hover."""
-        e.widget['bg'] = '#5F6275'
+        e.widget['bg'] = HOVER_BUTTON_BG
 
     def pointerLeave(self, e):
         """Remove highlight from button when mouse leave."""
