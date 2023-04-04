@@ -14,8 +14,8 @@ from calendar import monthrange
 import time
 
 
-LABEL_BG = '#EAEEF3'
-WINDOW_BG = '#EAEEF3'
+LABEL_BG = 'white'
+WINDOW_BG = 'white'
 ENTRY_BG = '#F8FAFC'
 BUTTON_BG = '#484B5B'
 FONT = ('Helvetica', 11, 'normal')
