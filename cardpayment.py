@@ -21,6 +21,7 @@ BUTTON_BG = '#484B5B'
 FONT = ('Helvetica', 11, 'normal')
 ENTRY_FONT = ('Helvetica', 10, 'normal')
 NOTES_FONT = ('Courier', 13, 'normal')
+NOTES_BG_COLOR = 'lemon chiffon'
 
 
 class CardPayment:
@@ -68,32 +69,59 @@ class CardPayment:
         self.cc_icon = PhotoImage(file="assets/img/cc_icon.png")
         self.top.iconphoto(False, self.cc_icon)
 
+        # Top buttons frame
+        self.top_btn_frame = Frame(self.top, background=WINDOW_BG)
+        self.top_btn_frame.grid(column=1, row=0, columnspan=5)
+
         # Always on top Checkbutton
         self.alwaysTopVar = IntVar()
-        self.always_top_check_button = Checkbutton(self.top, text='Always on top', font=('Helvetica', 9, 'normal'),
+        self.always_top_check_button = Checkbutton(self.top_btn_frame, text='Always on top', font=('Helvetica', 9, 'normal'),
                                                    variable=self.alwaysTopVar, onvalue=1, offvalue=0,
                                                    command=self.always_top, bg=LABEL_BG, activebackground=LABEL_BG)
         self.always_top_check_button.grid(
-            column=0, row=0, columnspan=3, sticky='NW')
+            column=0, row=0, sticky='NW')
 
         # Add Notes button
-        self.notes_button = Button(self.top, text='Add Notes', font=FONT, bg=WINDOW_BG, relief=GROOVE, command=lambda: self.toggle_notes_window(event=None))
-        self.notes_button.grid(column=4, row=0, columnspan=2, sticky='E', pady=(0, 12))
+        self.note_img = PhotoImage(file='./assets/img/note.png')
+        self.note_pin_img = PhotoImage(file='./assets/img/note_pin.png')
+        self.notes_button = Button(
+            self.top_btn_frame, image=self.note_img, font=FONT, bg=WINDOW_BG, relief='flat',
+            command=lambda: self.toggle_notes_window(event=None), borderwidth=0,
+            activebackground=WINDOW_BG
+            )
+        self.notes_button.grid(column=1, row=0, sticky='E', padx=(200, 0), pady=(0, 8))
 
         # Add Notes Window
-        self.notes_window = Toplevel(self.top, bg=WINDOW_BG, padx=5, pady=5)
-        self.notes_window.title('Add Notes')
+        self.notes_window = Toplevel(self.top, bg=NOTES_BG_COLOR, padx=4, pady=4)
+        # self.notes_window.title('Add Notes')
+        self.notes_window.overrideredirect(True)
         self.notes_window.resizable(width=False, height=False)
         self.notes_isHidden = True
         self.toggle_notes_window(event=None)
         self.notes_window.protocol('WM_DELETE_WINDOW', func=lambda: self.toggle_notes_window(event=None))
 
-        self.notes_text = Text(self.notes_window, height=5, width=26, font=NOTES_FONT, wrap=WORD)
-        self.notes_text.grid(column=0, row=0, columnspan=2, padx=10, pady=10)
+        self.notes_text = Text(
+            self.notes_window, height=8, width=26, font=NOTES_FONT, wrap=WORD,
+            bg=NOTES_BG_COLOR, relief='flat'
+            )
+        self.notes_text.grid(column=0, row=0, columnspan=2, padx=0, pady=0)
 
-        self.notes_ok_button = Button(self.notes_window, text='OK', font=FONT, width=6, command=lambda: self.toggle_notes_window(event=None))
+            # Notes button Frame
+        self.notes_btn_frame = Frame(self.notes_window, bg=NOTES_BG_COLOR)
+        self.notes_btn_frame.grid(column=0, row=0, padx=(180, 0), pady=(135, 0))
+        self.check_img = PhotoImage(file='./assets/img/check_mark.png')
+        self.notes_ok_button = Button(
+            self.notes_btn_frame, image=self.check_img, font=FONT, bg=NOTES_BG_COLOR,
+            command=lambda: self.toggle_notes_window(event=None), relief='flat',
+            activebackground=NOTES_BG_COLOR, borderwidth=0
+            )
         self.notes_ok_button.grid(column=0, row=1, sticky='E', padx=(0, 10), pady=(0, 5))
-        self.notes_clear_button = Button(self.notes_window, text='Clear', font=FONT, width=6, command=lambda: self.clear_notes(event=None))
+        self.x_img = PhotoImage(file='./assets/img/x_mark.png')
+        self.notes_clear_button = Button(
+            self.notes_btn_frame, image=self.x_img, font=FONT, bg=NOTES_BG_COLOR,
+            command=lambda: self.clear_notes(event=None), relief='flat',
+            activebackground=NOTES_BG_COLOR, borderwidth=0
+            )
         self.notes_clear_button.grid(column=1, row=1, sticky='W', padx=(10, 0), pady=(0, 5))
 
         self.notes_window.bind('<Escape>', self.toggle_notes_window)
@@ -372,7 +400,7 @@ class CardPayment:
         }
 
         if len(self.notes_text.get(1.0, 'end-1c').lstrip()) != 0:
-            self.fields |= {'Notes': f'*** NOTE: ***\n' + self.notes_text.get(1.0, END)}
+            self.fields |= {'Notes': f'         *** NOTE: ***\n' + self.notes_text.get(1.0, END)}
         else:
             self.fields |= {'Notes': ''}
 
@@ -492,7 +520,7 @@ class CardPayment:
         self.cc_length_check()
         self.cvv_length_check()
         self.expiration_check()
-        self.highlight_add_notes_button()
+        self.add_pin_to_note_btn()
 
         self.top.after(ms=50, func=self.update_fields)
 
@@ -623,7 +651,6 @@ class CardPayment:
 
             self.notes_isHidden = True
             self.top.attributes('-disabled', 1)
-            self.notes_window.wm_transient(self.top)
             self.notes_window.attributes('-topmost', 1)
             self.notes_window.deiconify()
             self.notes_text.focus()
@@ -631,13 +658,14 @@ class CardPayment:
     def clear_notes(self, event):
         """Clear all text inside Notes text box."""
         self.notes_text.delete(1.0, END)
+        self.toggle_notes_window(None)
 
-    def highlight_add_notes_button(self):
-        """Highlight Add Notes button if there are notes in text box."""
+    def add_pin_to_note_btn(self):
+        """Add pin to Notes button if there are notes in text box."""
         if len(self.notes_text.get(1.0, 'end-1c').lstrip()) == 0:
-            self.notes_button.config(bg=WINDOW_BG, activebackground=WINDOW_BG)
+            self.notes_button.config(image=self.note_img)
         else:
-            self.notes_button.config(bg='lemon chiffon', activebackground='lemon chiffon')
+            self.notes_button.config(image=self.note_pin_img)
 
 
 if __name__ == '__main__':
