@@ -17,7 +17,8 @@ FONT = ('Bahnschrift Light', 17, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
 HOVER_BUTTON_COLOR = '#424553'
-ACTIVE_BG_COLOR = '#878B9E'
+ACTIVE_BG_COLOR = '#424553'
+ACTIVE_FG_COLOR = 'white'
 
 MAIN_APP_VERSION = 'v5.0.0'
 
@@ -74,7 +75,7 @@ class MainApp(tk.Tk):
         self.button_images.append(self.img)
         button = tk.Button(text=f'  {text}', image=self.img, compound='left', font=FONT, fg=FG_COLOR,
                            bg=BG_COLOR, activebackground=ACTIVE_BG_COLOR, command=command,
-                           anchor='w', padx=10, pady=5, width=207)
+                           anchor='w', padx=10, pady=5, width=207, activeforeground=ACTIVE_FG_COLOR)
         return button
 
     def open_WrapUpDateCalculator(self):
