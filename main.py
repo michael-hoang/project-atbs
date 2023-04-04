@@ -19,6 +19,7 @@ FG_COLOR = 'white'
 HOVER_BUTTON_COLOR = '#424553'
 ACTIVE_BG_COLOR = '#878B9E'
 
+MAIN_APP_VERSION = 'v5.0.0'
 
 class MainApp(tk.Tk):
     def __init__(self):
@@ -28,7 +29,6 @@ class MainApp(tk.Tk):
         self.config(bg=BG_COLOR)
         self.resizable(width=False, height=False)
         self.iconphoto(False, tk.PhotoImage(file='assets/img/atbs_icon.png'))
-        self.main_app_current_version = 'v5.0.0'
 
         self.button_images = []
         # Create buttons
@@ -162,22 +162,13 @@ class MainApp(tk.Tk):
 
     def check_for_main_app_update(self, yesno_update_message=1) -> bool:
         """Check if new version of Main App is available."""
-        if getattr(sys, 'frozen', False):
-            root_path = os.path.dirname(sys.executable)
-        else:
-            root_path = os.path.dirname(os.path.abspath(__file__))
-
         latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
         latest_version_response = requests.get(latest_version_url)
         if latest_version_response.status_code == 200:
             data = json.loads(latest_version_response.content)
             main_app_latest_version = data['main']
 
-        with open('./dist/current_version/current_main_version.json') as f:
-            data = json.load(f)
-            current_main_app_version = data['main']
-
-        if current_main_app_version != main_app_latest_version:
+        if MAIN_APP_VERSION != main_app_latest_version:
             if yesno_update_message == 1:
                 message=f'{main_app_latest_version} is now available. Do you want to open App Update Manager?'
             elif yesno_update_message == 2:
