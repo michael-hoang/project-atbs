@@ -33,6 +33,18 @@ class CardPayment(tkb.Frame):
         # Form entries
         self.create_card_info_entries().pack(side=BOTTOM, fill=X, expand=YES, pady=5, padx=(18,0))
         self.create_entries_column().pack(side=TOP, fill=X, expand=YES, pady=5)
+
+        # Images
+        image_files = {
+            'amex': './assets/img/ae.png',
+            'discover': './assets/img/di.png',
+            'mastercard': './assets/img/mc.png',
+            'visa': './assets/img/vi.png',
+        }
+
+        self.photoimages = []
+        for key, val in image_files.items():
+            self.photoimages.append(tkb.PhotoImage(name=key, file=val))
    
     def create_long_form_entry(self, master, label, variable):
         """Create a single long form entry."""
