@@ -1,7 +1,14 @@
 """This module contains a class that represents a card payment form GUI."""
 
+import os
+import subprocess
+import sys
+import re
+import datetime as dt
 import ttkbootstrap as tkb
 from ttkbootstrap.constants import *
+from calendar import monthrange
+from PyPDF2 import PdfReader, PdfWriter
 
 
 class CardPayment(tkb.Frame):
@@ -29,6 +36,12 @@ class CardPayment(tkb.Frame):
         self.price_3 = tkb.StringVar(value='')
         self.price_4 = tkb.StringVar(value='')
         self.price_5 = tkb.StringVar(value='')
+        
+        self.price_1.trace('w', self.update_total)
+        self.price_2.trace('w', self.update_total)
+        self.price_3.trace('w', self.update_total)
+        self.price_4.trace('w', self.update_total)
+        self.price_5.trace('w', self.update_total)
 
         # Images
         image_files = {
@@ -128,16 +141,91 @@ class CardPayment(tkb.Frame):
     def create_buttonbox(self):
         """Create the application buttonbox."""
         container = tkb.Frame(self)
+        self.total_lbl = tkb.Label(container, text='$0.00', width=12, anchor='center')
+        self.total_lbl.pack(side=TOP)
+
         sub_btn = tkb.Button(
             master=container,
             text="Submit",
-            command=None,
+            command=self.export_pdf,
             bootstyle=DEFAULT,
-            width=8,
+            width=9,
         )
         sub_btn.pack(side=BOTTOM, pady=(0,4))
 
         return container
+    
+    def get_total(self) -> float:
+        """Calculate the total cost of medications."""
+        prices = (self.price_1, self.price_2, self.price_3, self.price_4, self.price_5)
+        total = 0
+        for price in prices:
+            try:
+                total += float(price.get().replace(',', ''))
+            except ValueError:
+                continue
+        
+        return total
+    
+    def update_total(self, *args):
+        """Update the total string variable."""
+        self.total_lbl['text'] = "${:,.2f}".format(self.get_total())
+    
+    def get_dict_fields(self) -> dict:
+        """Get a Python dictionary of field names and text values for PdfWriter."""
+        dict_fields = {
+            'Date': dt.datetime.today().strftime('%m-%d-%Y'),
+            'Visa': '',
+            'MasterCard': '',
+            'Discover': '',
+            'AMEX': '',
+            'Credit Card No': '',
+            'Exp': self.exp.get(),
+            'Security No': self.security_no.get(),
+            'Cardholder Name': self.cardholder.get(),
+            'MRN': self.mrn.get(),
+            'Medication Names 1': self.med_1.get(),
+            'Medication Names 2': self.med_2.get(),
+            'Medication Names 3': self.med_3.get(),
+            'Medication Names 4': self.med_4.get(),
+            'Medication Names 5': self.med_5.get(),
+            'Cost': self.price_1.get(),
+            'Cost 2': self.price_2.get(),
+            'Cost 3': self.price_3.get(),
+            'Cost 4': self.price_4.get(),
+            'Cost 5': self.price_5.get(),
+            'Total': '${:.2f}'.format(self.get_total()),
+            'Notes': '',
+        }
+        return dict_fields
+    
+    def export_pdf(self):
+        """Export payment information into a PDF form."""
+        cardholder = self.cardholder.get().split()
+        file_name = f'{cardholder[0] + self.mrn.get()}.pdf'
+        fields = self.get_dict_fields()
+        if getattr(sys, 'frozen', False):
+            app_path = os.path.dirname(sys.executable)
+        else:
+            app_path = os.path.dirname(os.path.abspath(__file__))
+
+        abs_path = f"{app_path}\.tmp"
+        check_folder = os.path.isdir(abs_path)
+        if not check_folder:
+            os.makedirs(abs_path)
+            subprocess.call(["attrib", "+h", abs_path]) # hidden directory
+
+        reader = PdfReader("assets/form/cardpayment.pdf")
+        writer = PdfWriter()
+        page = reader.pages[0]
+        writer.add_page(page)
+        writer.update_page_form_field_values(writer.pages[0], fields)
+        with open(f".tmp\{file_name}", "wb") as output_stream:
+            writer.write(output_stream)
+
+        # self.clear_entries()
+        os.startfile(f"{app_path}\.tmp\{file_name}", "print")
+
 
 if __name__ == '__main__':
     app = tkb.Window(
