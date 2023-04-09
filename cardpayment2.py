@@ -30,10 +30,6 @@ class CardPayment(tkb.Frame):
         self.price_4 = tkb.StringVar(value='')
         self.price_5 = tkb.StringVar(value='')
 
-        # Form entries
-        self.create_card_info_entries().pack(side=BOTTOM, fill=X, expand=YES, pady=5, padx=(18,0))
-        self.create_entries_column().pack(side=TOP, fill=X, expand=YES, pady=5)
-
         # Images
         image_files = {
             'amex': './assets/img/ae.png',
@@ -45,6 +41,13 @@ class CardPayment(tkb.Frame):
         self.photoimages = []
         for key, val in image_files.items():
             self.photoimages.append(tkb.PhotoImage(name=key, file=val))
+
+        # Form entries
+        self.create_entries_column().pack(side=TOP, fill=X, expand=YES, pady=5)
+        self.create_card_info_entries().pack(side=LEFT, fill=X, expand=YES, pady=5, padx=(18,0))
+
+        # Buttons
+        self.create_buttonbox().pack(side=LEFT, fill=Y)
    
     def create_long_form_entry(self, master, label, variable):
         """Create a single long form entry."""
@@ -70,6 +73,8 @@ class CardPayment(tkb.Frame):
         grid_para = {'pady': (4,0), 'sticky': 'w'}
         cardnumber = self.create_long_form_entry(container, 'Card Number', self.card_no)
         cardnumber.grid(column=0, row=0, columnspan=2, sticky='w')
+        card_img = self.create_card_image(container)
+        card_img.grid(column=1, row=0, sticky='e', padx=2, pady=(20,0))
         exp = self.create_short_form_entry(container, 'Exp', self.exp)
         exp.grid(column=0, row=1, **grid_para)
         security = self.create_short_form_entry(container, 'Security Code', self.security_no)
@@ -113,6 +118,26 @@ class CardPayment(tkb.Frame):
         price_col_lbl = tkb.Label(container, text='Price')
         price_col_lbl.pack(side=RIGHT, padx=(0,25))
 
+    def create_card_image(self, master):
+        """Create card network image."""
+        container = tkb.Frame(master)
+        image = tkb.Label(container, image='', border=0)
+        image.pack()
+        return container
+    
+    def create_buttonbox(self):
+        """Create the application buttonbox."""
+        container = tkb.Frame(self)
+        sub_btn = tkb.Button(
+            master=container,
+            text="Submit",
+            command=None,
+            bootstyle=DEFAULT,
+            width=8,
+        )
+        sub_btn.pack(side=BOTTOM, pady=(0,4))
+
+        return container
 
 if __name__ == '__main__':
     app = tkb.Window(
