@@ -46,10 +46,10 @@ class CardPayment(tkb.Frame):
 
         # Images
         image_files = {
-            'amex': './assets/img/ae.png',
-            'discover': './assets/img/di.png',
-            'mastercard': './assets/img/mc.png',
-            'visa': './assets/img/vi.png',
+            'AMEX': './assets/img/ae.png',
+            'Discover': './assets/img/di.png',
+            'MasterCard': './assets/img/mc.png',
+            'Visa': './assets/img/vi.png',
         }
 
         self.photoimages = []
@@ -218,7 +218,7 @@ class CardPayment(tkb.Frame):
             'MasterCard': '',
             'Discover': '',
             'AMEX': '',
-            'Credit Card No': '',
+            'Credit Card No': self.card_no.get(),
             'Exp': self.exp.get(),
             'Security No': self.security_no.get(),
             'Cardholder Name': self.cardholder.get(),
@@ -236,12 +236,22 @@ class CardPayment(tkb.Frame):
             'Total': '${:.2f}'.format(self.get_total()),
             'Notes': '',
         }
+        try:
+            cardnumber = dict_fields['Credit Card No'].replace(' ', '')
+            dict_fields[self.get_credit_card_network(cardnumber)] = 'X'
+        except:
+            pass
+
         return dict_fields
     
     def export_pdf(self):
         """Export payment information into a PDF form."""
         cardholder = self.cardholder.get().split()
-        file_name = f'{cardholder[0] + self.mrn.get()}.pdf'
+        try:
+            file_name = f'{cardholder[0]}_{self.mrn.get()}.pdf'
+        except IndexError:
+            file_name = f'{self.mrn.get()}.pdf'
+            
         fields = self.get_dict_fields()
         if getattr(sys, 'frozen', False):
             app_path = os.path.dirname(sys.executable)
@@ -266,17 +276,17 @@ class CardPayment(tkb.Frame):
         os.startfile(f"{app_path}\.tmp\{file_name}", "print")
 
     def get_credit_card_network(self, numbers: str) -> str or bool:
-        """Return amex, discover, mastercard, visa, or False."""
+        """Return AMEX, Discover, MasterCard, Visa, or False."""
         prefix = int(numbers[:2])
         length = len(numbers)
         if prefix > 50 and prefix < 56 and length == 16:
-            return 'mastercard'
+            return 'MasterCard'
         elif (prefix == 34 or prefix == 37) and length == 15:
-            return 'amex'
+            return 'AMEX'
         elif numbers[0] == '4' and (length == 13 or length == 16):
-            return 'visa'
+            return 'Visa'
         elif numbers[:4] == '6011':
-            return 'discover'
+            return 'Discover'
         else:
             return False
 
