@@ -3,7 +3,6 @@
 import os
 import subprocess
 import sys
-import re
 import datetime as dt
 import ttkbootstrap as tkb
 from ttkbootstrap.constants import *
@@ -173,14 +172,14 @@ class CardPayment(tkb.Frame):
         )
         set_btn.pack(side=BOTTOM, pady=(0,12))
 
-        files_btn = tkb.Button(
+        self.files_btn = tkb.Button(
             master=container,
             text="Files",
-            command=None,
+            command=self.open_file_folder,
             bootstyle=DARK,
             width=9,
         )
-        files_btn.pack(side=BOTTOM, pady=(0,12))
+        self.files_btn.pack(side=BOTTOM, pady=(0,12))
 
         notes_btn = tkb.Button(
             master=container,
@@ -358,6 +357,23 @@ class CardPayment(tkb.Frame):
                 self.cardnumber.winfo_children()[1].delete(0, 'end')
         except:
             pass
+
+    def open_file_folder(self):
+        """Opens directory containing the exported card payment forms."""
+        self.files_btn.config(text='Opening...')
+        self.files_btn.after(1000, lambda: self.files_btn.config(text='Files'))
+        if getattr(sys, 'frozen', False):
+            app_path = os.path.dirname(sys.executable)
+        else:
+            app_path = os.path.dirname(os.path.abspath(__file__))
+
+        abs_path = f"{app_path}\.tmp"
+        check_folder = os.path.isdir(abs_path)
+        if not check_folder:
+            os.makedirs(abs_path)
+            subprocess.call(["attrib", "+h", abs_path]) # hidden directory
+
+        subprocess.Popen(f'explorer "{abs_path}"')
 
 
 if __name__ == '__main__':
