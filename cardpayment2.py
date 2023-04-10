@@ -74,6 +74,8 @@ class CardPayment(tkb.Frame):
         # Validate numeric entries
         self.cardnumber.winfo_children()[1].configure(validate='focus', validatecommand=(self.valid_card_func, '%P'))
 
+        self.clear_all_entries()
+
     def create_long_form_entry(self, master, label, variable):
         """Create a single long form entry."""
         container = tkb.Frame(master)
@@ -272,7 +274,7 @@ class CardPayment(tkb.Frame):
         with open(f".tmp\{file_name}", "wb") as output_stream:
             writer.write(output_stream)
 
-        # self.clear_entries()
+        self.clear_all_entries()
         os.startfile(f"{app_path}\.tmp\{file_name}", "print")
 
     def get_credit_card_network(self, numbers: str) -> str or bool:
@@ -400,6 +402,17 @@ class CardPayment(tkb.Frame):
 
         subprocess.Popen(f'explorer "{abs_path}"')
 
+    def clear_all_entries(self):
+        """Clear all entries on the form."""
+        outer_containers = self.winfo_children()
+        for outer_container in outer_containers:
+            inner_containers = outer_container.winfo_children()
+            for inner_container in inner_containers:
+                if inner_container.winfo_class() == 'TFrame':
+                    entry_widgets = inner_container.winfo_children()
+                    for entry_widget in entry_widgets:
+                        if entry_widget.winfo_class() == 'TEntry':
+                            entry_widget.delete(0, 'end')
 
 if __name__ == '__main__':
     app = tkb.Window(
