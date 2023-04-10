@@ -37,11 +37,13 @@ class CardPayment(tkb.Frame):
         self.price_4 = tkb.StringVar(value='')
         self.price_5 = tkb.StringVar(value='')
         
+        # Trace
         self.price_1.trace('w', self.update_total)
         self.price_2.trace('w', self.update_total)
         self.price_3.trace('w', self.update_total)
         self.price_4.trace('w', self.update_total)
         self.price_5.trace('w', self.update_total)
+        self.card_no.trace('w', self.limit_card_number_size)
 
         # Images
         image_files = {
@@ -61,7 +63,16 @@ class CardPayment(tkb.Frame):
 
         # Buttons
         self.create_buttonbox().pack(side=LEFT, fill=Y)
+
+        # Event bindings
+        self.cardnumber.winfo_children()[1].bind('<KeyRelease>', self._check_card_number_format)
    
+        # Register validation callbacks
+        self.valid_card_func = master.register(self._validate_card_number)
+
+        # Validate numeric entries
+        self.cardnumber.winfo_children()[1].configure(validate='focus', validatecommand=(self.valid_card_func, '%P'))
+
     def create_long_form_entry(self, master, label, variable):
         """Create a single long form entry."""
         container = tkb.Frame(master)
@@ -84,8 +95,8 @@ class CardPayment(tkb.Frame):
         """Create card payment information entries."""
         container = tkb.Frame(self)
         grid_para = {'pady': (4,0), 'sticky': 'w'}
-        cardnumber = self.create_long_form_entry(container, 'Card Number', self.card_no)
-        cardnumber.grid(column=0, row=0, columnspan=2, sticky='w')
+        self.cardnumber = self.create_long_form_entry(container, 'Card Number', self.card_no)
+        self.cardnumber.grid(column=0, row=0, columnspan=2, sticky='w')
         card_img = self.create_card_image(container)
         card_img.grid(column=1, row=0, sticky='e', padx=2, pady=(20,0))
         exp = self.create_short_form_entry(container, 'Exp', self.exp)
@@ -134,8 +145,8 @@ class CardPayment(tkb.Frame):
     def create_card_image(self, master):
         """Create card network image."""
         container = tkb.Frame(master)
-        image = tkb.Label(container, image='', border=0)
-        image.pack()
+        self.image_lbl = tkb.Label(container, image='', border=0)
+        self.image_lbl.pack()
         return container
     
     def create_buttonbox(self):
@@ -152,6 +163,33 @@ class CardPayment(tkb.Frame):
             width=9,
         )
         sub_btn.pack(side=BOTTOM, pady=(0,4))
+        
+        set_btn = tkb.Button(
+            master=container,
+            text="Settings",
+            command=None,
+            bootstyle=DARK,
+            width=9,
+        )
+        set_btn.pack(side=BOTTOM, pady=(0,12))
+
+        files_btn = tkb.Button(
+            master=container,
+            text="Files",
+            command=None,
+            bootstyle=DARK,
+            width=9,
+        )
+        files_btn.pack(side=BOTTOM, pady=(0,12))
+
+        notes_btn = tkb.Button(
+            master=container,
+            text="Notes",
+            command=None,
+            bootstyle=DARK,
+            width=9,
+        )
+        notes_btn.pack(side=BOTTOM, pady=(0,12))
 
         return container
     
@@ -225,6 +263,101 @@ class CardPayment(tkb.Frame):
 
         # self.clear_entries()
         os.startfile(f"{app_path}\.tmp\{file_name}", "print")
+
+    def get_credit_card_network(self, numbers: str) -> str or bool:
+        """Return amex, discover, mastercard, visa, or False."""
+        prefix = int(numbers[:2])
+        length = len(numbers)
+        if prefix > 50 and prefix < 56 and length == 16:
+            return 'mastercard'
+        elif (prefix == 34 or prefix == 37) and length == 15:
+            return 'amex'
+        elif numbers[0] == '4' and (length == 13 or length == 16):
+            return 'visa'
+        elif numbers[:4] == '6011':
+            return 'discover'
+        else:
+            return False
+
+    def luhns_algo(self, numbers: str) -> bool:
+        """Return True if credit card numbers pass Luhn's Algorithm."""
+        sum1 = 0
+        sum2 = 0
+        for i in range(len(numbers)):
+            index = -(i + 1)
+            if (index % 2) == 0:
+                digit_x2_int = int(numbers[index]) * 2
+                digit_x2_str = str(digit_x2_int)
+                if len(digit_x2_str) > 1:
+                    sum2 += int(digit_x2_str[0]) + int(digit_x2_str[1])
+                else:
+                    sum2 += digit_x2_int
+            else:
+                sum1 += int(numbers[index])
+        # if the total modulo 10 is congruent to 0
+        if (sum1 + sum2) % 10 == 0:
+            return True
+
+        return False
+    
+    def _check_card_number_format(self, e):
+        """Format card numbers with spaces. (Ex. #### #### #### ####)"""
+        cardnumber = self.card_no.get()
+        length = len(cardnumber)
+        try:
+            if not cardnumber[-1].isdigit():
+                self.cardnumber.winfo_children()[1].delete(0, 'end')
+                self.cardnumber.winfo_children()[1].insert('end', cardnumber[:-1])
+        except:
+            pass
+
+        try:
+            if cardnumber[0] in ('4', '5', '6'):
+                if length in (4, 9, 14):
+                    self.cardnumber.winfo_children()[1].insert('end', ' ')
+                if length > 19:
+                    self.cardnumber.winfo_children()[1].set(cardnumber[:19])
+            elif cardnumber[0] == '3':
+                if length in (4, 11):
+                    self.cardnumber.winfo_children()[1].insert('end', ' ')
+                if length > 17:
+                    self.cardnumber.winfo_children()[1].set(cardnumber[:17])
+        except:
+            pass
+        
+    def _validate_card_number(self, card_numbers: str) -> bool:
+        """Validate that the input is a number and passes Luhn's algorithm."""
+        raw_num = card_numbers.replace(' ', '')
+        if raw_num.isdigit() and self.luhns_algo(raw_num):
+            try:
+                self.image_lbl.configure(image = self.get_credit_card_network(raw_num))
+            except:
+                pass
+            return True
+        elif card_numbers == '':
+            self.image_lbl.configure(image = '')
+            return True
+        else:
+            self.image_lbl.configure(image = '')
+            return False
+        
+    def limit_card_number_size(self, *args):
+        """Limit the number of characters depending on card network type"""
+        cardnumber = self.card_no.get()
+        length = len(cardnumber)
+        try:
+            if cardnumber[0] in ('4', '5', '6'):
+                if length > 19:
+                    self.cardnumber.winfo_children()[1].delete(0, 'end')
+                    self.cardnumber.winfo_children()[1].insert('end', cardnumber[:19])
+            elif cardnumber[0] == '3':
+                if length > 17:
+                    self.cardnumber.winfo_children()[1].delete(0, 'end')
+                    self.cardnumber.winfo_children()[1].insert('end', cardnumber[:17])
+            else:
+                self.cardnumber.winfo_children()[1].delete(0, 'end')
+        except:
+            pass
 
 
 if __name__ == '__main__':
