@@ -64,7 +64,9 @@ class CardPayment(tkb.Frame):
         self.create_buttonbox().pack(side=LEFT, fill=Y)
 
         # Event bindings
-        self.cardnumber.winfo_children()[1].bind('<KeyRelease>', self._check_card_number_format)
+        self.cardnumber.winfo_children()[1].bind('<BackSpace>', self._do_backspace)
+        self.cardnumber.winfo_children()[1].bind('<Key>', self._check_card_number_format)
+        self.cardnumber.winfo_children()[1].bind('<KeyRelease>', self._delete_non_numeric_char)
    
         # Register validation callbacks
         self.valid_card_func = master.register(self._validate_card_number)
@@ -299,17 +301,30 @@ class CardPayment(tkb.Frame):
 
         return False
     
-    def _check_card_number_format(self, e):
-        """Format card numbers with spaces. (Ex. #### #### #### ####)"""
+    def _do_backspace(self, e):
+        """Force backspace key to do backspace."""
         cardnumber = self.card_no.get()
         length = len(cardnumber)
+        try:
+            if cardnumber[-1] != ' ':
+                self.cardnumber.winfo_children()[1].delete(length, 'end')
+        except:
+            pass
+    
+    def _delete_non_numeric_char(self, e):
+        """Delete inputted characters that are non-numeric."""
+        cardnumber = self.card_no.get()
         try:
             if not cardnumber[-1].isdigit():
                 self.cardnumber.winfo_children()[1].delete(0, 'end')
                 self.cardnumber.winfo_children()[1].insert('end', cardnumber[:-1])
         except:
             pass
-
+    
+    def _check_card_number_format(self, e):
+        """Format card numbers with spaces. (Ex. #### #### #### ####)"""
+        cardnumber = self.card_no.get()
+        length = len(cardnumber)
         try:
             if cardnumber[0] in ('4', '5', '6'):
                 if length in (4, 9, 14):
