@@ -3,10 +3,10 @@
 import os
 import subprocess
 import sys
+import time
 import datetime as dt
 import ttkbootstrap as tkb
 from ttkbootstrap.constants import *
-from calendar import monthrange
 from PyPDF2 import PdfReader, PdfWriter
 from settings import Settings
 from dateutil.relativedelta import relativedelta
@@ -85,6 +85,10 @@ class CardPayment(tkb.Frame):
 
         # Settings window
         self.create_settings_window()
+
+        # After method
+        self.remove_files()
+        self.after(ms=3_600_000, func=self.remove_files) # after 1 hour
 
     def create_long_form_entry(self, master, label, variable):
         """Create a single long form entry."""
@@ -277,7 +281,7 @@ class CardPayment(tkb.Frame):
         else:
             app_path = os.path.dirname(os.path.abspath(__file__))
 
-        abs_path = f"{app_path}\.tmp"
+        abs_path = f"{app_path}\.files"
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
             os.makedirs(abs_path)
@@ -288,11 +292,11 @@ class CardPayment(tkb.Frame):
         page = reader.pages[0]
         writer.add_page(page)
         writer.update_page_form_field_values(writer.pages[0], fields)
-        with open(f".tmp\{file_name}", "wb") as output_stream:
+        with open(f".files\{file_name}", "wb") as output_stream:
             writer.write(output_stream)
 
         self.clear_all_entries()
-        os.startfile(f"{app_path}\.tmp\{file_name}", "print")
+        os.startfile(f"{app_path}\.files\{file_name}", "print")
 
     def get_credit_card_network(self, numbers: str) -> str or bool:
         """Return AMEX, Discover, MasterCard, Visa, or False."""
@@ -398,7 +402,6 @@ class CardPayment(tkb.Frame):
         for fmt in date_fmt:
             try:
                 exp_date = dt.datetime.strptime(exp_str, fmt) + relativedelta(months=1) - relativedelta(days=1)
-                print(exp_date)
                 if exp_date > dt.datetime.today():
                     return True
             except ValueError:
@@ -436,7 +439,7 @@ class CardPayment(tkb.Frame):
         else:
             app_path = os.path.dirname(os.path.abspath(__file__))
 
-        abs_path = f"{app_path}\.tmp"
+        abs_path = f"{app_path}\.files"
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
             os.makedirs(abs_path)
@@ -482,6 +485,30 @@ class CardPayment(tkb.Frame):
             self.settings_window.attributes('-topmost', 1)
             self.settings_window.deiconify()
             self.settings_window.focus()
+
+    def remove_files(self):
+        """Remove files in .files older than 7 days."""
+        
+        current_time = time.time()
+
+        if getattr(sys, 'frozen', False):
+            app_path = os.path.dirname(sys.executable)
+        else:
+            app_path = os.path.dirname(os.path.abspath(__file__))
+
+        abs_path = f"{app_path}\.files"
+        check_folder = os.path.isdir(abs_path)
+        if not check_folder:
+            os.makedirs(abs_path)
+            subprocess.call(["attrib", "+h", abs_path]) # hidden directory
+
+        for f in os.listdir(path=abs_path):
+            file_path = os.path.join(abs_path, f)
+            creation_time = os.path.getctime(file_path)
+            if (current_time - creation_time) // (24 * 3600) >= 7:
+                os.unlink(file_path)
+
+        self.after(ms=3_600_000, func=self.remove_files) # after 1 hour
 
 
 if __name__ == '__main__':
