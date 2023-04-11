@@ -47,6 +47,7 @@ class CardPayment(tkb.Frame):
         self.price_4.trace('w', self.update_total)
         self.price_5.trace('w', self.update_total)
         self.card_no.trace('w', self.limit_card_number_size)
+        self.security_no.trace('w', self.limit_sec_code_len)
 
         # Images
         image_files = {
@@ -71,17 +72,20 @@ class CardPayment(tkb.Frame):
         self.cardnumber.winfo_children()[1].bind('<BackSpace>', self._do_backspace)
         self.cardnumber.winfo_children()[1].bind('<Key>', self._check_card_number_format)
         self.cardnumber.winfo_children()[1].bind('<KeyRelease>', self._delete_non_numeric_char)
+        self.security_ent.winfo_children()[1].bind('<KeyRelease>', self._delete_non_numeric_char_for_sec_code)
    
         # Register validation callbacks
         self.valid_card_func = master.register(self._validate_card_number)
         self.valid_digit_func = master.register(self._validate_only_digits)
         self.valid_exp_func = master.register(self._validate_exp_date)
+        self.valid_sec_code_func = master.register(self._validate_security_code)
 
         # Validate numeric entries
         self.cardnumber.winfo_children()[1].configure(validate='focus', validatecommand=(self.valid_card_func, '%P'))
         self.exp_ent.winfo_children()[1].configure(validate='focus', validatecommand=(self.valid_exp_func, '%P'))
         self.zipcode.winfo_children()[1].configure(validate='key', validatecommand=(self.valid_digit_func, '%P'))
         self.mrn_ent.winfo_children()[1].configure(validate='key', validatecommand=(self.valid_digit_func, '%P'))
+        self.security_ent.winfo_children()[1].configure(validate='focus', validatecommand=(self.valid_sec_code_func, '%P'))
 
         # Settings window
         self.create_settings_window()
@@ -118,8 +122,8 @@ class CardPayment(tkb.Frame):
         card_img.grid(column=1, row=0, sticky='e', padx=2, pady=(20,0))
         self.exp_ent = self.create_short_form_entry(container, 'Exp', self.exp)
         self.exp_ent.grid(column=0, row=1, **grid_para)
-        security = self.create_short_form_entry(container, 'Security Code', self.security_no)
-        security.grid(column=1, row=1, **grid_para)
+        self.security_ent = self.create_short_form_entry(container, 'Security Code', self.security_no)
+        self.security_ent.grid(column=1, row=1, **grid_para)
         cardholder = self.create_long_form_entry(container, 'Cardholder Name', self.cardholder)
         cardholder.grid(column=0, row=2, columnspan=2, **grid_para)
         address = self.create_long_form_entry(container, 'Billing Address', self.address)
@@ -354,6 +358,16 @@ class CardPayment(tkb.Frame):
         except:
             pass
     
+    def _delete_non_numeric_char_for_sec_code(self, e):
+        """Delete inputted characters that are non-numeric."""
+        sec_code = self.security_no.get()
+        try:
+            if not sec_code[-1].isdigit():
+                self.security_ent.winfo_children()[1].delete(0, 'end')
+                self.security_ent.winfo_children()[1].insert('end', sec_code[:-1])
+        except:
+            pass
+    
     def _check_card_number_format(self, e):
         """Format card numbers with spaces. (Ex. #### #### #### ####)"""
         cardnumber = self.card_no.get()
@@ -397,7 +411,7 @@ class CardPayment(tkb.Frame):
         
     def _validate_exp_date(self, P: str) -> bool:
         """Validate that the inputted date is not expired."""
-        exp_str = self.exp.get()
+        exp_str = P
         date_fmt = ('%m/%y', '%m-%y', '%m/%Y', '%m-%Y')
         for fmt in date_fmt:
             try:
@@ -411,7 +425,47 @@ class CardPayment(tkb.Frame):
             return True
         else:
             return False
-
+        
+    def _validate_security_code(self, P: str) -> bool:
+        """Validate that the data is strictly a digit, and is only 3 or 4 chars long."""
+        sec_code = P
+        try:
+            first_digit = self.card_no.get()[0]
+            sec_code_len = len(sec_code)
+            for c in sec_code:
+                if not c.isdigit():
+                    return False
+                
+            if first_digit != '3':
+                if sec_code_len == 3 or sec_code == '':
+                    return True
+                return False
+            elif first_digit == '3':
+                if sec_code_len == 4 or sec_code == '':
+                    return True
+                return False
+        except:
+            pass
+        if sec_code == '':
+            return True
+        else:
+            return False
+        
+    def limit_sec_code_len(self, *args):
+        """Limit the number of characters depending on card network type"""
+        try:
+            first_digit = self.card_no.get()[0]
+            sec_code = self.security_no.get()
+            sec_code_len = len(sec_code)
+            if first_digit != '3' and sec_code_len > 3:
+                self.security_ent.winfo_children()[1].delete(0, 'end')
+                self.security_ent.winfo_children()[1].insert('end', sec_code[:3])
+            elif first_digit == '3' and sec_code_len > 4:
+                self.security_ent.winfo_children()[1].delete(0, 'end')
+                self.security_ent.winfo_children()[1].insert('end', sec_code[:4])
+        except IndexError:
+            pass
+            
     def limit_card_number_size(self, *args):
         """Limit the number of characters depending on card network type"""
         cardnumber = self.card_no.get()
