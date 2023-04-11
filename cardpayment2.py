@@ -5,8 +5,10 @@ import subprocess
 import sys
 import time
 import datetime as dt
+import tkinter as tk
 import ttkbootstrap as tkb
 from ttkbootstrap.constants import *
+from ttkbootstrap.dialogs import Messagebox
 from PyPDF2 import PdfReader, PdfWriter
 from settings import Settings
 from dateutil.relativedelta import relativedelta
@@ -20,7 +22,7 @@ class CardPayment(tkb.Frame):
     def __init__(self, master):
         super().__init__(master, padding=(20, 10))
         self.pack(fill=BOTH, expand=YES)
-
+        
         # Form variables
         self.card_no = tkb.StringVar(value='')
         self.exp = tkb.StringVar(value='')
@@ -73,6 +75,9 @@ class CardPayment(tkb.Frame):
         self.cardnumber.winfo_children()[1].bind('<Key>', self._check_card_number_format)
         self.cardnumber.winfo_children()[1].bind('<KeyRelease>', self._delete_non_numeric_char)
         self.security_ent.winfo_children()[1].bind('<KeyRelease>', self._delete_non_numeric_char_for_sec_code)
+        master.bind('<Control-Return>', self.submit_message_box)
+        master.bind('<Control-s>', self.toggle_settings_window)
+        master.bind('<Control-n>', self.toggle_notes_window)
    
         # Register validation callbacks
         self.valid_card_func = master.register(self._validate_card_number)
@@ -89,6 +94,8 @@ class CardPayment(tkb.Frame):
 
         # Settings window
         self.create_settings_window()
+        # Notes window
+        self.create_notes_window()
 
         # After method
         self.remove_files()
@@ -180,14 +187,14 @@ class CardPayment(tkb.Frame):
         self.total_lbl = tkb.Label(container, text='$0.00', width=12, anchor='center')
         self.total_lbl.pack(side=TOP)
 
-        sub_btn = tkb.Button(
+        self.sub_btn = tkb.Button(
             master=container,
             text="Submit",
-            command=self.export_pdf,
+            command=lambda: self.submit_message_box(e=None),
             bootstyle='DEFAULT',
             width=9,
         )
-        sub_btn.pack(side=BOTTOM, pady=(0,4))
+        self.sub_btn.pack(side=BOTTOM, pady=(0,4))
         
         set_btn = tkb.Button(
             master=container,
@@ -210,7 +217,7 @@ class CardPayment(tkb.Frame):
         notes_btn = tkb.Button(
             master=container,
             text="Notes",
-            command=None,
+            command=lambda: self.toggle_notes_window(e=None),
             bootstyle=DARK,
             width=9,
         )
@@ -270,6 +277,18 @@ class CardPayment(tkb.Frame):
             pass
 
         return dict_fields
+    
+    def submit_message_box(self, e):
+        """Prompt user for confirmation when 'Submit' button is pressed."""
+        answer = Messagebox.yesno(
+            parent=self,
+            title='Confirm Submit',
+            message='Are you sure you want to submit?'
+        )
+        if answer == 'Yes':
+            self.export_pdf()
+            self.sub_btn.config(text='Printing...')
+            self.sub_btn.after(5000, lambda: self.sub_btn.config(text='Submit'))
     
     def export_pdf(self):
         """Export payment information into a PDF form."""
@@ -515,6 +534,52 @@ class CardPayment(tkb.Frame):
                             self.cardnumber.winfo_children()[1].focus()
                             self.focus()
 
+    def center_child_to_parent(self, child, parent, window_name):
+        """Center child window to parent window."""
+        parent_x = parent.winfo_x()
+        parent_y = parent.winfo_y()
+        parent_width = parent.winfo_reqwidth()
+        parent_height = parent.winfo_reqheight()
+        if window_name == 'notes':
+            dx = int((parent_width / 2)) - 120
+            dy = int((parent_height / 2)) - 75
+        elif window_name == 'settings':
+            dx = int((parent_width / 2)) - 600
+            dy = int((parent_height / 2)) - 300
+        child.geometry('+%d+%d' % (parent_x + dx, parent_y + dy))
+
+    def create_notes_window(self):
+        """Create Notes window."""
+        self.notes_window = tkb.Toplevel(self)
+        self.notes_window.title('Notes')
+        self.notes_window.geometry('240x150')
+        self.notes_window.resizable(False, False)
+        # self.notes_window.overrideredirect(True)
+        self.notes_text_box = tk.Text(self.notes_window, font=('Sergoe UI', 14, 'normal'), wrap=WORD)
+        self.notes_text_box.pack(expand=YES)
+        self.notes_isHidden = True
+        self.toggle_notes_window(e=None)
+        self.notes_window.protocol('WM_DELETE_WINDOW', func=lambda: self.toggle_notes_window(e=None))
+        self.notes_window.bind('<Escape>', self.toggle_notes_window)
+        
+
+    def toggle_notes_window(self, e):
+        """Toggle Notes window."""
+        if self.notes_isHidden:
+            self.notes_window.withdraw()
+            self.notes_isHidden = False
+            self.lift()
+            self.master.attributes('-disabled', 0)
+            self.focus_force()
+        else:
+            self.center_child_to_parent(self.notes_window, self.master, 'notes')
+            self.notes_isHidden = True
+            self.master.attributes('-disabled', 1)
+            self.notes_window.attributes('-topmost', 1)
+            self.notes_window.deiconify()
+            self.notes_text_box.focus()
+            
+
     def create_settings_window(self):
         """"Create the settings window."""
         self.settings_window = tkb.Toplevel(self)
@@ -523,9 +588,10 @@ class CardPayment(tkb.Frame):
         self.settings_isHidden = True
         self.toggle_settings_window(e=None)
         self.settings_window.protocol('WM_DELETE_WINDOW', func=lambda: self.toggle_settings_window(e=None))
+        self.settings_window.bind('<Escape>', self.toggle_settings_window)
     
     def toggle_settings_window(self, e):
-        """Toggles Settings window."""
+        """Toggle Settings window."""
         if self.settings_isHidden:
             self.settings_window.withdraw()
             self.settings_isHidden = False
@@ -533,7 +599,7 @@ class CardPayment(tkb.Frame):
             self.master.attributes('-disabled', 0)
             self.focus_force()
         else:
-            self.settings_window.place_window_center()
+            self.center_child_to_parent(self.settings_window, self.master, 'settings')
             self.settings_isHidden = True
             self.master.attributes('-disabled', 1)
             self.settings_window.attributes('-topmost', 1)
@@ -567,7 +633,7 @@ class CardPayment(tkb.Frame):
 
 if __name__ == '__main__':
     app = tkb.Window(
-        'Card Payment Form', 'superhero', resizable=(False, False)
+        'Card Payment Form', 'darkly', resizable=(False, False)
     )
     CardPayment(app)
     app.place_window_center()
