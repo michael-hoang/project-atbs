@@ -633,7 +633,7 @@ class CardPayment(tkb.Frame):
 
 if __name__ == '__main__':
     app = tkb.Window(
-        'Card Payment Form', 'darkly', resizable=(False, False)
+        'Card Payment Form', 'superhero', resizable=(False, False)
     )
     CardPayment(app)
     app.place_window_center()
