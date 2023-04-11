@@ -24,6 +24,8 @@ class CardPayment(tkb.Frame):
         self.card_no = tkb.StringVar(value='')
         self.exp = tkb.StringVar(value='')
         self.security_no = tkb.StringVar(value='')
+        self.address = tkb.StringVar(value='')
+        self.zip = tkb.StringVar(value='')
         self.cardholder = tkb.StringVar(value='')
         self.mrn = tkb.StringVar(value='')
         self.med_1 = tkb.StringVar(value='')
@@ -110,8 +112,12 @@ class CardPayment(tkb.Frame):
         security.grid(column=1, row=1, **grid_para)
         cardholder = self.create_long_form_entry(container, 'Cardholder Name', self.cardholder)
         cardholder.grid(column=0, row=2, columnspan=2, **grid_para)
-        mrn = self.create_long_form_entry(container, 'MRN', self.mrn)
-        mrn.grid(column=0, row=3, columnspan=2, **grid_para)
+        address = self.create_long_form_entry(container, 'Billing Address', self.address)
+        address.grid(column=0, row=3, columnspan=2, **grid_para)
+        zip = self.create_short_form_entry(container, 'Zip Code', self.zip)
+        zip.grid(column=0, row=4, columnspan=2, **grid_para)
+        mrn = self.create_short_form_entry(container, 'MRN', self.mrn)
+        mrn.grid(column=1, row=4, columnspan=2, **grid_para)
         return container
 
     def create_list_entry(self, master, item_label, item_var, price_var):
