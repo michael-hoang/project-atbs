@@ -231,6 +231,8 @@ class CardPayment(tkb.Frame):
             'Credit Card No': self.card_no.get(),
             'Exp': self.exp.get(),
             'Security No': self.security_no.get(),
+            'Billing Address': self.address.get(),
+            'Zip Code': self.zip.get(),
             'Cardholder Name': self.cardholder.get(),
             'MRN': self.mrn.get(),
             'Medication Names 1': self.med_1.get(),
@@ -248,7 +250,8 @@ class CardPayment(tkb.Frame):
         }
         try:
             cardnumber = dict_fields['Credit Card No'].replace(' ', '')
-            dict_fields[self.get_credit_card_network(cardnumber)] = 'X'
+            if self.luhns_algo(cardnumber):
+                dict_fields[self.get_credit_card_network(cardnumber)] = 'X'
         except:
             pass
 
@@ -274,7 +277,7 @@ class CardPayment(tkb.Frame):
             os.makedirs(abs_path)
             subprocess.call(["attrib", "+h", abs_path]) # hidden directory
 
-        reader = PdfReader("assets/form/cardpayment.pdf")
+        reader = PdfReader("assets/form/cardpayment-form.pdf")
         writer = PdfWriter()
         page = reader.pages[0]
         writer.add_page(page)
@@ -421,6 +424,8 @@ class CardPayment(tkb.Frame):
                     for entry_widget in entry_widgets:
                         if entry_widget.winfo_class() == 'TEntry':
                             entry_widget.delete(0, 'end')
+                            self.cardnumber.winfo_children()[1].focus()
+                            self.focus()
 
     def create_settings_window(self):
         """"Create the settings window."""
