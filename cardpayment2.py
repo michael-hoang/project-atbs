@@ -8,6 +8,7 @@ import ttkbootstrap as tkb
 from ttkbootstrap.constants import *
 from calendar import monthrange
 from PyPDF2 import PdfReader, PdfWriter
+from settings import Settings
 
 
 class CardPayment(tkb.Frame):
@@ -74,7 +75,8 @@ class CardPayment(tkb.Frame):
         # Validate numeric entries
         self.cardnumber.winfo_children()[1].configure(validate='focus', validatecommand=(self.valid_card_func, '%P'))
 
-        self.clear_all_entries()
+        # Settings window
+        self.create_settings_window()
 
     def create_long_form_entry(self, master, label, variable):
         """Create a single long form entry."""
@@ -162,7 +164,7 @@ class CardPayment(tkb.Frame):
             master=container,
             text="Submit",
             command=self.export_pdf,
-            bootstyle=DEFAULT,
+            bootstyle='DEFAULT',
             width=9,
         )
         sub_btn.pack(side=BOTTOM, pady=(0,4))
@@ -170,7 +172,7 @@ class CardPayment(tkb.Frame):
         set_btn = tkb.Button(
             master=container,
             text="Settings",
-            command=None,
+            command=lambda: self.toggle_settings_window(e=None),
             bootstyle=DARK,
             width=9,
         )
@@ -388,7 +390,7 @@ class CardPayment(tkb.Frame):
     def open_file_folder(self):
         """Opens directory containing the exported card payment forms."""
         self.files_btn.config(text='Opening...')
-        self.files_btn.after(1000, lambda: self.files_btn.config(text='Files'))
+        self.files_btn.after(2000, lambda: self.files_btn.config(text='Files'))
         if getattr(sys, 'frozen', False):
             app_path = os.path.dirname(sys.executable)
         else:
@@ -414,9 +416,36 @@ class CardPayment(tkb.Frame):
                         if entry_widget.winfo_class() == 'TEntry':
                             entry_widget.delete(0, 'end')
 
+    def create_settings_window(self):
+        """"Create the settings window."""
+        self.settings_window = tkb.Toplevel(self)
+        self.settings_window.title('Settings')
+        self.settings_frame = Settings(self.settings_window)
+        self.settings_isHidden = True
+        self.toggle_settings_window(e=None)
+        self.settings_window.protocol('WM_DELETE_WINDOW', func=lambda: self.toggle_settings_window(e=None))
+    
+    def toggle_settings_window(self, e):
+        """Toggles Settings window."""
+        if self.settings_isHidden:
+            self.settings_window.withdraw()
+            self.settings_isHidden = False
+            self.lift()
+            self.master.attributes('-disabled', 0)
+            self.focus_force()
+        else:
+            self.settings_window.place_window_center()
+            self.settings_isHidden = True
+            self.master.attributes('-disabled', 1)
+            self.settings_window.attributes('-topmost', 1)
+            self.settings_window.deiconify()
+            self.settings_window.focus()
+
+
 if __name__ == '__main__':
     app = tkb.Window(
         'Card Payment Form', 'superhero', resizable=(False, False)
     )
     CardPayment(app)
+    app.place_window_center()
     app.mainloop()
