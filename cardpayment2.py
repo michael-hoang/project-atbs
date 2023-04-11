@@ -9,6 +9,7 @@ from ttkbootstrap.constants import *
 from calendar import monthrange
 from PyPDF2 import PdfReader, PdfWriter
 from settings import Settings
+from dateutil.relativedelta import relativedelta
 
 
 class CardPayment(tkb.Frame):
@@ -73,9 +74,14 @@ class CardPayment(tkb.Frame):
    
         # Register validation callbacks
         self.valid_card_func = master.register(self._validate_card_number)
+        self.valid_digit_func = master.register(self._validate_only_digits)
+        self.valid_exp_func = master.register(self._validate_exp_date)
 
         # Validate numeric entries
         self.cardnumber.winfo_children()[1].configure(validate='focus', validatecommand=(self.valid_card_func, '%P'))
+        self.exp_ent.winfo_children()[1].configure(validate='focus', validatecommand=(self.valid_exp_func, '%P'))
+        self.zipcode.winfo_children()[1].configure(validate='key', validatecommand=(self.valid_digit_func, '%P'))
+        self.mrn_ent.winfo_children()[1].configure(validate='key', validatecommand=(self.valid_digit_func, '%P'))
 
         # Settings window
         self.create_settings_window()
@@ -106,18 +112,18 @@ class CardPayment(tkb.Frame):
         self.cardnumber.grid(column=0, row=0, columnspan=2, sticky='w')
         card_img = self.create_card_image(container)
         card_img.grid(column=1, row=0, sticky='e', padx=2, pady=(20,0))
-        exp = self.create_short_form_entry(container, 'Exp', self.exp)
-        exp.grid(column=0, row=1, **grid_para)
+        self.exp_ent = self.create_short_form_entry(container, 'Exp', self.exp)
+        self.exp_ent.grid(column=0, row=1, **grid_para)
         security = self.create_short_form_entry(container, 'Security Code', self.security_no)
         security.grid(column=1, row=1, **grid_para)
         cardholder = self.create_long_form_entry(container, 'Cardholder Name', self.cardholder)
         cardholder.grid(column=0, row=2, columnspan=2, **grid_para)
         address = self.create_long_form_entry(container, 'Billing Address', self.address)
         address.grid(column=0, row=3, columnspan=2, **grid_para)
-        zip = self.create_short_form_entry(container, 'Zip Code', self.zip)
-        zip.grid(column=0, row=4, columnspan=2, **grid_para)
-        mrn = self.create_short_form_entry(container, 'MRN', self.mrn)
-        mrn.grid(column=1, row=4, columnspan=2, **grid_para)
+        self.zipcode = self.create_short_form_entry(container, 'Zip Code', self.zip)
+        self.zipcode.grid(column=0, row=4, columnspan=2, **grid_para)
+        self.mrn_ent = self.create_short_form_entry(container, 'MRN', self.mrn)
+        self.mrn_ent.grid(column=1, row=4, columnspan=2, **grid_para)
         return container
 
     def create_list_entry(self, master, item_label, item_var, price_var):
@@ -378,6 +384,31 @@ class CardPayment(tkb.Frame):
             self.image_lbl.configure(image = '')
             return False
         
+    def _validate_only_digits(self, P: str) -> bool:
+        """Validate that the input is strictly a digit."""
+        if str.isdigit(P) or P == "":
+            return True
+        else:
+            return False
+        
+    def _validate_exp_date(self, P: str) -> bool:
+        """Validate that the inputted date is not expired."""
+        exp_str = self.exp.get()
+        date_fmt = ('%m/%y', '%m-%y', '%m/%Y', '%m-%Y')
+        for fmt in date_fmt:
+            try:
+                exp_date = dt.datetime.strptime(exp_str, fmt) + relativedelta(months=1) - relativedelta(days=1)
+                print(exp_date)
+                if exp_date > dt.datetime.today():
+                    return True
+            except ValueError:
+                pass
+
+        if exp_str == '':
+            return True
+        else:
+            return False
+
     def limit_card_number_size(self, *args):
         """Limit the number of characters depending on card network type"""
         cardnumber = self.card_no.get()
