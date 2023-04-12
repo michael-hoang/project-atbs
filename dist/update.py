@@ -188,6 +188,43 @@ class Updater:
         self.reset_button()
         self.open_main_app()
 
+    def update_assets(self):
+        """Update files in the assets directory."""
+        assets_img = (
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/amex.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/atbs_icon.ico',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/atbs_icon.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/authentication_icon.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/cal_calc.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/cc_icon.ico',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/cc_icon.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/check_mark.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/dice.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/discover.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/edit-user.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/eye.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/generic_card.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/lock_button.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/lock_icon.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/map_icon.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/mastercard.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/note.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/note_pin.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/rx.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/rx_icon.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/search.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/setting.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/setting_icon.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/update.ico',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/update.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/visa.png',
+            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/x_mark.png',
+        )
+
+        assets_form = (
+            'https://github.com/michael-hoang/project-atbs-work/raw/242498f7014bd06daf6e507e6e011bf4d3d4a56d/assets/form/cardpayment.pdf',
+        )
+
 
 if __name__ == '__main__':
     Updater()
