@@ -28,8 +28,9 @@ class Updater:
         self.current_updater_version_path = ''
         self.main_app_current_version = ''
         self.main_app_latest_version = ''
-        self.check_create_assets_dir()
-        self.update_assets()
+        # Check for current version json file
+        self.check_download_updater_version_json()
+
         # GUI
         self.root = tk.Tk()
         self.root.withdraw()
@@ -90,6 +91,25 @@ class Updater:
 
         self.root.mainloop()
 
+    def check_download_updater_version_json(self):
+        """Check and download current Updater version .json file."""
+        data = {
+            'updater': self.updater_current_version
+        }
+        current_path = self.get_exe_script_path()
+        if '\\' in current_path:
+            current_version_dir = f'{current_path}\\current_version'
+            filename = f'{current_version_dir}\\current_updater_version.json'
+        else:
+            current_version_dir = f'{current_path}/current_version'
+            filename = f'{current_version_dir}/current_updater_version.json'
+        
+        if not os.path.exists(current_version_dir):
+            os.mkdir(current_version_dir)
+
+        with open(filename, 'w') as f:
+            json.dump(data, f, indent=4)
+
     def center_root_window_to_screen(self):
         """Center root window"""
         self.root.update_idletasks()
@@ -101,6 +121,14 @@ class Updater:
         y = int(screen_height/2 - win_width/2)
         self.root.geometry(f"{win_width}x{win_height}+{x}+{y}")
         self.root.deiconify()
+
+    def get_exe_script_path(self) -> str:
+        """Return the path to the current exe or script file."""
+        if getattr(sys, 'frozen', False):
+            path = os.path.dirname(sys.executable)
+        else:
+            path = os.path.dirname(os.path.abspath(__file__))
+        return path
     
     def get_root_path(self) -> str:
         """Return the path to the root directory of the main application."""
