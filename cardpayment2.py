@@ -287,8 +287,10 @@ class CardPayment(tkb.Frame):
         )
         if answer == 'Yes':
             self.export_pdf()
+            self.clear_all_entries()
             self.sub_btn.config(text='Printing...')
             self.sub_btn.after(5000, lambda: self.sub_btn.config(text='Submit'))
+            self.focus_force()
     
     def export_pdf(self):
         """Export payment information into a PDF form."""
@@ -318,7 +320,6 @@ class CardPayment(tkb.Frame):
         with open(f".files\{file_name}", "wb") as output_stream:
             writer.write(output_stream)
 
-        self.clear_all_entries()
         os.startfile(f"{app_path}\.files\{file_name}", "print")
 
     def get_credit_card_network(self, numbers: str) -> str or bool:
@@ -531,8 +532,9 @@ class CardPayment(tkb.Frame):
                     for entry_widget in entry_widgets:
                         if entry_widget.winfo_class() == 'TEntry':
                             entry_widget.delete(0, 'end')
-                            self.cardnumber.winfo_children()[1].focus()
-                            self.focus()
+        self.cardnumber.winfo_children()[1].focus_force()
+        self.exp_ent.winfo_children()[1].focus_force()
+        self.security_ent.winfo_children()[1].focus_force()              
 
     def center_child_to_parent(self, child, parent, window_name):
         """Center child window to parent window."""
@@ -566,11 +568,11 @@ class CardPayment(tkb.Frame):
     def toggle_notes_window(self, e):
         """Toggle Notes window."""
         if self.notes_isHidden:
-            self.notes_window.withdraw()
             self.notes_isHidden = False
             self.lift()
             self.master.attributes('-disabled', 0)
-            self.focus_force()
+            self.focus()
+            self.notes_window.withdraw()
         else:
             self.center_child_to_parent(self.notes_window, self.master, 'notes')
             self.notes_isHidden = True
@@ -584,6 +586,8 @@ class CardPayment(tkb.Frame):
         """"Create the settings window."""
         self.settings_window = tkb.Toplevel(self)
         self.settings_window.title('Settings')
+        self.settings_window.resizable(False, False)
+        # self.notes_window.overrideredirect(True)
         self.settings_frame = Settings(self.settings_window)
         self.settings_isHidden = True
         self.toggle_settings_window(e=None)
@@ -593,11 +597,11 @@ class CardPayment(tkb.Frame):
     def toggle_settings_window(self, e):
         """Toggle Settings window."""
         if self.settings_isHidden:
-            self.settings_window.withdraw()
             self.settings_isHidden = False
             self.lift()
             self.master.attributes('-disabled', 0)
-            self.focus_force()
+            self.focus()
+            self.settings_window.withdraw()
         else:
             self.center_child_to_parent(self.settings_window, self.master, 'settings')
             self.settings_isHidden = True
