@@ -103,7 +103,23 @@ class Updater:
         y = int(screen_height/2 - win_width/2)
         self.root.geometry(f"{win_width}x{win_height}+{x}+{y}")
         self.root.deiconify()
+    
+    def get_root_path(self) -> str:
+        """Return the path to the root directory of the main application."""
+        # Determine if the current application is a script file or frozen exe
+        if getattr(sys, 'frozen', False):
+            current_path = os.path.dirname(sys.executable)
+        else:
+            current_path = os.path.dirname(os.path.abspath(__file__))
 
+        if '\\' in current_path:
+            dir_len = len(current_path.split('\\')[-1]) + 1
+        elif '/' in current_path:
+            dir_len = len(current_path.split('/')[-1]) + 1
+        
+        root_path = current_path[:-dir_len]
+        return root_path
+        
     def get_paths(self):
         """Get paths for current working directory, main app, and updater."""
         if getattr(sys, 'frozen', False):
