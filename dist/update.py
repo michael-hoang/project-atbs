@@ -2,12 +2,9 @@
 latest release on a repository and downloads it to the user's root directory."""
 
 
-import requests
-import sys
-import os
+import json, requests, os, sys, urllib.request
 import tkinter as tk
 from tkinter import END
-import json
 
 
 FONT = ('Helvetica', 12, 'normal')
@@ -31,7 +28,7 @@ class Updater:
         self.current_updater_version_path = ''
         self.main_app_current_version = ''
         self.main_app_latest_version = ''
-
+        self.update_assets()
         # GUI
         self.root = tk.Tk()
         self.root.withdraw()
@@ -240,6 +237,17 @@ class Updater:
         assets_form = (
             'https://github.com/michael-hoang/project-atbs-work/raw/242498f7014bd06daf6e507e6e011bf4d3d4a56d/assets/form/cardpayment.pdf',
         )
+
+        root_path = self.get_root_path()
+        assets_img_path = f'{root_path}\\assets\\img'
+        assets_form_path = f'{root_path}\\assets\\form'
+        for img_url in assets_img:
+            filename = os.path.basename(img_url)
+            urllib.request.urlretrieve(img_url, os.path.join(assets_img_path, filename))
+        
+        for form_url in assets_form:
+            filename = os.path.basename(form_url)
+            urllib.request.urlretrieve(form_url, os.path.join(assets_form_path, filename))
 
 
 if __name__ == '__main__':
