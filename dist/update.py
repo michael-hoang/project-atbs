@@ -28,6 +28,7 @@ class Updater:
         self.current_updater_version_path = ''
         self.main_app_current_version = ''
         self.main_app_latest_version = ''
+        self.check_create_assets_dir()
         self.update_assets()
         # GUI
         self.root = tk.Tk()
@@ -201,6 +202,23 @@ class Updater:
         self.reset_button()
         self.open_main_app()
 
+    def check_create_assets_dir(self):
+        """Check if assets directory exists and create it if it doesn't."""
+        root_path = self.get_root_path()
+        if '\\' in root_path:
+            assets_dir = f'{root_path}\\assets'
+            assets_img_dir = f'{assets_dir}\\img'
+            assets_form_dir = f'{assets_dir}\\form'
+        elif '/' in root_path:
+            assets_dir = f'{root_path}/assets'
+            assets_img_dir = f'{assets_dir}/img'
+            assets_form_dir = f'{assets_dir}/form'
+
+        if not os.path.exists(assets_dir):
+            os.mkdir(assets_dir)
+            os.mkdir(assets_img_dir)
+            os.mkdir(assets_form_dir)
+
     def update_assets(self):
         """Update files in the assets directory."""
         assets_img = (
@@ -239,8 +257,13 @@ class Updater:
         )
 
         root_path = self.get_root_path()
-        assets_img_path = f'{root_path}\\assets\\img'
-        assets_form_path = f'{root_path}\\assets\\form'
+        if '\\' in root_path:
+            assets_img_path = f'{root_path}\\assets\\img'
+            assets_form_path = f'{root_path}\\assets\\form'
+        elif '/' in root_path:
+            assets_img_path = f'{root_path}/assets/img'
+            assets_form_path = f'{root_path}/assets/form'
+
         for img_url in assets_img:
             filename = os.path.basename(img_url)
             urllib.request.urlretrieve(img_url, os.path.join(assets_img_path, filename))
