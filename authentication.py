@@ -25,7 +25,7 @@ class Authenticator:
     def __init__(self):
         """Initialize encryption, GUI, and check credentials."""
         self.endecrypt = EnDeCrypt()
-        self.top = tk.Toplevel(bg=BG_COLOR, padx=25, pady=20)
+        self.top = tk.Toplevel(bg=BG_COLOR, padx=25, pady=20, autostyle=False)
         self.top.title('Authentication')
         self.top.withdraw()
         self.top.resizable(width=False, height=False)
@@ -34,12 +34,12 @@ class Authenticator:
         self.top.iconphoto(False, self.authentication_icon)
 
         self.instructLabel = tk.Label(
-            self.top, text='Enter your PIN/Phrase.', bg=BG_COLOR, fg='white', font=('Bahnschrift Light', 14, 'normal'))
+            self.top, text='Enter your PIN/Phrase.', bg=BG_COLOR, fg='white', font=('Bahnschrift Light', 14, 'normal'), autostyle=False)
         self.instructLabel.grid(column=0, row=0, columnspan=2, pady=(0, 10))
-        self.keyEntry = tk.Entry(self.top, font=FONT, width=24, show='*')
+        self.keyEntry = tk.Entry(self.top, font=FONT, width=24, show='*', autostyle=False)
         self.keyEntry.grid(column=0, row=2)
         self.okButton = tk.Button(
-            self.top, text='OK', command=lambda: self.confirmation('event'), width=10, font=FONT, bg=BUTTON_COLOR, fg='white', borderwidth=0, activebackground=GOLD_COLOR)
+            self.top, text='OK', command=lambda: self.confirmation('event'), width=10, font=FONT, bg=BUTTON_COLOR, fg='white', borderwidth=0, activebackground=GOLD_COLOR, autostyle=False)
         self.okButton.grid(column=0, row=3, pady=(15, 0))
 
         # Center window to screen
@@ -188,7 +188,7 @@ class Authenticator:
             ' your secret key. Keep it safe. You will not be able'\
             ' to recover your saved accounts and passwords if you lose'\
             ' it.'
-        createKeyWin = tk.Toplevel(self.top, padx=20, pady=20, bg=BG_COLOR)
+        createKeyWin = tk.Toplevel(self.top, padx=20, pady=20, bg=BG_COLOR, autostyle=False)
         createKeyWin.title('Setup PIN/Phrase')
         createKeyWin.withdraw()
         createKeyWin.resizable(width=False, height=False)
@@ -199,21 +199,21 @@ class Authenticator:
         createKeyWin.attributes('-topmost', False)
         
         warningLabel = tk.Label(
-            createKeyWin, text=warning_message, justify='left', font=FONT, wraplength=400, bg=BG_COLOR, fg='white')
+            createKeyWin, text=warning_message, justify='left', font=FONT, wraplength=400, bg=BG_COLOR, fg='white', autostyle=False)
         warningLabel.grid(column=0, row=0, columnspan=2,
                           sticky='EW', padx=10, pady=(0, 10))
         enterKeyLabel = tk.Label(
-            createKeyWin, text='Enter PIN/Phrase: ', font=FONT, bg=BG_COLOR, fg='white')
+            createKeyWin, text='Enter PIN/Phrase: ', font=FONT, bg=BG_COLOR, fg='white', autostyle=False)
         enterKeyLabel.grid(column=0, row=1, sticky='E', pady=(10))
-        keyEntry = tk.Entry(createKeyWin, font=FONT, show='*')
+        keyEntry = tk.Entry(createKeyWin, font=FONT, show='*', autostyle=False)
         keyEntry.grid(column=1, row=1, pady=(10, 5))
         verifyKeyLabel = tk.Label(
-            createKeyWin, text='Re-Enter PIN/Phrase: ', font=FONT, bg=BG_COLOR, fg='white')
+            createKeyWin, text='Re-Enter PIN/Phrase: ', font=FONT, bg=BG_COLOR, fg='white', autostyle=False)
         verifyKeyLabel.grid(column=0, row=2, sticky='E')
-        verifyKeyEntry = tk.Entry(createKeyWin, font=FONT, show='*')
+        verifyKeyEntry = tk.Entry(createKeyWin, font=FONT, show='*', autostyle=False)
         verifyKeyEntry.grid(column=1, row=2, pady=(0, 10))
         okButton = tk.Button(createKeyWin, text='OK',
-                             font=FONT, width=10, bg=BUTTON_COLOR, fg='white', borderwidth=0, activebackground=GOLD_COLOR, command=lambda: _verifySecretKey('event'))
+                             font=FONT, width=10, bg=BUTTON_COLOR, fg='white', borderwidth=0, activebackground=GOLD_COLOR, command=lambda: _verifySecretKey('event'), autostyle=False)
         okButton.grid(column=1, row=3, pady=(10, 0))
         # Eye button
         createKeyWin.eyeImage_open = Image.open('assets/img/eye.png')
@@ -222,7 +222,7 @@ class Authenticator:
         createKeyWin.eyeImage = ImageTk.PhotoImage(
             createKeyWin.eyeImage_resized)
         eyeButton = tk.Button(createKeyWin, image=createKeyWin.eyeImage,
-                              bg=BG_COLOR, activebackground=BG_COLOR, borderwidth=0)
+                              bg=BG_COLOR, activebackground=BG_COLOR, borderwidth=0, autostyle=False)
         eyeButton.grid(column=2, row=1, rowspan=2)
         eyeButton.bind('<ButtonPress-1>', showSecretKey)
         eyeButton.bind('<ButtonRelease-1>', hideSecretKey)
