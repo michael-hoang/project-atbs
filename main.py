@@ -22,14 +22,12 @@ HOVER_BUTTON_COLOR = '#424553'
 ACTIVE_BG_COLOR = '#424553'
 ACTIVE_FG_COLOR = 'white'
 
-MAIN_APP_VERSION = 'v5.0.0'
-
 class MainApp(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.main_app_current_version = 'v4.6.2'
-        self.main_app_latest_version = self.get_latest_main_app_version()
         self.withdraw()
+        self.main_app_current_version = 'v5.0.0'
+        self.main_app_latest_version = self.get_latest_main_app_version()
         self.title('Project AtBS')
         self.config(bg=BG_COLOR)
         self.resizable(width=False, height=False)
@@ -253,10 +251,7 @@ class MainApp(tk.Tk):
 
     def open_Updater(self):
         """Run App Update Manager"""
-        if getattr(sys, 'frozen', False):
-            root_path = os.path.dirname(sys.executable)
-        else:
-            root_path = os.path.dirname(os.path.abspath(__file__))
+        root_path = self.get_exe_script_path()
         os.startfile(f'{root_path}/dist/update.exe')
 
 
