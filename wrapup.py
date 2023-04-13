@@ -18,7 +18,7 @@ class WrapUpDateCalculator():
     def __init__(self):
         """Initializes WrapUpDateCalculator graphical user interface."""
 
-        self.top = tk.Toplevel()
+        self.top = tk.Toplevel(autostyle=False)
         self.top.withdraw()
         self.top.attributes('-topmost', 0)
         self.top.title('Wrap Up Date Calculator')
@@ -35,19 +35,19 @@ class WrapUpDateCalculator():
         self.always_top_check_button = tk.Checkbutton(self.top, text='Always on top',
                                                       variable=self.alwaysTopVar, onvalue=1, offvalue=0,
                                                       bg=BG_COLOR, fg=FG_COLOR, font=(
-                                                          'Bahnschrift Light', 10, 'normal'),
+                                                          'Bahnschrift Light', 10, 'normal'), autostyle=False,
                                                       activebackground=BG_COLOR, activeforeground=FG_COLOR,
                                                       selectcolor=BG_COLOR, command=self.always_top)
         self.always_top_check_button.grid(
             column=0, row=0, sticky='NW', pady=(0, 10))
 
         # Dispense Date Label & Entry
-        self.dispense_date_label = tk.Label(self.top, text='Dispense Date:',
+        self.dispense_date_label = tk.Label(self.top, text='Dispense Date:', autostyle=False,
                                             bg=BG_COLOR,
                                             fg=FG_COLOR,
                                             font=FONT)
         self.dispense_date_label.grid(column=0, row=1, sticky='E')
-        self.dispense_date_entry = tk.Entry(self.top, bg=FG_COLOR,
+        self.dispense_date_entry = tk.Entry(self.top, bg=FG_COLOR, autostyle=False,
                                             fg=BG_COLOR,
                                             font=FONT,
                                             width=12)
@@ -55,12 +55,12 @@ class WrapUpDateCalculator():
                                       padx=10, pady=5)
 
         # Day Supply Label & Entry
-        self.day_supply_label = tk.Label(self.top, text='Day Supply:',
+        self.day_supply_label = tk.Label(self.top, text='Day Supply:', autostyle=False,
                                          bg=BG_COLOR,
                                          fg=FG_COLOR,
                                          font=FONT)
         self.day_supply_label.grid(column=0, row=2, sticky='E')
-        self.day_supply_entry = tk.Entry(self.top, bg=FG_COLOR,
+        self.day_supply_entry = tk.Entry(self.top, bg=FG_COLOR, autostyle=False,
                                          fg=BG_COLOR,
                                          font=FONT,
                                          width=12)
@@ -68,17 +68,17 @@ class WrapUpDateCalculator():
 
         # Custom wrap up date
         self.custom_canvas = tk.Canvas(
-            self.top, bg=BG_COLOR, highlightbackground=BG_COLOR, highlightcolor=BG_COLOR)
+            self.top, bg=BG_COLOR, highlightbackground=BG_COLOR, highlightcolor=BG_COLOR, autostyle=False)
         self.custom_canvas.grid(column=0, row=3, columnspan=2, pady=5)
         self.custom_wrapUpLabel = tk.Label(
-            self.custom_canvas, text='Wrap up', font=FONT, bg=BG_COLOR, fg=FG_COLOR)
+            self.custom_canvas, text='Wrap up', font=FONT, bg=BG_COLOR, fg=FG_COLOR, autostyle=False)
         self.custom_wrapUpLabel.grid(column=0, row=0)
         self.custom_wrapUpEntry = tk.Entry(
-            self.custom_canvas, font=('Bahnschrift Light', 14, 'bold'), width=2, justify='center', bg=BUTTON_BG_COLOR, fg=FG_COLOR)
+            self.custom_canvas, font=('Bahnschrift Light', 14, 'bold'), width=2, justify='center', bg=BUTTON_BG_COLOR, fg=FG_COLOR, autostyle=False)
         self.custom_wrapUpEntry.grid(column=1, row=0, padx=4)
         self.custom_wrapUpEntry.insert(0, '7')
         self.custom_daysBeforeLabel = tk.Label(
-            self.custom_canvas, text='days before', font=FONT, bg=BG_COLOR, fg=FG_COLOR)
+            self.custom_canvas, text='days before', font=FONT, bg=BG_COLOR, fg=FG_COLOR, autostyle=False)
         self.custom_daysBeforeLabel.grid(column=2, row=0)
 
         # self.v = tk.IntVar()
@@ -98,7 +98,7 @@ class WrapUpDateCalculator():
 
         # Calculate Button
         self.calculate_button = tk.Button(self.top, text='Calculate',
-                                          bg=BUTTON_BG_COLOR,
+                                          bg=BUTTON_BG_COLOR, autostyle=False,
                                           fg=FG_COLOR,
                                           font=FONT,
                                           activebackground=GOLD_COLOR,
@@ -115,12 +115,12 @@ class WrapUpDateCalculator():
         self.wrap_up_date_text = tk.Label(self.top, text='Wrap Up Date:',
                                           font=('Bahnschrift Light',
                                                 18, 'normal'),
-                                          bg=BG_COLOR,
+                                          bg=BG_COLOR, autostyle=False,
                                           fg='gold')
         self.wrap_up_date_text.grid(column=0, row=6, pady=6)
         self.wrap_up_date = tk.Label(self.top, text='',
                                      font=('Bahnschrift Light', 18, 'normal'),
-                                     bg=BG_COLOR,
+                                     bg=BG_COLOR, autostyle=False,
                                      fg='gold')
         self.wrap_up_date.grid(column=1, row=6, pady=6)
 
@@ -128,7 +128,7 @@ class WrapUpDateCalculator():
         self.clear_button = tk.Button(self.top, text='Clear',
                                       bg=BUTTON_BG_COLOR,
                                       fg=FG_COLOR,
-                                      font=FONT,
+                                      font=FONT, autostyle=False,
                                       activebackground=GOLD_COLOR,
                                       borderwidth=0, command=self.clear)
         self.clear_button.grid(
@@ -139,7 +139,7 @@ class WrapUpDateCalculator():
         # Exit button
         self.exit_button = tk.Button(self.top, text='Exit',
                                      bg=BUTTON_BG_COLOR,
-                                     fg=FG_COLOR,
+                                     fg=FG_COLOR, autostyle=False,
                                      font=FONT,
                                      activebackground='firebrick3', activeforeground='white',
                                      borderwidth=0, command=self.top.destroy)
