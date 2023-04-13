@@ -34,6 +34,6 @@ class AssetManager:
             'x_mark.png',
         )
 
-        self.assets_form = (
-            'https://github.com/michael-hoang/project-atbs-work/raw/242498f7014bd06daf6e507e6e011bf4d3d4a56d/assets/form/cardpayment.pdf',
-        )
+        self.assets_form = {
+            'cardpayment.pdf': 'https://github.com/michael-hoang/project-atbs-work/raw/242498f7014bd06daf6e507e6e011bf4d3d4a56d/assets/form/cardpayment.pdf',
+        }
