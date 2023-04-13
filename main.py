@@ -6,6 +6,7 @@ from cardpayment import CardPayment
 from map import Map
 from pwmanager import PasswordManager
 from authentication import Authenticator
+from refill import RefillTemplate
 import os
 import sys
 import json
@@ -17,9 +18,11 @@ from assetmanager import AssetManager
 FONT = ('Bahnschrift Light', 17, 'normal')
 BG_COLOR = '#30323D'
 FG_COLOR = 'white'
-HOVER_BUTTON_COLOR = 'SlateGray4'
-ACTIVE_BG_COLOR = 'SlateGray2'
+HOVER_BUTTON_COLOR = '#424553'
+ACTIVE_BG_COLOR = '#424553'
+ACTIVE_FG_COLOR = 'white'
 
+MAIN_APP_VERSION = 'v5.0.0'
 
 class MainApp(tk.Tk):
     def __init__(self):
@@ -35,20 +38,23 @@ class MainApp(tk.Tk):
 
         self.button_images = []
         # Create buttons
-        self.cp_but = self.create_button(
+        self.cp_btn = self.create_button(
             'Payment', 'cc_icon.png', self.open_CardPaymentForm)
-        self.wud_but = self.create_button(
+        self.rf_btn = self.create_button(
+            'Refill', 'rx.png', self.open_RefillCoordination)
+        self.wud_btn = self.create_button(
             'Wrap Up', 'cal_calc.png', self.open_WrapUpDateCalculator)
-        self.m_but = self.create_button(
+        self.m_btn = self.create_button(
             'Map', 'map_icon.png', self.open_MapSearch)
-        self.pm_but = self.create_button(
+        self.pm_btn = self.create_button(
             'Password', 'lock_icon.png', self.open_PasswordManager)
 
         # Place buttons on grid
-        self.cp_but.grid(column=0, row=0, sticky='EW')
-        self.wud_but.grid(column=0, row=1, sticky='EW')
-        self.m_but.grid(column=0, row=2, sticky='EW')
-        self.pm_but.grid(column=0, row=3, sticky='EW')
+        self.cp_btn.grid(column=0, row=0, sticky='EW')
+        self.rf_btn.grid(column=0, row=1, sticky='EW')
+        self.wud_btn.grid(column=0, row=2, sticky='EW')
+        self.m_btn.grid(column=0, row=3, sticky='EW')
+        self.pm_btn.grid(column=0, row=4, sticky='EW')
 
         # Bind events
         self.bind('<Enter>', self.pointerEnter)
@@ -139,7 +145,7 @@ class MainApp(tk.Tk):
         self.button_images.append(self.img)
         button = tk.Button(text=f'  {text}', image=self.img, compound='left', font=FONT, fg=FG_COLOR,
                            bg=BG_COLOR, activebackground=ACTIVE_BG_COLOR, command=command,
-                           anchor='w', padx=10, pady=5, width=207)
+                           anchor='w', padx=10, pady=5, width=207, activeforeground=ACTIVE_FG_COLOR)
         return button
 
     def open_WrapUpDateCalculator(self):
@@ -153,6 +159,10 @@ class MainApp(tk.Tk):
     def open_MapSearch(self):
         """Instantiate Map object in a new TopLevel window."""
         Map()
+
+    def open_RefillCoordination(self):
+        """Instantiate Refill Coordination object in a new TopLevel window."""
+        RefillTemplate()
 
     def open_PasswordManager(self):
         """Instantiate Password Manager in a new TopLevel window."""

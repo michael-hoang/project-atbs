@@ -5,3 +5,4 @@ __pycache__/
 current_version/
 main.exe
 update.exe
+dist/
