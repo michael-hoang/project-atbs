@@ -15,7 +15,7 @@ FONT = ('Bahnschrift Light', 12, 'normal')
 class DataBase(tk.Toplevel):
     """Represents a database that stores all login information."""
 
-    def __init__(self, root):
+    def __init__(self, root, autostyle=False):
         """Initialize DataBase attributes."""
         super().__init__()
         self.withdraw()
@@ -55,7 +55,7 @@ class DataBase(tk.Toplevel):
     def createCanvas(self):
         """Create canvas on TopLevel DataBase window to display login info."""
         self.canvas = tk.Canvas(
-            self, width=645, height=228, bg=BG_COLOR, highlightthickness=0)
+            self, width=645, height=228, bg=BG_COLOR, highlightthickness=0, autostyle=False)
         self.canvas.pack(side='left', fill='both', expand=True)
 
         self.scrollbar = tk.Scrollbar(
@@ -67,35 +67,35 @@ class DataBase(tk.Toplevel):
         self.canvas.bind("<Configure>", lambda event: self.canvas.configure(
             scrollregion=self.canvas.bbox("all")))
 
-        self.headerFrame = tk.Frame(self.canvas, bg=BG_COLOR)
+        self.headerFrame = tk.Frame(self.canvas, bg=BG_COLOR, autostyle=False)
         self.canvas.create_window(0, 0, window=self.headerFrame, anchor='nw')
 
         index = tk.Entry(master=self.headerFrame, width=2,
-                         disabledbackground=BG_COLOR, disabledforeground=GOLD_COLOR)
+                         disabledbackground=BG_COLOR, disabledforeground=GOLD_COLOR, autostyle=False)
         index.grid(column=0, row=0)
         index.insert(0, '#')
         index.config(state='disabled', font=FONT, width=2, justify='center')
 
         website = tk.Entry(master=self.headerFrame, width=18,
-                           disabledbackground=BG_COLOR, disabledforeground=GOLD_COLOR)
+                           disabledbackground=BG_COLOR, disabledforeground=GOLD_COLOR, autostyle=False)
         website.grid(column=1, row=0)
         website.insert(0, 'Website')
         website.config(state='disabled', font=FONT)
 
         username = tk.Entry(master=self.headerFrame, width=25,
-                            disabledbackground=BG_COLOR, disabledforeground=GOLD_COLOR)
+                            disabledbackground=BG_COLOR, disabledforeground=GOLD_COLOR, autostyle=False)
         username.grid(column=2, row=0)
         username.insert(0, 'Username')
         username.config(state='disabled', font=FONT)
 
         password = tk.Entry(master=self.headerFrame,
-                            disabledbackground=BG_COLOR, disabledforeground=GOLD_COLOR)
+                            disabledbackground=BG_COLOR, disabledforeground=GOLD_COLOR, autostyle=False)
         password.grid(column=3, row=0)
         password.insert(0, 'Password')
         password.config(state='disabled', font=FONT)
 
         blank = tk.Entry(master=self.headerFrame,
-                         disabledbackground=BG_COLOR, disabledforeground=GOLD_COLOR)
+                         disabledbackground=BG_COLOR, disabledforeground=GOLD_COLOR, autostyle=False)
         blank.grid(column=4, row=0)
         blank.insert(0, '   --')
         blank.config(state='disabled', font=FONT)
@@ -149,32 +149,32 @@ class DataBase(tk.Toplevel):
                 dePassword = self.edc.decrypt(v['password'])
 
                 index_entry = tk.Entry(
-                    master=scrollableframe, disabledbackground=GRAY_COLOR, disabledforeground=GOLD_COLOR)
+                    master=scrollableframe, disabledbackground=GRAY_COLOR, disabledforeground=GOLD_COLOR, autostyle=False)
                 index_entry.grid(column=0, row=entryRow)
                 index_entry.insert(0, str(number))
                 index_entry.config(state='disabled', font=FONT,
                                    width=2, justify='center')
 
                 website_entry = tk.Entry(
-                    master=scrollableframe, disabledbackground=GRAY_COLOR, disabledforeground='white')
+                    master=scrollableframe, disabledbackground=GRAY_COLOR, disabledforeground='white', autostyle=False)
                 website_entry.grid(column=1, row=entryRow)
                 website_entry.insert(0, deWebsite)
                 website_entry.config(state='disabled', font=FONT, width=18)
 
                 username_entry = tk.Entry(
-                    master=scrollableframe, disabledbackground=GRAY_COLOR, disabledforeground='white')
+                    master=scrollableframe, disabledbackground=GRAY_COLOR, disabledforeground='white', autostyle=False)
                 username_entry.grid(column=2, row=entryRow)
                 username_entry.insert(0, deUsername)
                 username_entry.config(state='disabled', font=FONT, width=25)
 
                 password_entry = tk.Entry(
-                    master=scrollableframe, disabledbackground=GRAY_COLOR, disabledforeground='white')
+                    master=scrollableframe, disabledbackground=GRAY_COLOR, disabledforeground='white', autostyle=False)
                 password_entry.grid(column=3, row=entryRow)
                 password_entry.insert(0, dePassword)
                 password_entry.config(state='disabled', show='*', font=FONT)
 
                 delete_button = tk.Button(
-                    master=scrollableframe, text='Delete', command=partial(self.delete, key=k), bg=DARK_RED_COLOR, fg='white', activebackground='red', activeforeground='white')
+                    master=scrollableframe, text='Delete', command=partial(self.delete, key=k), bg=DARK_RED_COLOR, fg='white', activebackground='red', activeforeground='white', autostyle=False)
                 delete_button.grid(column=4, row=entryRow)
                 delete_button.bind('<Enter>', self.pointerEnter)
                 delete_button.bind('<Leave>', self.pointerLeave)
