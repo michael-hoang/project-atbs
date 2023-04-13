@@ -28,6 +28,7 @@ class MainApp(tk.Tk):
         self.resizable(width=False, height=False)
         self.iconphoto(False, tk.PhotoImage(file='assets/img/atbs_icon.png'))
         self.main_app_current_version = 'v4.6.2'
+        self.check_download_main_version_json()
 
         self.button_images = []
         # Create buttons
@@ -62,6 +63,34 @@ class MainApp(tk.Tk):
         self.deiconify()
 
         self.after(ms=86_400_000, func=self._check_for_updates_loop) # every 24 hours
+
+    def check_download_main_version_json(self):
+        """Check and download Main version .json file."""
+        data = {
+            'main': self.main_app_current_version
+        }
+        current_path = self.get_exe_script_path()
+        if '\\' in current_path:
+            current_version_dir = f'{current_path}\\dist\\current_version'
+            filename = f'{current_version_dir}\\current_main_version.json'
+        else:
+            current_version_dir = f'{current_path}/dist/current_version'
+            filename = f'{current_version_dir}/current_main_version.json'
+        
+        if not os.path.exists(current_version_dir):
+            os.mkdir(current_version_dir)
+
+        if not os.path.exists(filename):
+            with open(filename, 'w') as f:
+                json.dump(data, f, indent=4)
+
+    def get_exe_script_path(self) -> str:
+        """Return the path to the current exe or script file."""
+        if getattr(sys, 'frozen', False):
+            path = os.path.dirname(sys.executable)
+        else:
+            path = os.path.dirname(os.path.abspath(__file__))
+        return path
 
     def create_button(self, text, image_path, command):
         img_open = Image.open(fp=f'assets/img/{image_path}')
@@ -108,11 +137,7 @@ class MainApp(tk.Tk):
 
     def check_for_new_updater_version(self):
         """Check for new version and update the App Update Manager"""
-        if getattr(sys, 'frozen', False):
-            root_path = os.path.dirname(sys.executable)
-        else:
-            root_path = os.path.dirname(os.path.abspath(__file__))
-
+        root_path = self.get_exe_script_path()
         current_updater_version_path = f'{root_path}/dist/current_version/current_updater_version.json'
         latest_updater_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_updater_version.json'
         with open(current_updater_version_path) as f:
@@ -154,11 +179,6 @@ class MainApp(tk.Tk):
 
     def check_for_main_app_update(self, yesno_update_message=1) -> bool:
         """Check if new version of Main App is available."""
-        if getattr(sys, 'frozen', False):
-            root_path = os.path.dirname(sys.executable)
-        else:
-            root_path = os.path.dirname(os.path.abspath(__file__))
-
         latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
         latest_version_response = requests.get(latest_version_url)
         if latest_version_response.status_code == 200:

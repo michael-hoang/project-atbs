@@ -107,8 +107,9 @@ class Updater:
         if not os.path.exists(current_version_dir):
             os.mkdir(current_version_dir)
 
-        with open(filename, 'w') as f:
-            json.dump(data, f, indent=4)
+        if not os.path.exists(filename):
+            with open(filename, 'w') as f:
+                json.dump(data, f, indent=4)
 
     def center_root_window_to_screen(self):
         """Center root window"""
