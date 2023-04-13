@@ -25,6 +25,7 @@ class MainApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.main_app_current_version = 'v4.6.2'
+        self.main_app_latest_version = self.get_latest_main_app_version()
         self.withdraw()
         self.title('Project AtBS')
         self.config(bg=BG_COLOR)
@@ -68,60 +69,60 @@ class MainApp(tk.Tk):
 
     def check_and_download_dependant_files(self):
         """Check and download dependent files."""
+        if self.main_app_current_version == self.main_app_latest_version:
+            # Define the common path components.
+            current_path = self.get_exe_script_path()
+            assets_dir = os.path.join(current_path, 'assets')
+            form_dir = os.path.join(assets_dir, 'form')
+            img_dir = os.path.join(assets_dir, 'img')
+            dist_dir = os.path.join(current_path, 'dist')
+            current_version_dir = os.path.join(dist_dir, 'current_version')
+            main_ver_json = os.path.join(current_version_dir, 'current_main_version.json')
+            update_exe = os.path.join(dist_dir, 'update.exe')
 
-        # Define the common path components.
-        current_path = self.get_exe_script_path()
-        assets_dir = os.path.join(current_path, 'assets')
-        form_dir = os.path.join(assets_dir, 'form')
-        img_dir = os.path.join(assets_dir, 'img')
-        dist_dir = os.path.join(current_path, 'dist')
-        current_version_dir = os.path.join(dist_dir, 'current_version')
-        main_ver_json = os.path.join(current_version_dir, 'current_main_version.json')
-        update_exe = os.path.join(dist_dir, 'update.exe')
+            # Create any missing directories.
+            directories = [dist_dir, current_version_dir, assets_dir, form_dir, img_dir]
+            for directory in directories:
+                if not os.path.exists(directory):
+                    os.mkdir(directory)
 
-        # Create any missing directories.
-        directories = [dist_dir, current_version_dir, assets_dir, form_dir, img_dir]
-        for directory in directories:
-            if not os.path.exists(directory):
-                os.mkdir(directory)
+            # Create the main version JSON file if it doesn't exist.
+            if not os.path.exists(main_ver_json):
+                with open(main_ver_json, 'w') as f:
+                    json.dump({'main': self.main_app_current_version}, f, indent=4)
 
-        # Create the main version JSON file if it doesn't exist.
-        if not os.path.exists(main_ver_json):
-            with open(main_ver_json, 'w') as f:
-                json.dump({'main': self.main_app_current_version}, f, indent=4)
+            # Download the img files if they don't exist.
+            img_dir_content = os.listdir(img_dir)
+            assets = AssetManager()
+            for img in assets.assets_img:
+                if img not in img_dir_content:
+                    img_url = assets.img_content_url + img
+                    try:
+                        urllib.request.urlretrieve(img_url, os.path.join(img_dir, img))
+                    except:
+                        pass
 
-        # Download the img files if they don't exist.
-        img_dir_content = os.listdir(img_dir)
-        assets = AssetManager()
-        for img in assets.assets_img:
-            if img not in img_dir_content:
-                img_url = assets.img_content_url + img
+            # Download the form files if they don't exist.
+            form_dir_content = os.listdir(form_dir)
+            for form in assets.assets_form:
+                if form not in form_dir_content:
+                    form_url = assets.assets_form[form]
+                    try:
+                        urllib.request.urlretrieve(form_url, os.path.join(form_dir, form))
+                    except:
+                        pass
+
+            # Download the update.exe file if it doesn't exist.
+            if not os.path.exists(update_exe):
+                updater_dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/update.exe'
+                block_size = 1024
                 try:
-                    urllib.request.urlretrieve(img_url, os.path.join(img_dir, img))
+                    updater_exe_response = requests.get(updater_dl_url, stream=True)
+                    with open(update_exe, 'wb') as f:
+                        for data in updater_exe_response.iter_content(block_size):
+                            f.write(data)
                 except:
                     pass
-
-        # Download the form files if they don't exist.
-        form_dir_content = os.listdir(form_dir)
-        for form in assets.assets_form:
-            if form not in form_dir_content:
-                form_url = assets.assets_form[form]
-                try:
-                    urllib.request.urlretrieve(form_url, os.path.join(form_dir, form))
-                except:
-                    pass
-
-        # Download the update.exe file if it doesn't exist.
-        if not os.path.exists(update_exe):
-            updater_dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/update.exe'
-            block_size = 1024
-            try:
-                updater_exe_response = requests.get(updater_dl_url, stream=True)
-                with open(update_exe, 'wb') as f:
-                    for data in updater_exe_response.iter_content(block_size):
-                        f.write(data)
-            except requests.exceptions.RequestException:
-                pass
 
     def get_exe_script_path(self) -> str:
         """Return the path to the current exe or script file."""
@@ -216,19 +217,25 @@ class MainApp(tk.Tk):
 
         self.after(ms=86_400_000, func=self._check_for_updates_loop) # every 24 hours 
 
+    def get_latest_main_app_version(self) -> str:
+        """Get the lastest version number of the main app."""
+        latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
+        try:
+            latest_version_response = requests.get(latest_version_url)
+            if latest_version_response.status_code == 200:
+                data = json.loads(latest_version_response.content)
+                main_app_latest_version = data['main']
+                return main_app_latest_version
+        except:
+            return 'N/A'
+
     def check_for_main_app_update(self, yesno_update_message=1) -> bool:
         """Check if new version of Main App is available."""
-        latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
-        latest_version_response = requests.get(latest_version_url)
-        if latest_version_response.status_code == 200:
-            data = json.loads(latest_version_response.content)
-            main_app_latest_version = data['main']
-
-        if self.main_app_current_version != main_app_latest_version:
+        if self.main_app_current_version != self.main_app_latest_version:
             if yesno_update_message == 1:
-                message=f'{main_app_latest_version} is now available. Do you want to open App Update Manager?'
+                message=f'{self.main_app_latest_version} is now available. Do you want to open App Update Manager?'
             elif yesno_update_message == 2:
-                message=f'{main_app_latest_version} is now available. Do you want to close the app and open App Update Manager?'
+                message=f'{self.main_app_latest_version} is now available. Do you want to close the app and open App Update Manager?'
 
             return messagebox.askyesno(title='New Update Available', message=message)
                                        
