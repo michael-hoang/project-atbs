@@ -10,6 +10,8 @@ import os
 import sys
 import json
 import requests
+import urllib.request
+from assetmanager import AssetManager
 
 
 FONT = ('Bahnschrift Light', 17, 'normal')
@@ -22,13 +24,13 @@ ACTIVE_BG_COLOR = 'SlateGray2'
 class MainApp(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.main_app_current_version = 'v4.6.2'
         self.withdraw()
         self.title('Project AtBS')
         self.config(bg=BG_COLOR)
         self.resizable(width=False, height=False)
-        self.iconphoto(False, tk.PhotoImage(file='assets/img/atbs_icon.png'))
-        self.main_app_current_version = 'v4.6.2'
         self.check_and_download_dependant_files()
+        self.iconphoto(False, tk.PhotoImage(file='assets/img/atbs_icon.png'))
 
         self.button_images = []
         # Create buttons
@@ -65,42 +67,50 @@ class MainApp(tk.Tk):
         self.after(ms=86_400_000, func=self._check_for_updates_loop) # every 24 hours
 
     def check_and_download_dependant_files(self):
-        """Check and download dependant files."""
-        data = {
-            'main': self.main_app_current_version
-        }
+        """Check and download dependent files."""
+
+        # Define the common path components.
         current_path = self.get_exe_script_path()
-        if '\\' in current_path:
-            dist_dir = f'{current_path}\\dist'
-            current_version_dir = f'{current_path}\\dist\\current_version'
-            main_ver_json = f'{current_version_dir}\\current_main_version.json'
-            update_exe = f'{dist_dir}\\update.exe'
-        else:
-            dist_dir = f'{current_path}/dist'
-            current_version_dir = f'{current_path}/dist/current_version'
-            main_ver_json = f'{current_version_dir}/current_main_version.json'
-            update_exe = f'{dist_dir}/update.exe'
+        assets_dir = os.path.join(current_path, 'assets')
+        form_dir = os.path.join(assets_dir, 'form')
+        img_dir = os.path.join(assets_dir, 'img')
+        dist_dir = os.path.join(current_path, 'dist')
+        current_version_dir = os.path.join(dist_dir, 'current_version')
+        main_ver_json = os.path.join(current_version_dir, 'current_main_version.json')
+        update_exe = os.path.join(dist_dir, 'update.exe')
 
-        if not os.path.exists(dist_dir):
-            os.mkdir(dist_dir)
-        
-        if not os.path.exists(current_version_dir):
-            os.mkdir(current_version_dir)
+        # Create any missing directories.
+        directories = [dist_dir, current_version_dir, assets_dir, form_dir, img_dir]
+        for directory in directories:
+            if not os.path.exists(directory):
+                os.mkdir(directory)
 
+        # Create the main version JSON file if it doesn't exist.
         if not os.path.exists(main_ver_json):
             with open(main_ver_json, 'w') as f:
-                json.dump(data, f, indent=4)
-    
+                json.dump({'main': self.main_app_current_version}, f, indent=4)
+
+        # Download the img and form files if they don't exist.
+        img_filenames = os.listdir(img_dir)
+        assets = AssetManager()
+        for img in assets.assets_img:
+            if img not in img_filenames:
+                img_url = assets.img_content_url + img
+                try:
+                    urllib.request.urlretrieve(img_url, os.path.join(img_dir, img))
+                except:
+                    pass
+
+        # Download the update.exe file if it doesn't exist.
         if not os.path.exists(update_exe):
             updater_dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/update.exe'
-            # Download latest update.exe
             block_size = 1024
             try:
                 updater_exe_response = requests.get(updater_dl_url, stream=True)
                 with open(update_exe, 'wb') as f:
                     for data in updater_exe_response.iter_content(block_size):
                         f.write(data)
-            except:
+            except requests.exceptions.RequestException:
                 pass
 
     def get_exe_script_path(self) -> str:
