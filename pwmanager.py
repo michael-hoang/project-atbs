@@ -29,7 +29,7 @@ class PasswordManager:
 
         self.EnDeCrypt = EnDeCrypt()
 
-        self.top = tk.Toplevel()
+        self.top = tk.Toplevel(autostyle=False)
         self.top.withdraw()  # Hides top window from screen.
         self.top.title('Password Manager')
         self.top.config(bg=BG_COLOR, padx=25, pady=10)
@@ -40,7 +40,7 @@ class PasswordManager:
         # Settings Window
         self.topSettings_hiddenStatus = True
         self.topSettings = tk.Toplevel(
-            master=self.top, bg=BG_COLOR, padx=20, pady=20)
+            master=self.top, bg=BG_COLOR, padx=20, pady=20, autostyle=False)
         self._toggle_settngs()
         self.topSettings.title(string='Password Settings')
         setting_icon = tk.PhotoImage(file="assets/img/setting_icon.png")
@@ -51,16 +51,16 @@ class PasswordManager:
 
         #### Frame 1 (Letters) ####
         letters_lf = tk.LabelFrame(master=self.topSettings, text='Letters', font=FONT, bg=BG_COLOR,
-                                   fg='white', padx=15, pady=15)
+                                   fg='white', padx=15, pady=15, autostyle=False)
         letters_lf.grid(column=0, row=0, sticky='NSEW', padx=(0, 10))
 
         # numLetters
         numLetters_l = tk.Label(master=letters_lf, text='Characters: ',
                                 font=('Bahnschrift Light', 12, 'normal'),
-                                bg=BG_COLOR, fg='white')
+                                bg=BG_COLOR, fg='white', autostyle=False)
         numLetters_l.grid(column=0, row=0)
         self.numLetters_e = tk.Entry(master=letters_lf, font=('Bahnschrift Light', 12, 'normal'),
-                                     width=3)
+                                     width=3, autostyle=False)
         self.numLetters_e.insert(0, '5')
         self.numLetters_e.grid(column=1, row=0, sticky='W')
         self.numLetters = int(self.numLetters_e.get())
@@ -72,7 +72,8 @@ class PasswordManager:
                                       bg=BG_COLOR, fg='white', font=(
                                           'Bahnschrift Light', 12, 'normal'),
                                       activebackground=BG_COLOR, activeforeground='white',
-                                      selectcolor=BG_COLOR, command=self._lowercase)
+                                      selectcolor=BG_COLOR, command=self._lowercase,
+                                      autostyle=False)
         lowercase_cb.grid(
             column=0, row=1, pady=(5, 0), columnspan=2, sticky='W')
 
@@ -83,39 +84,39 @@ class PasswordManager:
                                       bg=BG_COLOR, fg='white', font=(
                                           'Bahnschrift Light', 12, 'normal'),
                                       activebackground=BG_COLOR, activeforeground='white',
-                                      selectcolor=BG_COLOR, command=self._uppercase)
+                                      selectcolor=BG_COLOR, command=self._uppercase, autostyle=False)
         uppercase_cb.grid(column=0, row=2, pady=(5, 0),
                           columnspan=2, sticky='W')
 
         #### Frame 2 (Numbers) ####
         numbers_lf = tk.LabelFrame(master=self.topSettings, text='Numbers', font=FONT, bg=BG_COLOR,
-                                   fg='white', width=200, height=200, padx=15, pady=15)
+                                   fg='white', width=200, height=200, padx=15, pady=15, autostyle=False)
         numbers_lf.grid(column=1, row=0, sticky='NSEW', padx=(10, 0))
 
         # numNumbers
         numNumbers_l = tk.Label(master=numbers_lf, text='Characters: ',
                                 font=('Bahnschrift Light', 12, 'normal'),
-                                bg=BG_COLOR, fg='white')
+                                bg=BG_COLOR, fg='white', autostyle=False)
         numNumbers_l.grid(column=0, row=0)
         self.numNumbers_e = tk.Entry(master=numbers_lf, font=('Bahnschrift Light', 12, 'normal'),
-                                     width=3)
+                                     width=3, autostyle=False)
         self.numNumbers_e.insert(0, '5')
         self.numNumbers_e.grid(column=1, row=0, sticky='W')
         self.numNumbers = int(self.numNumbers_e.get())
 
         #### Frame 3 (Symbols) ####
         symbols_lf = tk.LabelFrame(master=self.topSettings, text='Symbols', font=FONT, bg=BG_COLOR,
-                                   fg='white', width=200, height=200, padx=15, pady=15)
+                                   fg='white', width=200, height=200, padx=15, pady=15, autostyle=False)
         symbols_lf.grid(column=0, row=2, columnspan=2,
                         sticky='NSEW', pady=(5, 0))
 
         # numSymbols
         numSymbols_l = tk.Label(master=symbols_lf, text='Characters: ',
                                 font=('Bahnschrift Light', 12, 'normal'),
-                                bg=BG_COLOR, fg='white')
+                                bg=BG_COLOR, fg='white', autostyle=False)
         numSymbols_l.grid(column=0, row=0)
         self.numSymbols_e = tk.Entry(master=symbols_lf, font=('Bahnschrift Light', 12, 'normal'),
-                                     width=3)
+                                     width=3, autostyle=False)
         self.numSymbols_e.insert(0, '5')
         self.numSymbols_e.grid(column=1, row=0, columnspan=2, sticky='W')
         self.numSymbols = int(self.numSymbols_e.get())
@@ -123,11 +124,11 @@ class PasswordManager:
         # ListBox (Include Symbols)
         include_l = tk.Label(master=symbols_lf, text='Include', font=(
             'Bahnschrift Light', 12, 'normal'),
-            bg=BG_COLOR, fg='white', justify='center')
+            bg=BG_COLOR, fg='white', justify='center', autostyle=False)
         include_l.grid(column=0, row=1, pady=(5, 0), padx=(10, 0))
         self.listBox_in = tk.Listbox(master=symbols_lf, justify='center',
                                      font=('Bahnschrift Light', 12, 'normal'), width=10, height=8,
-                                     selectmode='extended', selectbackground=LIGHT_GRAY, selectforeground='white')
+                                     selectmode='extended', selectbackground=LIGHT_GRAY, selectforeground='white', autostyle=False)
         self.listBox_in.grid(column=0, row=2, rowspan=2,
                              sticky='E', padx=(10, 0))
 
@@ -142,14 +143,14 @@ class PasswordManager:
         # >> Button
         excludeButton = tk.Button(master=symbols_lf, text='>>', font=(
             'Bahnschrift Light', 12, 'normal'), bg=BUTTON_COLOR, fg='white',
-            borderwidth=0, activebackground=GOLD_COLOR, command=self._exclude_symbol)
+            borderwidth=0, activebackground=GOLD_COLOR, command=self._exclude_symbol, autostyle=False)
         excludeButton.grid(column=2, row=2, ipadx=10, padx=10)
         excludeButton.bind('<Enter>', self.pointerEnter)
         excludeButton.bind('<Leave>', self.pointerLeave)
         # << Button
         includeButton = tk.Button(master=symbols_lf, text='<<', font=(
             'Bahnschrift Light', 12, 'normal'), bg=BUTTON_COLOR, fg='white',
-            borderwidth=0, activebackground=GOLD_COLOR, command=self._include_symbol)
+            borderwidth=0, activebackground=GOLD_COLOR, command=self._include_symbol, autostyle=False)
         includeButton.grid(column=2, row=3, ipadx=10, padx=10)
         includeButton.bind('<Enter>', self.pointerEnter)
         includeButton.bind('<Leave>', self.pointerLeave)
@@ -157,11 +158,11 @@ class PasswordManager:
         # ListBox (Exclude Symbols)
         exclude_l = tk.Label(master=symbols_lf, text='Exclude', font=(
             'Bahnschrift Light', 12, 'normal'),
-            bg=BG_COLOR, fg='white', justify='center')
+            bg=BG_COLOR, fg='white', justify='center', autostyle=False)
         exclude_l.grid(column=3, row=1, pady=(5, 0))
         self.listBox_ex = tk.Listbox(master=symbols_lf, justify='center',
                                      font=('Bahnschrift Light', 12, 'normal'), width=10, height=8,
-                                     selectmode='extended', selectbackground=LIGHT_GRAY, selectforeground='white')
+                                     selectmode='extended', selectbackground=LIGHT_GRAY, selectforeground='white', autostyle=False)
         self.listBox_ex.grid(column=3, row=2, rowspan=2, sticky='E')
 
         exclude_scrollbar = tk.Scrollbar(master=symbols_lf)
@@ -176,37 +177,37 @@ class PasswordManager:
                                             bg=BG_COLOR, fg='white', font=(
                                                 'Bahnschrift Light', 10, 'normal'),
                                             activebackground=BG_COLOR, activeforeground='white',
-                                            selectcolor=BG_COLOR, command=self.always_top)
+                                            selectcolor=BG_COLOR, command=self.always_top, autostyle=False)
         self.always_top_cb.grid(
             column=0, row=0, columnspan=2, sticky='NW', pady=(10, 0))
 
         # Lock Image Button
         self.lock_img = tk.PhotoImage(file='assets/img/lock_button.png')
         self.lockButton = tk.Button(master=self.top, image=self.lock_img, bg=BG_COLOR,
-                                    activebackground=BG_COLOR, borderwidth=0, command=lambda: self.open_database(self.top))
+                                    activebackground=BG_COLOR, borderwidth=0, command=lambda: self.open_database(self.top), autostyle=False)
         self.lockButton.grid(column=2, row=0, pady=(20, 10))
 
         # Website Label & Entry
         self.websiteLabel = tk.Label(master=self.top, text='Website:', bg=BG_COLOR,
-                                     fg='white', font=FONT)
+                                     fg='white', font=FONT, autostyle=False)
         self.websiteLabel.grid(column=1, row=1, sticky='E')
-        self.websiteEntry = tk.Entry(master=self.top, width=30, font=FONT)
+        self.websiteEntry = tk.Entry(master=self.top, width=30, font=FONT, autostyle=False)
         self.websiteEntry.grid(column=2, row=1, padx=5, pady=4)
         self.websiteEntry.focus()
 
         # Username/Email Label & Entry
         self.userLabel = tk.Label(master=self.top, text='Username/Email:', bg=BG_COLOR,
-                                  fg='white', font=FONT)
+                                  fg='white', font=FONT, autostyle=False)
         self.userLabel.grid(column=1, row=2, sticky='E')
-        self.userEntry = tk.Entry(master=self.top, width=30, font=FONT)
+        self.userEntry = tk.Entry(master=self.top, width=30, font=FONT, autostyle=False)
         self.userEntry.grid(column=2, row=2, padx=5, pady=4)
 
         # Password Label & Entry
         self.passLabel = tk.Label(master=self.top, text='Password:', bg=BG_COLOR,
-                                  fg='white', font=FONT)
+                                  fg='white', font=FONT, autostyle=False)
         self.passLabel.grid(column=1, row=3, sticky='E')
         self.passEntry = tk.Entry(
-            master=self.top, width=30, font=FONT, show='*')
+            master=self.top, width=30, font=FONT, show='*', autostyle=False)
         self.passEntry.grid(column=2, row=3, padx=5, pady=4)
 
         # Search Button
@@ -215,7 +216,7 @@ class PasswordManager:
         self.new_search_img = ImageTk.PhotoImage(self.search_resized_img)
         self.searchButton = tk.Button(master=self.top, image=self.new_search_img, bg=BG_COLOR,
                                       activebackground=BG_COLOR, borderwidth=0,
-                                      command=lambda: self.search_login(event=None))
+                                      command=lambda: self.search_login(event=None), autostyle=False)
         self.searchButton.grid(column=3, row=1, padx=5)
 
         # Dice Button
@@ -224,7 +225,7 @@ class PasswordManager:
         self.new_dice_img = ImageTk.PhotoImage(self.dice_resized_img)
         self.diceButton = tk.Button(master=self.top, image=self.new_dice_img, bg=BG_COLOR,
                                     activebackground=BG_COLOR, borderwidth=0,
-                                    command=self.generate_random_password)
+                                    command=self.generate_random_password, autostyle=False)
         self.diceButton.grid(column=3, row=3, padx=5)
 
         # Settings Button
@@ -233,7 +234,7 @@ class PasswordManager:
         self.new_setting_img = ImageTk.PhotoImage(self.setting_resized_img)
         self.settingButton = tk.Button(master=self.top, image=self.new_setting_img, bg=BG_COLOR,
                                        activebackground=BG_COLOR, borderwidth=0,
-                                       command=self._toggle_settngs)
+                                       command=self._toggle_settngs, autostyle=False)
         self.settingButton.grid(
             column=0, row=3, columnspan=2, sticky='E', padx=(0, 100))
 
@@ -241,7 +242,7 @@ class PasswordManager:
         self.addButton = tk.Button(master=self.top, text='Add', bg=BUTTON_COLOR,
                                    fg='white', font=('Bahnschrift Light', 12, 'normal'),
                                    borderwidth=0, width=33, activebackground=GOLD_COLOR,
-                                   command=lambda: self.save_login_info(event=None))
+                                   command=lambda: self.save_login_info(event=None), autostyle=False)
         self.addButton.grid(column=2, row=4, pady=(4, 20))
 
         # Eye button
@@ -249,7 +250,7 @@ class PasswordManager:
         eye_resized_img = eye_img.resize((25, 25))
         self.new_eye_img = ImageTk.PhotoImage(eye_resized_img)
         self.eyeButton = tk.Button(master=self.top, image=self.new_eye_img, bg=BG_COLOR,
-                                   activebackground=BG_COLOR, borderwidth=0)
+                                   activebackground=BG_COLOR, borderwidth=0, autostyle=False)
         self.eyeButton.grid(column=3, row=4, sticky='N', pady=(5, 0))
         self.eyeButton.bind('<ButtonPress-1>', self._show_password)
         self.eyeButton.bind('<ButtonRelease-1>', self._hide_password)
@@ -507,7 +508,7 @@ class PasswordManager:
 
         # TopLevel Username Entry
         topUsernameEntry = tk.Entry(master=top, font=('Bahnschrift Light', 14, 'normal'),
-                                    bg=BG_COLOR, fg='white')
+                                    bg=BG_COLOR, fg='white', autostyle=False)
         topUsernameEntry.grid(column=1, row=1, sticky='W', pady=(0, 10))
         topUsernameEntry.delete(0, END)
         topUsernameEntry.insert(index=0, string=deUsername)
@@ -530,7 +531,7 @@ class PasswordManager:
 
         # TopLevel Password Entry
         topPasswordEntry = tk.Entry(master=top, font=('Bahnschrift Light', 14, 'normal'),
-                                    bg=BG_COLOR, fg='white', show='*')
+                                    bg=BG_COLOR, fg='white', show='*', autostyle=False)
         topPasswordEntry.grid(column=1, row=2, sticky='W')
         topPasswordEntry.delete(0, END)
         topPasswordEntry.insert(index=0, string=dePassword)
