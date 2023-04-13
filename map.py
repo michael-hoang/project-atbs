@@ -17,7 +17,7 @@ class Map:
 
     def __init__(self):
         """Initializes Map Search GUI."""
-        self.top = tk.Toplevel()
+        self.top = tk.Toplevel(autostyle=False)
         self.top.withdraw()
         self.top.title('Search Maps')
         self.top.config(bg=BG_COLOR, padx=20, pady=20)
@@ -27,7 +27,7 @@ class Map:
 
         # Checkbutton
         self.alwaysTopVar = tk.IntVar()
-        self.always_top_cb = tk.Checkbutton(self.top, text='Always on top',
+        self.always_top_cb = tk.Checkbutton(self.top, text='Always on top', autostyle=False,
                                             variable=self.alwaysTopVar, onvalue=1, offvalue=0,
                                             bg=BG_COLOR, fg=FG_COLOR, font=(
                                                 'Bahnschrift Light', 10, 'normal'),
@@ -36,15 +36,15 @@ class Map:
         self.always_top_cb.grid(column=0, row=0, sticky='E')
 
         # Address Label & Text
-        self.address_l = tk.Label(self.top, text='Address:', bg=BG_COLOR, fg='gold',
+        self.address_l = tk.Label(self.top, text='Address:', bg=BG_COLOR, fg='gold', autostyle=False,
                                   font=('Bahnschrift Light', 20, 'normal'))
         self.address_l.grid(column=0, row=0, sticky='W')
-        self.address_t = tk.Text(self.top, bg=FG_COLOR, fg=BG_COLOR,
+        self.address_t = tk.Text(self.top, bg=FG_COLOR, fg=BG_COLOR, autostyle=False,
                                  font=FONT, width=25, height=3)
         self.address_t.grid(column=0, row=1, pady=(13, 20))
 
         # Get Direction Button
-        self.calculate_b = tk.Button(self.top, text='Search', bg=BUTTON_BG_COLOR,
+        self.calculate_b = tk.Button(self.top, text='Search', bg=BUTTON_BG_COLOR, autostyle=False,
                                      fg=FG_COLOR, font=FONT, activebackground=GOLD_COLOR,
                                      borderwidth=0, command=self.get_direction, width=12, pady=2)
         self.calculate_b.grid(column=0, row=2, columnspan=2)
