@@ -76,7 +76,7 @@ class CardPayment(tkb.Frame):
         self.cardnumber.winfo_children()[1].bind('<KeyRelease>', self._delete_non_numeric_char)
         self.security_ent.winfo_children()[1].bind('<KeyRelease>', self._delete_non_numeric_char_for_sec_code)
         master.bind('<Control-Return>', self.submit_message_box)
-        master.bind('<Control-s>', self.toggle_settings_window)
+        # master.bind('<Control-s>', self.toggle_settings_window)
         master.bind('<Control-n>', self.toggle_notes_window)
    
         # Register validation callbacks
@@ -93,7 +93,7 @@ class CardPayment(tkb.Frame):
         self.security_ent.winfo_children()[1].configure(validate='focus', validatecommand=(self.valid_sec_code_func, '%P'))
 
         # Settings window
-        self.create_settings_window()
+        # self.create_settings_window()
         # Notes window
         self.create_notes_window()
 
@@ -196,14 +196,14 @@ class CardPayment(tkb.Frame):
         )
         self.sub_btn.pack(side=BOTTOM, pady=(0,4))
         
-        set_btn = tkb.Button(
-            master=container,
-            text="Settings",
-            command=lambda: self.toggle_settings_window(e=None),
-            bootstyle=DARK,
-            width=9,
-        )
-        set_btn.pack(side=BOTTOM, pady=(0,12))
+        # set_btn = tkb.Button(
+        #     master=container,
+        #     text="Settings",
+        #     command=lambda: self.toggle_settings_window(e=None),
+        #     bootstyle=DARK,
+        #     width=9,
+        # )
+        # set_btn.pack(side=BOTTOM, pady=(0,12))
 
         self.files_btn = tkb.Button(
             master=container,
