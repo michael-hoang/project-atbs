@@ -90,14 +90,24 @@ class MainApp(tk.Tk):
             with open(main_ver_json, 'w') as f:
                 json.dump({'main': self.main_app_current_version}, f, indent=4)
 
-        # Download the img and form files if they don't exist.
-        img_filenames = os.listdir(img_dir)
+        # Download the img files if they don't exist.
+        img_dir_content = os.listdir(img_dir)
         assets = AssetManager()
         for img in assets.assets_img:
-            if img not in img_filenames:
+            if img not in img_dir_content:
                 img_url = assets.img_content_url + img
                 try:
                     urllib.request.urlretrieve(img_url, os.path.join(img_dir, img))
+                except:
+                    pass
+
+        # Download the form files if they don't exist.
+        form_dir_content = os.listdir(form_dir)
+        for form in assets.assets_form:
+            if form not in form_dir_content:
+                form_url = assets.assets_form[form]
+                try:
+                    urllib.request.urlretrieve(form_url, os.path.join(form_dir, form))
                 except:
                     pass
 
