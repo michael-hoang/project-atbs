@@ -4,6 +4,7 @@ class AssetManager:
     def __init__(self):
         self.img_content_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/'
         self.assets_img = (
+            'ae.png',
             'amex.png',
             'atbs_icon.ico',
             'atbs_icon.png',
@@ -12,6 +13,7 @@ class AssetManager:
             'cc_icon.ico',
             'cc_icon.png',
             'check_mark.png',
+            'di.png',
             'dice.png',
             'discover.png',
             'edit-user.png',
@@ -21,6 +23,7 @@ class AssetManager:
             'lock_icon.png',
             'map_icon.png',
             'mastercard.png',
+            'mc.png',
             'note.png',
             'note_pin.png',
             'rx.png',
@@ -30,6 +33,7 @@ class AssetManager:
             'setting_icon.png',
             'update.ico',
             'update.png',
+            'vi.png',
             'visa.png',
             'x_mark.png',
         )
