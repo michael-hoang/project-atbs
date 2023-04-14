@@ -27,7 +27,7 @@ class MainApp(tkb.Window):
     def __init__(self):
         super().__init__('Project AtBS', 'superhero', resizable=(False, False))
         self.withdraw()
-        self.main_app_current_version = 'v5.0.0'
+        self.main_app_current_version = 'v5.1.0'
         self.main_app_latest_version = self.get_latest_main_app_version()
         self.config(bg=BG_COLOR)
         self.check_and_download_dependant_files()
