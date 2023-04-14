@@ -37,6 +37,7 @@ class RefillTemplate:
         self.disabled_text_color = 'snow3'
         self.text_color = 'black'
             # Entry
+        self.entry_date_font = ('Comic Sans MS', 10, 'normal')
         self.entry_font = ('Comic Sans MS', 11, 'normal')
         self.entry_bg_color = 'gray92'
         self.entry_relief = 'flat'
@@ -280,10 +281,11 @@ class RefillTemplate:
         self.dispense_date_label.grid(column=0, row=0)
         # Dispense date entry
         self.dispense_date_entry = tkb.DateEntry(
-            self.dispense_date_canvas, startdate=dt.date.today()
+            self.dispense_date_canvas, bootstyle='primary'
             )
-        self.dispense_date_entry._configure_set(state='disabled')
         self.dispense_date_entry.grid(column=1, row=0)
+        self.dispense_date_entry.entry.config(width=10, font=self.entry_date_font)
+        self.disable_date_entry_widget()
         # FedEx delivery / Pickup time label
         self.fedex_delivery_pick_time_label = tk.Label(
             self.dispense_date_canvas, font=self.label_font, bg=self.background_color,
@@ -646,6 +648,16 @@ class RefillTemplate:
             self.user_setup_window()
 
 
+    def disable_date_entry_widget(self):
+        """Disable and clear all text inside bootstrap DateEntry widget."""
+        self.dispense_date_entry.entry.delete(0, 'end')
+        self.dispense_date_entry.configure(state='disabled')
+
+    def enable_date_entry_widget(self):
+        """Enable bootstrap DateEntry widget"""
+        self.dispense_date_entry.configure(state='normal')
+        self.dispense_date_entry.button.config(state='normal')
+
     def center_refill_coordination_window(self):
         """Center Refill Coordination window to monitor screen."""
         self.top.update_idletasks()
@@ -663,7 +675,7 @@ class RefillTemplate:
         self.cycle_btn.config(bg=self.btn_bg_color, command=self.select_cycle)
         self.injection_cycle = 'Injection is due'
         self.due_start_label.config(text='is due')
-        self.due_start_entry.config(state='normal')
+        self.due_start_entry.configure(state='normal')
         self.top.focus()
         if not self.day_supply_entry.get().strip():
             self.day_supply_entry.insert(0, '0')
@@ -674,7 +686,7 @@ class RefillTemplate:
         self.cycle_btn.config(bg=self.select_btn_bg_color, command=self._unselect_injection_cycle)
         self.injection_cycle = 'Next cycle starts'
         self.due_start_label.config(text='starts')
-        self.due_start_entry.config(state='normal')
+        self.due_start_entry.configure(state='normal')
         self.top.focus()
         if not self.day_supply_entry.get().strip():
             self.day_supply_entry.insert(0, '0')
@@ -686,7 +698,7 @@ class RefillTemplate:
         self.injection_cycle = ''
         self.due_start_label.config(text='')
         self.due_start_entry.delete(0, 'end')
-        self.due_start_entry.config(state='disabled')
+        self.due_start_entry.configure(state='disabled')
 
     def select_dcs(self):
         """Select DCS button."""
@@ -698,7 +710,7 @@ class RefillTemplate:
         self.dispense_walkover_entry.delete(0, 'end')
         self.dispense_walkover_entry.config(state='disabled')
         self.dispense_date_label.config(text='Shipping out on', fg=self.text_color)
-        self.dispense_date_entry._configure_set(state='readonly')
+        self.enable_date_entry_widget()
         if self.signature_required == '':
             self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
             self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
@@ -716,7 +728,7 @@ class RefillTemplate:
         self.dispense_walkover_entry.delete(0, 'end')
         self.dispense_walkover_entry.config(state='disabled')
         self.dispense_date_label.config(text='Shipping out on', fg=self.text_color)
-        self.dispense_date_entry._configure_set(state='readonly')
+        self.enable_date_entry_widget()
         if self.signature_required == '':
             self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
             self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
@@ -738,7 +750,7 @@ class RefillTemplate:
         self.signature_required = ''
         self.dispense_signature_label.config(fg=self.disabled_text_color)
         self.dispense_date_label.config(text='Picking up on', fg=self.text_color)
-        self.dispense_date_entry._configure_set(state='readonly')
+        self.enable_date_entry_widget()
         self.fedex_delivery_pick_time_label.config(text='')
 
     def select_walkover(self):
@@ -755,7 +767,7 @@ class RefillTemplate:
         self.signature_required = ''
         self.dispense_signature_label.config(fg=self.disabled_text_color)
         self.dispense_date_label.config(text='Walking over on', fg=self.text_color)
-        self.dispense_date_entry._configure_set(state='readonly')
+        self.enable_date_entry_widget()
         self.fedex_delivery_pick_time_label.config(text='')
         self._remove_pickup_time_label_entry()
         self.top.focus()
@@ -775,8 +787,7 @@ class RefillTemplate:
         self.dispense_walkover_entry.delete(0, 'end')
         self.dispense_walkover_entry.config(state='disabled')
         self.dispense_date_label.config(text='Dispense Date:', fg=self.btn_disabled_fg_color)
-        self.dispense_date_entry.delete(0, 'end')
-        self.dispense_date_entry.config(state='disabled')
+        self.disable_date_entry_widget()
         self.signature_required = ''
         self.dispense_signature_label.config(fg=self.disabled_text_color)
         self.dispense_signature_yes_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
@@ -797,8 +808,7 @@ class RefillTemplate:
         self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color, command=self.select_yes_sig)
         self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color, command=self.select_no_sig)
         self.dispense_date_label.config(text='Dispense Date:', fg=self.btn_disabled_fg_color)
-        self.dispense_date_entry.delete(0, 'end')
-        self.dispense_date_entry.config(state='disabled')
+        self.disable_date_entry_widget()
         self.signature_required = ''
         self.dispense_signature_label.config(fg=self.disabled_text_color)
         self.dispense_signature_yes_btn.config(state='disabled', bg=self.btn_disabled_bg_color)
@@ -866,12 +876,12 @@ class RefillTemplate:
         """Clear all inputs."""
         self.medication_entry.delete(0, 'end')
         self.day_supply_entry.delete(0, 'end')
-        self.dispense_date_entry.delete(0, 'end')
+        self.dispense_date_entry.entry.delete(0, 'end')
         self.dispense_comments_entry.delete(0, 'end')
         self.spoke_with_entry.delete(0, 'end')
         self._remove_pickup_time_label_entry()
 
-        self.dispense_date_entry.config(startdate=dt.date.today())
+        # self.dispense_date_entry.set_date(dt.date.today())
         
         self._unselect_injection_cycle()
         self._unselect_yes_no_sig()
@@ -934,7 +944,7 @@ class RefillTemplate:
 
     def _check_copy_wam_notes_conditions(self) -> bool:
         """Check if Copy WAM Notes conditions are met."""
-        dispense_date_entry_not_empty = self.dispense_date_entry.get()
+        dispense_date_entry_not_empty = self.dispense_date_entry.entry.get().strip()
         pickup_time_not_empty = self.dispense_pickup_time_entry.get().strip()
         walkover_location = self.dispense_walkover_entry.get().strip()
         if self.dispense_method in ('DCS', 'FedEx') and dispense_date_entry_not_empty and self.signature_required\
@@ -982,10 +992,14 @@ class RefillTemplate:
 
     def _calculate_fedex_delivery_date(self) -> str:
         """Calculate FedEx delivery date."""
-        if self.dispense_date_entry.get().strip():   
-            entered_ship_date = self.dispense_date_entry.get_date()
-            delivery_date = entered_ship_date + dt.timedelta(days=1)
-            return f'{delivery_date.month}/{delivery_date.day}'
+        entered_ship_date = self.dispense_date_entry.entry.get().strip()
+        if entered_ship_date:
+            try:   
+                entered_ship_date_dt_obj = dt.datetime.strptime(entered_ship_date, '%m/%d/%Y')
+                delivery_date = entered_ship_date_dt_obj + dt.timedelta(days=1)
+                return f'{delivery_date.month}/{delivery_date.day}'
+            except:
+                return ''
         else:
             return ''
       
@@ -1053,34 +1067,34 @@ class RefillTemplate:
                 if last_name == '':
                     flash(last_name_entry)
 
-        setup_window = tk.Toplevel(self.top)
+        setup_window = tk.Toplevel(self.top, autostyle=False)
         setup_window.withdraw()
         setup_window.title('User Setup')
         setup_window.config(bg=self.background_color, padx=20, pady=20)
         setup_window.resizable(False, False)
 
         first_name_label = tk.Label(
-            setup_window, text='First Name:', bg=self.background_color, font=self.label_font
+            setup_window, text='First Name:', bg=self.background_color, font=self.label_font, autostyle=False
             )
         first_name_label.grid(column=0, row=0, padx=5)
         first_name_entry = tk.Entry(
-            setup_window, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief
+            setup_window, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief, autostyle=False
             )
         first_name_entry.grid(column=1, row=0, pady=(0, 5))
         
         last_name_label = tk.Label(
-            setup_window, text='Last Name:', bg=self.background_color, font=self.label_font
+            setup_window, text='Last Name:', bg=self.background_color, font=self.label_font, autostyle=False
             )
         last_name_label.grid(column=0, row=1, padx=5)
         last_name_entry = tk.Entry(
-            setup_window, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief
+            setup_window, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief, autostyle=False
             )
         last_name_entry.grid(column=1, row=1)
 
         ok_btn = tk.Button(
             setup_window, text='OK', bg=self.copy_btn_bg_color, relief='raised',
             font=self.btn_font, activebackground=self.copy_btn_bg_color, width=9,
-            command=confirm_user
+            command=confirm_user, autostyle=False
             )
         ok_btn.grid(column=0, row=2, columnspan=2, pady=(5, 0))
 
@@ -1144,8 +1158,13 @@ class RefillTemplate:
 
     def get_formatted_dispense_date(self) -> str:
         """Get formatted dispense date from datetime object."""
-        dispense_date = self.dispense_date_entry.get_date()
-        return f'{dispense_date.month}/{dispense_date.day}'
+        dispense_date = self.dispense_date_entry.entry.get().strip()
+        try:
+            disp_date_dt_obj = dt.datetime.strptime(dispense_date, '%m/%d/%Y')
+        except:
+            return ''
+        
+        return f'{disp_date_dt_obj.month}/{disp_date_dt_obj.day}'
     
 
     def format_wam_notes(self, format='plain') -> str:
