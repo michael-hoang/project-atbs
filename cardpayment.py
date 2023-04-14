@@ -267,7 +267,7 @@ class CardPayment(tkb.Frame):
             'Cost 4': self.price_4.get(),
             'Cost 5': self.price_5.get(),
             'Total': '${:.2f}'.format(self.get_total()),
-            'Notes': '',
+            'Notes': self.notes_text_box.get(1.0, 'end-1c'), # -1c removes the added newline
         }
         try:
             cardnumber = dict_fields['Credit Card No'].replace(' ', '')
