@@ -36,4 +36,5 @@ class AssetManager:
 
         self.assets_form = {
             'cardpayment-form.pdf': 'https://github.com/michael-hoang/project-atbs-work/raw/main/assets/form/cardpayment-form.pdf',
+            'cardpayment-blank.pdf': 'https://github.com/michael-hoang/project-atbs-work/raw/main/assets/form/cardpayment-blank.pdf',
         }
