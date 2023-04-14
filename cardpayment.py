@@ -532,6 +532,7 @@ class CardPayment(tkb.Frame):
                     for entry_widget in entry_widgets:
                         if entry_widget.winfo_class() == 'TEntry':
                             entry_widget.delete(0, 'end')
+        self.notes_text_box.delete(1.0, END)
         self.cardnumber.winfo_children()[1].focus_force()
         self.exp_ent.winfo_children()[1].focus_force()
         self.security_ent.winfo_children()[1].focus_force()              
