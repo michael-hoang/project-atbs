@@ -160,7 +160,8 @@ class MainApp(tkb.Window):
 
     def open_RefillCoordination(self):
         """Instantiate Refill Coordination object in a new TopLevel window."""
-        RefillTemplate()
+        rf = RefillTemplate()
+        rf.dispense_pickup_time_entry.configure(bootstyle='primary')
 
     def open_PasswordManager(self):
         """Instantiate Password Manager in a new TopLevel window."""

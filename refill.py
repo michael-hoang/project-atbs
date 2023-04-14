@@ -1,12 +1,13 @@
 """ This module contains a class that represents Refill Coordination form."""
 
 import tkinter as tk
+import ttkbootstrap as tkb
 import datetime as dt
 import os, sys, subprocess, json
 from PIL import Image, ImageTk
 from win32 import win32clipboard
 from tkinter import WORD
-from tkcalendar import DateEntry
+
 
 
 class RefillTemplate:
@@ -55,7 +56,7 @@ class RefillTemplate:
 
     
         # Initialize Refill coordination GUI window
-        self.top = tk.Toplevel()
+        self.top = tk.Toplevel(autostyle=False)
         self.top.withdraw()
         self.top.title('Refill Coordination')
         self.top.config(bg=self.background_color, padx=20, pady=20)
@@ -64,7 +65,7 @@ class RefillTemplate:
         self.top.iconphoto(True, self.icon)
 
         # Initialize Intervention GUI window
-        self.intervention_window = tk.Toplevel(self.top)
+        self.intervention_window = tk.Toplevel(self.top, autostyle=False)
         self.intervention_window.withdraw()
         self.intervention_window.title('Intervention')
         self.intervention_window.config(bg=self.background_color, padx=20, pady=20)
@@ -98,7 +99,7 @@ class RefillTemplate:
 
         # === Container for top buttons and label === #
         self.container_top_buttons_labels = tk.Canvas(
-            self.top, bg=self.background_color, highlightthickness=0
+            self.top, bg=self.background_color, highlightthickness=0, autostyle=False
             )
         self.container_top_buttons_labels.grid(column=0, row=0)
 
@@ -107,19 +108,20 @@ class RefillTemplate:
             self.container_top_buttons_labels, text='Intervention',command=self.toggle_intervention_window,
             bg=self.copy_btn_bg_color, relief='raised', fg='black',
             font=('Comic Sans MS', 8, 'normal'), activebackground=self.copy_btn_bg_color,
-            activeforeground='black'
+            activeforeground='black', autostyle=False
             )
         self.intervention_btn.grid(column=0, row=0)
         # Refill coordination label
         self.refill_coordination_label = tk.Label(
             self.container_top_buttons_labels, text='Refill Coordination',
             bg=self.background_color, font=('Comic Sans MS', 14, 'normal'),
+            autostyle=False
             )
         self.refill_coordination_label.grid(column=1, row=0, padx=(40, 90))
 
         # Top buttons inner container
         self.top_buttons_inner_container = tk.Frame(
-            self.container_top_buttons_labels, bg=self.background_color
+            self.container_top_buttons_labels, bg=self.background_color, autostyle=False
             )
         self.top_buttons_inner_container.grid(
             column=2, row=0, pady=(self.labelFrame_space_btwn, 0), sticky='we'
@@ -130,30 +132,30 @@ class RefillTemplate:
         self.edit_user_img = ImageTk.PhotoImage(img)
         self.edit_user_btn = tk.Button(
             self.top_buttons_inner_container, image=self.edit_user_img, command=self.user_setup_window,
-            bg=self.copy_btn_bg_color
+            bg=self.copy_btn_bg_color, autostyle=False
             )
         self.edit_user_btn.grid(column=0, row=0)
 
         # === Container for Medication label frame and Clear button === #
         self.container_med_clear = tk.Canvas(
-            self.top, bg=self.background_color, highlightthickness=0
+            self.top, bg=self.background_color, highlightthickness=0, autostyle=False
             )
         self.container_med_clear.grid(column=0, row=1, sticky='w', pady=(self.labelFrame_space_btwn, 0))
 
         # === Medication label frame === #
         self.medication_labelFrame = tk.LabelFrame(
-            self.container_med_clear, text='Medication', bg=self.background_color, font=self.labelFrame_font
+            self.container_med_clear, text='Medication', bg=self.background_color, font=self.labelFrame_font, autostyle=False
             )
         self.medication_labelFrame.grid(column=0, row=0, sticky='w')
         #   Medication canvas
         self.medication_canvas = tk.Canvas(
-            self.medication_labelFrame, bg=self.background_color, highlightthickness=0
+            self.medication_labelFrame, bg=self.background_color, highlightthickness=0, autostyle=False
             )
         self.medication_canvas.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Medication entry
         self.medication_entry = tk.Entry(
             self.medication_canvas, font=self.entry_font, bg=self.entry_bg_color,
-            relief=self.entry_relief, width=30
+            relief=self.entry_relief, width=30, autostyle=False
             )
         self.medication_entry.grid(column=1, row=0, sticky='w')
         
@@ -161,69 +163,69 @@ class RefillTemplate:
         self.clear_btn = tk.Button(
             self.container_med_clear, text='Clear', command=self.clear, bg=self.copy_btn_bg_color, relief='raised',
             fg='black', font=self.btn_font, activebackground=self.copy_btn_bg_color,
-            activeforeground='black', width=9
+            activeforeground='black', width=9, autostyle=False
             )
         self.clear_btn.grid(column=1, row=0, padx=(20,0))
 
         # === Medication on hand label frame === #
         self.medication_on_hand_labelFrame = tk.LabelFrame(
-            self.top, text='Medication On Hand', bg=self.background_color, font=self.labelFrame_font
+            self.top, text='Medication On Hand', bg=self.background_color, font=self.labelFrame_font, autostyle=False
             )
         self.medication_on_hand_labelFrame.grid(column=0, row=2, sticky='we', pady=(self.labelFrame_space_btwn, 0))
         #   Day supply canvas
         self.day_supply_canvas = tk.Canvas(
-            self.medication_on_hand_labelFrame, bg=self.background_color, highlightthickness=0
+            self.medication_on_hand_labelFrame, bg=self.background_color, highlightthickness=0, autostyle=False
             )
         self.day_supply_canvas.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Day supply entry
-        self.day_supply_entry = tk.Entry(self.day_supply_canvas, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief)
+        self.day_supply_entry = tk.Entry(self.day_supply_canvas, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief, autostyle=False)
         self.day_supply_entry.grid(column=0, row=0)
         # Day supply label
         self.day_supply_label = tk.Label(
-            self.day_supply_canvas, text='day(s)', bg=self.background_color, font=self.label_font
+            self.day_supply_canvas, text='day(s)', bg=self.background_color, font=self.label_font, autostyle=False
             )
         self.day_supply_label.grid(column=1, row=0)
         #   Injection/cycle canvas
         self.injection_cycle_canvas = tk.Canvas(
-            self.medication_on_hand_labelFrame, bg=self.background_color, highlightthickness=0
+            self.medication_on_hand_labelFrame, bg=self.background_color, highlightthickness=0, autostyle=False
             )
         self.injection_cycle_canvas.grid(column=0, row=1, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         self.injection_btn = tk.Button(
             self.injection_cycle_canvas, text='Injection', command=self.select_injection,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.injection_btn.grid(column=0, row=0)
         self.cycle_btn = tk.Button(
             self.injection_cycle_canvas, text='Cycle', command=self.select_cycle,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.cycle_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
         # Due/start label
         self.due_start_label = tk.Label(
             self.injection_cycle_canvas, text='', bg=self.background_color,
-            font=self.label_font, width=7
+            font=self.label_font, width=7, autostyle=False
             )
         self.due_start_label.grid(column=2, row=0)
         # Due/start entry
         self.due_start_entry = tk.Entry(
             self.injection_cycle_canvas, font=self.entry_font, bg=self.entry_bg_color,
             relief=self.entry_relief, width=19, disabledbackground=self.background_color,
-            state='disabled'
+            state='disabled', autostyle=False
             )
         self.due_start_entry.grid(column=3, row=0)
 
         # === Dispense date label frame === #
         self.dispense_date_labelFrame = tk.LabelFrame(
-            self.top, text='Dispense Date', bg=self.background_color, font=self.labelFrame_font
+            self.top, text='Dispense Date', bg=self.background_color, font=self.labelFrame_font, autostyle=False
             )
         self.dispense_date_labelFrame.grid(column=0, row=3, sticky='w', pady=(self.labelFrame_space_btwn, 0))
         #   Dispense btn canvas
         self.dispense_btn_canvas = tk.Canvas(
-            self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0
+            self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0, autostyle=False
             )
         self.dispense_btn_canvas.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # DCS button
@@ -231,7 +233,7 @@ class RefillTemplate:
             self.dispense_btn_canvas, text='DCS', command=self.select_dcs,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.dispense_dcs_btn.grid(column=0, row=0)
         # FedEx button
@@ -239,7 +241,7 @@ class RefillTemplate:
             self.dispense_btn_canvas, text='FedEx', command=self.select_fedex,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.dispense_fedex_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
         # Pick up button
@@ -247,7 +249,7 @@ class RefillTemplate:
             self.dispense_btn_canvas, text='Pick Up', command=self.select_pickup,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.dispense_pickup_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
         # Walk over button
@@ -255,50 +257,44 @@ class RefillTemplate:
             self.dispense_btn_canvas, text='Walk Over', command=self.select_walkover,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.dispense_walkover_btn.grid(column=3, row=0, padx=(self.btn_space_btwn, 0))
         # Walkover location entry
         self.dispense_walkover_entry = tk.Entry(
             self.dispense_btn_canvas, font=self.entry_font, bg=self.entry_bg_color,
             relief=self.entry_relief, width=15, disabledbackground=self.background_color,
-            state='disabled'
+            state='disabled', autostyle=False
             )
         self.dispense_walkover_entry.grid(column=4, row=0, padx=(self.btn_space_btwn, 0))
         #   Dispense date canvas
         self.dispense_date_canvas = tk.Canvas(
-            self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0
+            self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0, autostyle=False
             )
         self.dispense_date_canvas.grid(column=0, row=1, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Dispense date label
         self.dispense_date_label = tk.Label(
             self.dispense_date_canvas, text='Dispense Date:',
-            bg=self.background_color, font=self.label_font, width=13, fg=self.disabled_text_color
+            bg=self.background_color, font=self.label_font, width=13, fg=self.disabled_text_color, autostyle=False
             )
         self.dispense_date_label.grid(column=0, row=0)
         # Dispense date entry
-        self.dispense_date_entry = DateEntry(
-            self.dispense_date_canvas, selectmode='day', state='disabled',
-            font=self.entry_font, width=9, background=self.btn_bg_color,
-            foreground='white', showweeknumbers=False, firstweekday='sunday',
-            bordercolor='white', headersbackground='white', selectbackground=self.select_btn_bg_color,
-            weekendbackground='gray95', weekendforeground='gray73',
-            othermonthbackground='white', borderwidth=0, othermonthforeground='gray73',
-            disableddaybackground='white', disableddayforeground='gray88',
-            mindate=dt.date.today(), normalforeground='black'
+        self.dispense_date_entry = tkb.DateEntry(
+            self.dispense_date_canvas, startdate=dt.date.today()
             )
+        self.dispense_date_entry._configure_set(state='disabled')
         self.dispense_date_entry.grid(column=1, row=0)
         # FedEx delivery / Pickup time label
         self.fedex_delivery_pick_time_label = tk.Label(
             self.dispense_date_canvas, font=self.label_font, bg=self.background_color,
-            text=''
+            text='', autostyle=False
             )
         self.fedex_delivery_pick_time_label.grid(column=2, row=0)
         # Pick up time entry
         self.dispense_pickup_time_entry = tk.Entry(
             self.dispense_date_canvas, font=self.entry_font, bg=self.entry_bg_color,
             relief=self.entry_relief, width=0, disabledbackground=self.background_color,
-            state='disabled'
+            state='disabled', autostyle=False
             )
         self.dispense_pickup_time_entry.grid(column=3, row=0)
 
@@ -308,19 +304,19 @@ class RefillTemplate:
             bg=self.copy_btn_bg_color, relief='raised', fg=self.copy_btn_fg_color,
             font=self.btn_font, activebackground=self.copy_btn_active_bg_color,
             activeforeground=self.copy_btn_active_fg_color, width=11,
-            wraplength=80, disabledforeground=self.copy_btn_disabled_fg_color
+            wraplength=80, disabledforeground=self.copy_btn_disabled_fg_color, autostyle=False
             )
         self.copy_wam_notes_btn.grid(column=0, row=2, rowspan=3, padx=(275,0), pady=(20,0))
 
         #   Signature canvas
         self.dispense_signature_canvas = tk.Canvas(
-            self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0
+            self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0, autostyle=False
             )
         self.dispense_signature_canvas.grid(column=0, row=3, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Signature label
         self.dispense_signature_label = tk.Label(
             self.dispense_signature_canvas, text='Signature required?',
-            bg=self.background_color, font=self.label_font, fg=self.disabled_text_color
+            bg=self.background_color, font=self.label_font, fg=self.disabled_text_color, autostyle=False
             )
         self.dispense_signature_label.grid(column=0, row=0)
         # Yes button
@@ -329,7 +325,7 @@ class RefillTemplate:
             bg=self.btn_disabled_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color,
-            disabledforeground=self.copy_btn_disabled_fg_color, state='disabled'
+            disabledforeground=self.copy_btn_disabled_fg_color, state='disabled', autostyle=False
             )
         self.dispense_signature_yes_btn.grid(column=1, row=0)
         # No button
@@ -338,37 +334,37 @@ class RefillTemplate:
             bg=self.btn_disabled_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
             activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color,
-            disabledforeground=self.copy_btn_disabled_fg_color, state='disabled'
+            disabledforeground=self.copy_btn_disabled_fg_color, state='disabled', autostyle=False
             )
         self.dispense_signature_no_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
 
         #   Comments canvas
         self.dispense_comments_canvas = tk.Canvas(
-            self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0
+            self.dispense_date_labelFrame, bg=self.background_color, highlightthickness=0, autostyle=False
             )
         self.dispense_comments_canvas.grid(column=0, row=4, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Comments label
         self.dispense_comments_label = tk.Label(
-            self.dispense_comments_canvas, text='Comments:', bg=self.background_color, font=self.label_font
+            self.dispense_comments_canvas, text='Comments:', bg=self.background_color, font=self.label_font, autostyle=False
             )
         self.dispense_comments_label.grid(column=0, row=0)
         # Comments entry
-        self.dispense_comments_entry = tk.Entry(self.dispense_comments_canvas, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief)
+        self.dispense_comments_entry = tk.Entry(self.dispense_comments_canvas, font=self.entry_font, bg=self.entry_bg_color, relief=self.entry_relief, autostyle=False)
         self.dispense_comments_entry.grid(column=1, row=0)
 
         # === Medication efficacy label frame === #
         self.medication_efficacy_labelFrame = tk.LabelFrame(
-            self.top, text='Medication Efficacy', bg=self.background_color, font=self.labelFrame_font
+            self.top, text='Medication Efficacy', bg=self.background_color, font=self.labelFrame_font, autostyle=False
             )
         self.medication_efficacy_labelFrame.grid(column=0, row=4, sticky='w', pady=(self.labelFrame_space_btwn, 0))
         #   Medication efficacy canvas
         self.medication_efficacy_canvas = tk.Canvas(
-            self.medication_efficacy_labelFrame, bg=self.background_color, highlightthickness=0
+            self.medication_efficacy_labelFrame, bg=self.background_color, highlightthickness=0, autostyle=False
             )
         self.medication_efficacy_canvas.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Medication efficacy label
         self.medication_efficacy_label = tk.Label(
-            self.medication_efficacy_canvas, text='Is medication working?', bg=self.background_color, font=self.label_font
+            self.medication_efficacy_canvas, text='Is medication working?', bg=self.background_color, font=self.label_font, autostyle=False
             )
         self.medication_efficacy_label.grid(column=0, row=0)
         # A little button
@@ -376,7 +372,7 @@ class RefillTemplate:
             self.medication_efficacy_canvas, text='A little', command=self.select_a_little,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.medication_efficacy_alittle_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
         # A lot button
@@ -384,7 +380,7 @@ class RefillTemplate:
             self.medication_efficacy_canvas, text='A lot', command=self.select_a_lot,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.medication_efficacy_alot_btn.grid(column=1, row=0)
         # Can't tell button
@@ -392,24 +388,24 @@ class RefillTemplate:
             self.medication_efficacy_canvas, text='Can\'t tell', command=self.select_cant_tell,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.medication_efficacy_cantTell_btn.grid(column=3, row=0, padx=(self.btn_space_btwn, 0))
 
         # === Spoke with label frame === #
         self.spoke_with_labelFrame = tk.LabelFrame(
-            self.top, text='Spoke with', bg=self.background_color, font=self.labelFrame_font
+            self.top, text='Spoke with', bg=self.background_color, font=self.labelFrame_font, autostyle=False
             )
         self.spoke_with_labelFrame.grid(column=0, row=5, sticky='w', pady=(self.labelFrame_space_btwn, 0))
         #   Spoke with canvas
         self.spoke_with_canvas = tk.Canvas(
-            self.spoke_with_labelFrame, bg=self.background_color, highlightthickness=0
+            self.spoke_with_labelFrame, bg=self.background_color, highlightthickness=0, autostyle=False
             )
         self.spoke_with_canvas.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Spoke with entry
         self.spoke_with_entry = tk.Entry(
             self.spoke_with_canvas, font=self.entry_font, bg=self.entry_bg_color,
-            relief=self.entry_relief, width=25
+            relief=self.entry_relief, width=25, autostyle=False
             )
         self.spoke_with_entry.grid(column=0, row=0)
 
@@ -419,7 +415,7 @@ class RefillTemplate:
             relief='raised', fg=self.copy_btn_fg_color, font=self.btn_font,
             activebackground=self.copy_btn_active_bg_color,
             activeforeground=self.copy_btn_active_fg_color, width=14,
-            disabledforeground=self.copy_btn_disabled_fg_color
+            disabledforeground=self.copy_btn_disabled_fg_color, autostyle=False
             )
         self.copy_template_btn.grid(column=0, row=5, padx=(260,0), pady=(15,0))
 
@@ -438,13 +434,13 @@ class RefillTemplate:
         # === Changes label frame === #
         self.changes_labelFrame = tk.LabelFrame(
             self.intervention_window, text='Changes', bg=self.background_color,
-            font=self.labelFrame_font, highlightthickness=0
+            font=self.labelFrame_font, highlightthickness=0, autostyle=False
             )
         self.changes_labelFrame.grid(column=0, row=1)
 
         # Changes button container
         self.changes_button_container = tk.Frame(
-            self.changes_labelFrame, highlightthickness=0, bg=self.background_color
+            self.changes_labelFrame, highlightthickness=0, bg=self.background_color, autostyle=False
             )
         self.changes_button_container.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Dose/Direction button
@@ -452,7 +448,7 @@ class RefillTemplate:
             self.changes_button_container, text='Dose/Direction', command=self._select_dose_direction,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.changes_dose_direction_btn.grid(column=0, row=0)
         # Medication Profile button
@@ -460,7 +456,7 @@ class RefillTemplate:
             self.changes_button_container, text='Medication Profile', command=self._select_medication_profile,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.changes_medication_profile_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
         # New Allergies button
@@ -468,13 +464,13 @@ class RefillTemplate:
             self.changes_button_container, text='New Allergies', command=self._select_new_allergies,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.changes_allergies_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
 
         # Changes Other & Medical Condition button container
         self.changes_other_med_cond_container = tk.Frame(
-            self.changes_labelFrame, highlightthickness=0, bg=self.background_color
+            self.changes_labelFrame, highlightthickness=0, bg=self.background_color, autostyle=False
             )
         self.changes_other_med_cond_container.grid(column=0, row=1, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Medical Condition button
@@ -482,7 +478,7 @@ class RefillTemplate:
             self.changes_other_med_cond_container, text='Medical Condition', command=self._select_medical_condition,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.changes_medical_condition_btn.grid(column=0, row=0)
         # Other changes button
@@ -490,14 +486,14 @@ class RefillTemplate:
             self.changes_other_med_cond_container, text='Other', command=self._select_other_changes,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.changes_other_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
 
         # Changes Notes container
         self.changes_notes_container = tk.Frame(
             self.changes_labelFrame, highlightthickness=0, width=364, height=64,
-            bg=self.background_color
+            bg=self.background_color, autostyle=False
             )
         self.changes_notes_container.grid(
             column=0, row=2, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady
@@ -506,7 +502,7 @@ class RefillTemplate:
         # Changes Notes Text box
         self.changes_notes_text_box = tk.Text(
             self.changes_notes_container, font=self.entry_font, wrap=WORD,
-            width=40, height=3
+            width=40, height=3, autostyle=False
             )
         self.changes_notes_text_box.grid(column=0, row=0)
         self.insert_placeholder_intervention_text_box(self.changes_notes_text_box)
@@ -514,13 +510,13 @@ class RefillTemplate:
         # === Side Effects label frame === #
         self.side_effects_labelFrame = tk.LabelFrame(
             self.intervention_window, text='Side Effects', bg=self.background_color,
-            font=self.labelFrame_font, highlightthickness=0
+            font=self.labelFrame_font, highlightthickness=0, autostyle=False
             )
         self.side_effects_labelFrame.grid(column=0, row=2, sticky='we', pady=(self.labelFrame_space_btwn, 0))
 
         # Side effect button container
         self.side_effect_button_container = tk.Frame(
-            self.side_effects_labelFrame, highlightthickness=0, bg=self.background_color
+            self.side_effects_labelFrame, highlightthickness=0, bg=self.background_color, autostyle=False
             )
         self.side_effect_button_container.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         # Injection site reaction button
@@ -528,7 +524,7 @@ class RefillTemplate:
             self.side_effect_button_container, text='Injection site reaction', command=self._select_injection_site_rxn,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.injection_site_rxn_btn.grid(column=1, row=0, padx=(self.btn_space_btwn, 0))
         # Hospitalized/ER Visit button
@@ -536,7 +532,7 @@ class RefillTemplate:
             self.side_effect_button_container, text='Hospitalized/ER', command=self._select_hospitalized_er,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.hospitalize_er_btn.grid(column=2, row=0, padx=(self.btn_space_btwn, 0))
         # Other side effects button
@@ -544,14 +540,14 @@ class RefillTemplate:
             self.side_effect_button_container, text='Other', command=self._select_other_side_effects,
             bg=self.btn_bg_color, borderwidth=self.btn_borderwidth,
             relief=self.btn_relief, fg=self.btn_text_color, font=self.btn_font,
-            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color
+            activebackground=self.btn_active_bg_color, activeforeground=self.btn_active_fg_color, autostyle=False
             )
         self.side_effect_other_btn.grid(column=0, row=0)
 
         # Side effects Notes container
         self.side_effects_notes_container = tk.Frame(
             self.side_effects_labelFrame, highlightthickness=0, width=364, height=64,
-            bg=self.background_color
+            bg=self.background_color, autostyle=False
             )
         self.side_effects_notes_container.grid(
             column=0, row=1, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady
@@ -560,7 +556,7 @@ class RefillTemplate:
          # Side effects Notes container
         self.side_effects_notes_container = tk.Frame(
             self.side_effects_labelFrame, highlightthickness=0, width=364, height=64,
-            bg=self.background_color
+            bg=self.background_color, autostyle=False
             )
         self.side_effects_notes_container.grid(
             column=0, row=1, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady
@@ -569,7 +565,7 @@ class RefillTemplate:
         # Side effects Notes Text box
         self.side_effects_notes_text_box = tk.Text(
             self.side_effects_notes_container, font=self.entry_font, wrap=WORD,
-            width=40, height=3
+            width=40, height=3, autostyle=False
             )
         self.side_effects_notes_text_box.grid(column=0, row=0)
         self.insert_placeholder_intervention_text_box(self.side_effects_notes_text_box)
@@ -577,21 +573,21 @@ class RefillTemplate:
         # === Adherence label frame === #
         self.adherence_labelFrame = tk.LabelFrame(
             self.intervention_window, text='Adherence', bg=self.background_color,
-            font=self.labelFrame_font, highlightthickness=0
+            font=self.labelFrame_font, highlightthickness=0, autostyle=False
             )
         self.adherence_labelFrame.grid(column=0, row=3, sticky='we', pady=(self.labelFrame_space_btwn, 0))
 
          # Adherence notes container
         self.adherence_notes_container = tk.Frame(
             self.adherence_labelFrame, highlightthickness=0, width=364, height=64,
-            bg=self.background_color
+            bg=self.background_color, autostyle=False
             )
         self.adherence_notes_container.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         self.adherence_notes_container.grid_propagate(False)
         # Adherence Notes Text box
         self.adherence_notes_text_box = tk.Text(
             self.adherence_notes_container, font=self.entry_font, wrap=WORD,
-            width=40, height=3
+            width=40, height=3, autostyle=False
             )
         self.adherence_notes_text_box.grid(column=0, row=0)
         self.insert_placeholder_intervention_text_box(self.adherence_notes_text_box)
@@ -599,21 +595,21 @@ class RefillTemplate:
         # === Additional Notes label frame === #
         self.additional_notes_labelFrame = tk.LabelFrame(
             self.intervention_window, text='Additional Notes', bg=self.background_color,
-            font=self.labelFrame_font, highlightthickness=0
+            font=self.labelFrame_font, highlightthickness=0, autostyle=False
             )
         self.additional_notes_labelFrame.grid(column=0, row=4, sticky='we', pady=(self.labelFrame_space_btwn, 0))
 
          # Additional notes container
         self.additional_notes_container = tk.Frame(
             self.additional_notes_labelFrame, highlightthickness=0, width=364, height=75,
-            bg=self.background_color
+            bg=self.background_color, autostyle=False
             )
         self.additional_notes_container.grid(column=0, row=0, sticky='w', padx=self.canvas_padx, pady=self.canvas_pady)
         self.additional_notes_container.grid_propagate(False)
         # Additional Notes Text box
         self.additional_notes_text_box = tk.Text(
             self.additional_notes_container, font=self.entry_font, wrap=WORD,
-            width=40, height=4
+            width=40, height=4, autostyle=False
             )
         self.additional_notes_text_box.grid(column=0, row=0)
         self.insert_placeholder_intervention_text_box(self.additional_notes_text_box)
@@ -702,7 +698,7 @@ class RefillTemplate:
         self.dispense_walkover_entry.delete(0, 'end')
         self.dispense_walkover_entry.config(state='disabled')
         self.dispense_date_label.config(text='Shipping out on', fg=self.text_color)
-        self.dispense_date_entry.config(state='normal')
+        self.dispense_date_entry._configure_set(state='readonly')
         if self.signature_required == '':
             self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
             self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
@@ -720,7 +716,7 @@ class RefillTemplate:
         self.dispense_walkover_entry.delete(0, 'end')
         self.dispense_walkover_entry.config(state='disabled')
         self.dispense_date_label.config(text='Shipping out on', fg=self.text_color)
-        self.dispense_date_entry.config(state='normal')
+        self.dispense_date_entry._configure_set(state='readonly')
         if self.signature_required == '':
             self.dispense_signature_yes_btn.config(state='normal', bg=self.btn_bg_color)
             self.dispense_signature_no_btn.config(state='normal', bg=self.btn_bg_color)
@@ -742,7 +738,7 @@ class RefillTemplate:
         self.signature_required = ''
         self.dispense_signature_label.config(fg=self.disabled_text_color)
         self.dispense_date_label.config(text='Picking up on', fg=self.text_color)
-        self.dispense_date_entry.config(state='normal')
+        self.dispense_date_entry._configure_set(state='readonly')
         self.fedex_delivery_pick_time_label.config(text='')
 
     def select_walkover(self):
@@ -759,7 +755,7 @@ class RefillTemplate:
         self.signature_required = ''
         self.dispense_signature_label.config(fg=self.disabled_text_color)
         self.dispense_date_label.config(text='Walking over on', fg=self.text_color)
-        self.dispense_date_entry.config(state='normal')
+        self.dispense_date_entry._configure_set(state='readonly')
         self.fedex_delivery_pick_time_label.config(text='')
         self._remove_pickup_time_label_entry()
         self.top.focus()
@@ -875,7 +871,7 @@ class RefillTemplate:
         self.spoke_with_entry.delete(0, 'end')
         self._remove_pickup_time_label_entry()
 
-        self.dispense_date_entry.set_date(dt.date.today())
+        self.dispense_date_entry.config(startdate=dt.date.today())
         
         self._unselect_injection_cycle()
         self._unselect_yes_no_sig()
@@ -938,7 +934,7 @@ class RefillTemplate:
 
     def _check_copy_wam_notes_conditions(self) -> bool:
         """Check if Copy WAM Notes conditions are met."""
-        dispense_date_entry_not_empty = self.dispense_date_entry.get().strip()
+        dispense_date_entry_not_empty = self.dispense_date_entry.get()
         pickup_time_not_empty = self.dispense_pickup_time_entry.get().strip()
         walkover_location = self.dispense_walkover_entry.get().strip()
         if self.dispense_method in ('DCS', 'FedEx') and dispense_date_entry_not_empty and self.signature_required\
