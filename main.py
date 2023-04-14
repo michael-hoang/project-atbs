@@ -151,7 +151,7 @@ class MainApp(tkb.Window):
 
     def open_CardPaymentForm(self):
         """Instantiate CardPayment object in a new TopLevel window."""
-        window = tkb.Toplevel('Card Payment Form')
+        window = tkb.Toplevel('Card Payment Form', 'superhero', resizable=(False, False))
         CardPayment(window)
 
     def open_MapSearch(self):
@@ -160,8 +160,7 @@ class MainApp(tkb.Window):
 
     def open_RefillCoordination(self):
         """Instantiate Refill Coordination object in a new TopLevel window."""
-        rf = RefillTemplate()
-        rf.dispense_pickup_time_entry.configure(bootstyle='primary')
+        RefillTemplate()
 
     def open_PasswordManager(self):
         """Instantiate Password Manager in a new TopLevel window."""
