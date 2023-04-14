@@ -1,4 +1,5 @@
 import tkinter as tk
+import ttkbootstrap as tkb
 from tkinter import messagebox
 from PIL import Image, ImageTk
 from wrapup import WrapUpDateCalculator
@@ -22,15 +23,13 @@ HOVER_BUTTON_COLOR = '#424553'
 ACTIVE_BG_COLOR = '#424553'
 ACTIVE_FG_COLOR = 'white'
 
-class MainApp(tk.Tk):
+class MainApp(tkb.Window):
     def __init__(self):
-        super().__init__()
+        super().__init__('Project AtBS', 'superhero', resizable=(False, False))
         self.withdraw()
         self.main_app_current_version = 'v5.0.0'
         self.main_app_latest_version = self.get_latest_main_app_version()
-        self.title('Project AtBS')
         self.config(bg=BG_COLOR)
-        self.resizable(width=False, height=False)
         self.check_and_download_dependant_files()
         self.iconphoto(False, tk.PhotoImage(file='assets/img/atbs_icon.png'))
 
@@ -143,7 +142,7 @@ class MainApp(tk.Tk):
         self.button_images.append(self.img)
         button = tk.Button(text=f'  {text}', image=self.img, compound='left', font=FONT, fg=FG_COLOR,
                            bg=BG_COLOR, activebackground=ACTIVE_BG_COLOR, command=command,
-                           anchor='w', padx=10, pady=5, width=207, activeforeground=ACTIVE_FG_COLOR)
+                           anchor='w', padx=10, pady=5, width=207, activeforeground=ACTIVE_FG_COLOR, autostyle=False)
         return button
 
     def open_WrapUpDateCalculator(self):
@@ -152,7 +151,8 @@ class MainApp(tk.Tk):
 
     def open_CardPaymentForm(self):
         """Instantiate CardPayment object in a new TopLevel window."""
-        CardPayment()
+        window = tkb.Toplevel('Card Payment Form')
+        CardPayment(window)
 
     def open_MapSearch(self):
         """Instantiate Map object in a new TopLevel window."""
