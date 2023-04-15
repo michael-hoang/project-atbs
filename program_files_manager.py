@@ -53,16 +53,21 @@ class ProgramFileManager:
             'img': os.path.join(self.root_path, 'assets', 'img'),
             'dist': os.path.join(self.root_path, 'dist'),
             'current_version': os.path.join(self.root_path, 'dist', 'current_version')
-        } 
+        }
         for directory in directories.values():
             if not os.path.exists(directory):
                 os.mkdir(directory)
-                
+
         self.directories = directories
 
-
-    def create_current_version_json(self):
-        json_path = self.root_path
+    def create_current_version_json(self, current_version_number: str):
+        """Create current_main_version.json file if it doesn't exist."""
+        json_path = os.path.join(
+            self.directories['current_version'], 'current_main_version.json'
+        )
+        if not os.path.exists(json_path):
+            with open(json_path, 'w') as f:
+                json.dump({'main': current_version_number}, f, indent=4)
 
     def download_essential_files(self):
         """
