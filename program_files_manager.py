@@ -17,9 +17,13 @@ class ProgramFileManager:
     """
 
     def __init__(self):
-        """Initialize AssetManager object and the latest version url attribute."""
+        """
+        Initialize AssetManager object, latest version URL, and update
+        executable URL attributes.
+        """
         self.assets = AssetManager()
         self.latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
+        self.update_exe_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/update.exe'
 
     def get_latest_version_number(self) -> str:
         """Return the latest version number for the Main app."""
@@ -96,6 +100,19 @@ class ProgramFileManager:
                 except:
                     pass
 
+    def download_update_exe(self):
+        """Download update.exe file if it does not exist in the dist directory."""
+        update_exe_path = os.path.join(self.directories['dist'], 'update.exe')
+        if not os.path.exists(update_exe_path):
+            block_size = 1024
+            try:
+                response = requests.get(self.update_exe_url, stream=True)
+                with open(update_exe_path, 'wb') as f:
+                    for data in response.iter_content(block_size):
+                        f.write(data)
+            except:
+                pass
+
     def download_essential_files(self, current_version_number):
         """
         Download all essential files required for the Main app to run properly.
@@ -106,6 +123,7 @@ class ProgramFileManager:
         self.create_current_version_json(current_version_number)
         self.download_img_files()
         self.download_form_files()
+        self.download_update_exe()
 
 
 if __name__ == '__main__':
