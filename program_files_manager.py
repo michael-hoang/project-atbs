@@ -3,7 +3,7 @@
 from assetmanager import AssetManager
 
 
-class ProgramFilesManager:
+class ProgramFileManager:
     """
     This class provides methods to retrieve the paths to the running script or
     executable and download all critical files required for the Main app to
@@ -11,4 +11,7 @@ class ProgramFilesManager:
     """
 
     def __init__(self):
-        pass
+        """Initialize URL attributes."""
+
+        self.latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
+    
