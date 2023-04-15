@@ -45,19 +45,24 @@ class ProgramFileManager:
     def create_required_directories(self):
         """
         Create all the necessary directories that contain essential files for
-        the Main app.
+        the Main app. The paths are stored in a Python dictionary as an attribute.
         """
-        assets_dir = os.path.join(self.root_path, 'assets')
-        form_dir = os.path.join(assets_dir, 'form')
-        img_dir = os.path.join(assets_dir, 'img')
-        dist_dir = os.path.join(self.root_path, 'dist')
-        current_version_dir = os.path.join(dist_dir, 'current_version')
-        directories = (
-            assets_dir, form_dir, img_dir, dist_dir, current_version_dir
-        )
-        for directory in directories:
+        directories = {
+            'assets': os.path.join(self.root_path, 'assets'),
+            'form': os.path.join(self.root_path, 'assets', 'form'),
+            'img': os.path.join(self.root_path, 'assets', 'img'),
+            'dist': os.path.join(self.root_path, 'dist'),
+            'current_version': os.path.join(self.root_path, 'dist', 'current_version')
+        } 
+        for directory in directories.values():
             if not os.path.exists(directory):
                 os.mkdir(directory)
+                
+        self.directories = directories
+
+
+    def create_current_version_json(self):
+        json_path = self.root_path
 
     def download_essential_files(self):
         """
