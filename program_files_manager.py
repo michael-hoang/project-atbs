@@ -83,6 +83,19 @@ class ProgramFileManager:
                 except:
                     pass
 
+    def download_form_files(self):
+        """Download the form files if they don't exist in the form directory."""
+        contents_of_form_dir = os.listdir(self.directories['form'])
+        for form in self.assets.assets_form:
+            if form not in contents_of_form_dir:
+                form_url = self.assets.assets_form[form]
+                try:
+                    urllib.request.urlretrieve(
+                        form_url, os.path.join(self.directories['form'], form)
+                    )
+                except:
+                    pass
+
     def download_essential_files(self, current_version_number):
         """
         Download all essential files required for the Main app to run properly.
@@ -92,9 +105,9 @@ class ProgramFileManager:
         self.create_required_directories()
         self.create_current_version_json(current_version_number)
         self.download_img_files()
+        self.download_form_files()
 
 
 if __name__ == '__main__':
     pfm = ProgramFileManager()
     pfm.download_essential_files('v.5.0.0')
- 
