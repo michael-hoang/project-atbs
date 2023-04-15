@@ -4,6 +4,7 @@ import json
 import os
 import requests
 import sys
+import urllib.request
 
 from assetmanager import AssetManager
 
@@ -16,8 +17,8 @@ class ProgramFileManager:
     """
 
     def __init__(self):
-        """Initialize URL attributes."""
-
+        """Initialize AssetManager object and the latest version url attribute."""
+        self.assets = AssetManager()
         self.latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
 
     def get_latest_version_number(self) -> str:
@@ -31,15 +32,15 @@ class ProgramFileManager:
         except:
             return None
 
-    def get_program_path(self):
+    def get_program_directory_path(self):
         """
-        Create an attribute for the absolute path to the running program (root 
-        path). The program can be an executable or a script.
+        Create an attribute for the absolute path to the running program
+        directory (root path). The program can be an executable or a script.
         """
         if getattr(sys, 'frozen', False):
-            path = os.path.abspath(sys.executable)
+            path = os.path.dirname(sys.executable)
         else:
-            path = os.path.abspath(__file__)
+            path = os.path.dirname(os.path.abspath(__file__))
         self.root_path = path
 
     def create_required_directories(self):
@@ -69,18 +70,31 @@ class ProgramFileManager:
             with open(json_path, 'w') as f:
                 json.dump({'main': current_version_number}, f, indent=4)
 
-    def download_essential_files(self):
+    def download_img_files(self):
+        """Download the image files if they don't exist in the img directory."""
+        contents_of_img_dir = os.listdir(self.directories['img'])
+        for img in self.assets.assets_img:
+            if img not in contents_of_img_dir:
+                img_url = self.assets.img_content_url + img
+                try:
+                    urllib.request.urlretrieve(
+                        img_url, os.path.join(self.directories['img'], img)
+                    )
+                except:
+                    pass
+
+    def download_essential_files(self, current_version_number):
         """
         Download all essential files required for the Main app to run properly.
         Instantiates an object called AssetManager to look for required files.
         """
-        am = AssetManager()
-        self.get_program_path()
+        self.get_program_directory_path()
         self.create_required_directories()
+        self.create_current_version_json(current_version_number)
+        self.download_img_files()
 
 
 if __name__ == '__main__':
     pfm = ProgramFileManager()
-    latest_version = pfm.get_latest_version_number()
-    print(latest_version)
-    print(pfm.get_program_path())
+    pfm.download_essential_files('v.5.0.0')
+ 
