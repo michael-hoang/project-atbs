@@ -5,7 +5,9 @@ latest release on a repository and downloads it to the user's root directory."""
 import json, requests, os, sys, urllib.request
 import tkinter as tk
 from tkinter import END
-from ..assets_manager import AssetManager
+sys.path.append('../')
+from assets_manager import AssetManager
+
 
 
 FONT = ('Helvetica', 12, 'normal')
