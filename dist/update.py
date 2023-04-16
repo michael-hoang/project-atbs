@@ -5,6 +5,7 @@ latest release on a repository and downloads it to the user's root directory."""
 import json, requests, os, sys, urllib.request
 import tkinter as tk
 from tkinter import END
+from ..assets_manager import AssetManager
 
 
 FONT = ('Helvetica', 12, 'normal')
@@ -250,41 +251,7 @@ class Updater:
 
     def update_assets(self):
         """Update files in the assets directory."""
-        assets_img = (
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/amex.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/atbs_icon.ico',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/atbs_icon.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/authentication_icon.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/cal_calc.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/cc_icon.ico',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/cc_icon.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/check_mark.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/dice.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/discover.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/edit-user.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/eye.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/generic_card.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/lock_button.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/lock_icon.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/map_icon.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/mastercard.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/note.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/note_pin.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/rx.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/rx_icon.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/search.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/setting.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/setting_icon.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/update.ico',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/update.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/visa.png',
-            'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/assets/img/x_mark.png',
-        )
-
-        assets_form = (
-            'https://github.com/michael-hoang/project-atbs-work/raw/242498f7014bd06daf6e507e6e011bf4d3d4a56d/assets/form/cardpayment.pdf',
-        )
-
+        am = AssetManager()
         root_path = self.get_root_path()
         if '\\' in root_path:
             assets_img_path = f'{root_path}\\assets\\img'
@@ -293,13 +260,12 @@ class Updater:
             assets_img_path = f'{root_path}/assets/img'
             assets_form_path = f'{root_path}/assets/form'
 
-        for img_url in assets_img:
-            filename = os.path.basename(img_url)
-            urllib.request.urlretrieve(img_url, os.path.join(assets_img_path, filename))
+        for img in am.assets_img:
+            img_url = am.img_content_url + img
+            urllib.request.urlretrieve(img_url, os.path.join(assets_img_path, img))
         
-        for form_url in assets_form:
-            filename = os.path.basename(form_url)
-            urllib.request.urlretrieve(form_url, os.path.join(assets_form_path, filename))
+        for form, form_url in am.assets_form.items():
+            urllib.request.urlretrieve(form_url, os.path.join(assets_form_path, form))
 
 
 if __name__ == '__main__':
