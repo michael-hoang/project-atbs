@@ -168,7 +168,8 @@ class MainApp(tkb.Window):
 
     def check_for_main_app_update(self, yesno_update_message=1) -> bool:
         """Check if new version of Main App is available."""
-        response = requests.get(self.latest_version_url)
+        latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
+        response = requests.get(latest_version_url)
         if response.status_code == 200:
             data = json.loads(response.content)
             latest_version = data['main']
