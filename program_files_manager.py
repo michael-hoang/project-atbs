@@ -6,7 +6,7 @@ import requests
 import sys
 import urllib.request
 
-from assetmanager import AssetManager
+from assets_manager import AssetManager
 
 
 class ProgramFileManager:
@@ -24,6 +24,7 @@ class ProgramFileManager:
         self.assets = AssetManager()
         self.latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
         self.update_exe_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/update.exe'
+        self.directories = None
 
     def get_latest_version_number(self) -> str:
         """Return the latest version number for the Main app."""
@@ -34,7 +35,7 @@ class ProgramFileManager:
                 latest_version = data['main']
                 return latest_version
         except:
-            return None
+            return ''
 
     def get_program_directory_path(self):
         """
@@ -124,8 +125,3 @@ class ProgramFileManager:
         self.download_img_files()
         self.download_form_files()
         self.download_update_exe()
-
-
-if __name__ == '__main__':
-    pfm = ProgramFileManager()
-    pfm.download_essential_files('v.5.0.0')
