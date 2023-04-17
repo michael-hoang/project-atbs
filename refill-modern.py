@@ -8,6 +8,7 @@ import ttkbootstrap as tkb
 
 from win32 import win32clipboard
 from tkinter import WORD
+from tkinter.ttk import Style
 from ttkbootstrap.constants import *
 
 
@@ -17,6 +18,8 @@ class MainFrame(tkb.Frame):
     def __init__(self, master):
         super().__init__(master)
         self.pack(fill=BOTH, expand=YES)
+        style = Style()
+        style.configure('TLabelframe.Label', font=('', 12, 'bold'))
 
         # Side panel frame
         side_panel_frame = tkb.Frame(self)
@@ -187,6 +190,7 @@ class MainFrame(tkb.Frame):
         labelframe = tkb.Labelframe(
             master=master,
             text=text,
+            style='TLabelframe.Label',
             padding=10,
         )
         labelframe.pack(side=TOP, fill=BOTH, pady=(0, 10))
