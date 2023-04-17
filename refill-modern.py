@@ -61,11 +61,16 @@ class MainFrame(tkb.Frame):
         )
 
         # Medication
+
+        # Row 1
         medication_row_1 = self.create_inner_frame(medication_labelframe)
+
         medication_entry = tkb.Entry(medication_row_1)
         medication_entry.pack(fill=BOTH)
 
         # Medication on hand
+
+        # Row 1
         medication_on_hand_row_1 = self.create_inner_frame(
             master=medication_on_hand_labelframe,
         )
@@ -82,19 +87,21 @@ class MainFrame(tkb.Frame):
         )
         medication_on_hand_days_label.pack(side=LEFT, padx=(2, 0))
 
+        # Row 2
         medication_on_hand_row_2 = self.create_inner_frame(
             master=medication_on_hand_labelframe,
         )
 
         medication_on_hand_injection_btn = self.create_tk_btn(
-            medication_on_hand_row_2, 'Injection'
+            master=medication_on_hand_row_2,
+            text='Injection',
+            padding=False
         )
-        medication_on_hand_injection_btn.pack(side=LEFT)
 
         medication_on_hand_cycle_btn = self.create_tk_btn(
-            medication_on_hand_row_2, 'Cycle'
+            master=medication_on_hand_row_2,
+            text='Cycle',
         )
-        medication_on_hand_cycle_btn.pack(side=LEFT, padx=(2, 0))
 
         medication_on_hand_due_start_label = tkb.Label(
             master=medication_on_hand_row_2,
@@ -107,6 +114,56 @@ class MainFrame(tkb.Frame):
             width=15,
         )
         medication_on_hand_due_start_entry.pack(side=LEFT, padx=(2, 0))
+
+        # Dispense date
+
+        # Row 1
+        dispense_date_row_1 = self.create_inner_frame(dispense_date_labelframe)
+
+        dispense_date_dcs_btn = self.create_tk_btn(
+            master=dispense_date_row_1,
+            text='DCS',
+            padding=False
+        )
+        dispense_date_fedex_btn = self.create_tk_btn(
+            master=dispense_date_row_1,
+            text='FedEx'
+        )
+        dispense_date_pickup_btn = self.create_tk_btn(
+            master=dispense_date_row_1,
+            text='Pick Up'
+        )
+        dispense_date_walkover_btn = self.create_tk_btn(
+            master=dispense_date_row_1,
+            text='Walk Over'
+        )
+
+        # Row 2
+        dispense_date_row_2 = self.create_inner_frame(dispense_date_labelframe)
+
+        dispense_date_method_label = tkb.Label(
+            master=dispense_date_row_2,
+            text='Walking over on'
+        )
+        dispense_date_method_label.pack(side=LEFT)
+
+        dispense_date_calendar = tkb.DateEntry(
+            master=dispense_date_row_2,
+        )
+        dispense_date_calendar.entry.config(width=10)
+        dispense_date_calendar.pack(side=LEFT)
+
+        dispense_date_pickup_time_label = tkb.Label(
+            master=dispense_date_row_2,
+            text='Time:'
+        )
+        dispense_date_pickup_time_label.pack(side=LEFT)
+
+        dispense_date_pickup_time_entry = tkb.Entry(
+            master=dispense_date_row_2,
+            width=15,
+        )
+        dispense_date_pickup_time_entry.pack(side=LEFT)
 
         # ===== INTERVENTION QUESTIONS =====#
 
@@ -141,13 +198,19 @@ class MainFrame(tkb.Frame):
         frame.pack(anchor='w', fill=BOTH, pady=(10, 0))
         return frame
 
-    def create_tk_btn(self, master, text):
+    def create_tk_btn(self, master, text, padding=True):
         """Create a Tk button."""
         btn = tk.Button(
             master=master,
             text=text,
-            activeforeground='white'
+            activeforeground='white',
+            padx=6,
+            pady=3,
         )
+        btn.pack(side=LEFT)
+        if padding:
+            btn.pack_configure(padx=(2, 0))
+
         return btn
 
 
