@@ -78,17 +78,15 @@ class MainFrame(tkb.Frame):
             master=medication_on_hand_labelframe,
         )
 
-        medication_on_hand_entry = tkb.Entry(
+        medication_on_hand_entry = self.create_short_entry(
             master=medication_on_hand_row_1,
-            width=15,
+            padding=False
         )
-        medication_on_hand_entry.pack(side=LEFT)
 
-        medication_on_hand_days_label = tkb.Label(
+        medication_on_hand_days_label = self.create_label(
             master=medication_on_hand_row_1,
-            text='day(s)',
+            text='day(s)'
         )
-        medication_on_hand_days_label.pack(side=LEFT, padx=(2, 0))
 
         # Row 2
         medication_on_hand_row_2 = self.create_inner_frame(
@@ -106,17 +104,14 @@ class MainFrame(tkb.Frame):
             text='Cycle',
         )
 
-        medication_on_hand_due_start_label = tkb.Label(
+        medication_on_hand_due_start_label = self.create_label(
             master=medication_on_hand_row_2,
-            text='is due',
+            text='is due'
         )
-        medication_on_hand_due_start_label.pack(side=LEFT, padx=(2, 0))
 
-        medication_on_hand_due_start_entry = tkb.Entry(
-            master=medication_on_hand_row_2,
-            width=15,
+        medication_on_hand_due_start_entry = self.create_short_entry(
+            master=medication_on_hand_row_2
         )
-        medication_on_hand_due_start_entry.pack(side=LEFT, padx=(2, 0))
 
         # Dispense date
 
@@ -144,29 +139,35 @@ class MainFrame(tkb.Frame):
         # Row 2
         dispense_date_row_2 = self.create_inner_frame(dispense_date_labelframe)
 
-        dispense_date_method_label = tkb.Label(
+        dispense_date_method_label = self.create_label(
             master=dispense_date_row_2,
-            text='Walking over on'
+            text='Walking over on',
+            padding=False
         )
-        dispense_date_method_label.pack(side=LEFT)
 
         dispense_date_calendar = tkb.DateEntry(
             master=dispense_date_row_2,
         )
         dispense_date_calendar.entry.config(width=10)
-        dispense_date_calendar.pack(side=LEFT)
+        dispense_date_calendar.pack(side=LEFT, padx=(2, 0))
 
-        dispense_date_pickup_time_label = tkb.Label(
+        dispense_date_pickup_time_label = self.create_label(
             master=dispense_date_row_2,
             text='Time:'
         )
-        dispense_date_pickup_time_label.pack(side=LEFT)
 
-        dispense_date_pickup_time_entry = tkb.Entry(
-            master=dispense_date_row_2,
-            width=15,
+        dispense_date_pickup_time_entry = self.create_short_entry(
+            master=dispense_date_row_2
         )
-        dispense_date_pickup_time_entry.pack(side=LEFT)
+
+        # Row 3
+        dispense_date_row_3 = self.create_inner_frame(dispense_date_labelframe)
+
+        dispense_date_signature_required_label = self.create_label(
+            master=dispense_date_row_3,
+            text='Signature required?',
+            padding=False
+        )
 
         # ===== INTERVENTION QUESTIONS =====#
 
@@ -201,6 +202,30 @@ class MainFrame(tkb.Frame):
         frame = tkb.Frame(master)
         frame.pack(anchor='w', fill=BOTH, pady=(10, 0))
         return frame
+    
+    def create_label(self, master, text, padding=True):
+        """Create a label."""
+        label = tkb.Label(
+            master=master,
+            text=text
+        )
+        label.pack(side=LEFT)
+        if padding:
+            label.pack_configure(padx=(2, 0))
+            
+        return label
+
+    def create_short_entry(self, master, width=15, padding=True):
+        """Create an entry field."""
+        entry = tkb.Entry(
+            master=master,
+            width=width,
+        )
+        entry.pack(side=LEFT)
+        if padding:
+            entry.pack_configure(padx=(2, 0))
+
+        return entry
 
     def create_tk_btn(self, master, text, padding=True):
         """Create a Tk button."""
