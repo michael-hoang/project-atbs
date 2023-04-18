@@ -268,9 +268,90 @@ class MainFrame(tkb.Frame):
         )
 
         additional_notes_labelframe = self.create_labelframe(
-            intervention_questions_frame, 'Additional Notes'
+            intervention_questions_frame, 'Additional Notes', False
         )
 
+        # Changes
+
+        # Row 1
+        changes_row_1 = self.create_inner_frame(changes_labelframe)
+
+        changes_dose_direction_btn = self.create_tk_btn(
+            master=changes_row_1,
+            text='Dose/Direction',
+            padding=False
+        )
+
+        changes_medication_profile_btn = self.create_tk_btn(
+            master=changes_row_1,
+            text='Medication Profile'
+        )
+
+        changes_new_allergies_btn = self.create_tk_btn(
+            master=changes_row_1,
+            text='New Allergies'
+        )
+
+        # Row 2
+        changes_row_2 = self.create_inner_frame(changes_labelframe)
+
+        changes_medical_condition_btn = self.create_tk_btn(
+            master=changes_row_2,
+            text='Medical Conditions',
+            padding=False
+        )
+
+        changes_other_btn = self.create_tk_btn(
+            master=changes_row_2,
+            text='Other'
+        )
+
+        # Row 3
+        changes_row_3 = self.create_inner_frame(changes_labelframe)
+
+        changes_textbox = self.create_text_box(master=changes_row_3)
+
+        # Side effects
+
+        # Row 1
+        side_effects_row_1 = self.create_inner_frame(side_effects_labelframe)
+
+        side_effects_other_btn = self.create_tk_btn(
+            master=side_effects_row_1,
+            text='Other',
+            padding=False
+        )
+
+        side_effects_injection_site_rxn_btn = self.create_tk_btn(
+            master=side_effects_row_1,
+            text='Injection site reaction'
+        )
+
+        side_effects_hospitalized_er_btn = self.create_tk_btn(
+            master=side_effects_row_1,
+            text='Hospitalized/ER'
+        )
+
+        # Row 2
+        side_effects_row_2 = self.create_inner_frame(side_effects_labelframe)
+
+        side_effects_textbox = self.create_text_box(side_effects_row_2)
+
+        # Adherence
+
+        # Row 1
+        adherence_row_1 = self.create_inner_frame(adherence_labelframe)
+
+        adherence_textbox = self.create_text_box(adherence_row_1)
+
+        # Additional notes
+
+        # Row 1
+        additional_notes_row_1 = self.create_inner_frame(
+            additional_notes_labelframe
+        )
+
+        additional_notes_textbox = self.create_text_box(additional_notes_row_1)
 
     def create_side_panel_btn(self, master, text):
         """Create side panel buttons."""
@@ -302,7 +383,7 @@ class MainFrame(tkb.Frame):
         frame = tkb.Frame(master)
         frame.pack(anchor='w', fill=BOTH, pady=(10, 0))
         return frame
-    
+
     def create_label(self, master, text, padding=True):
         """Create a label."""
         label = tkb.Label(
@@ -312,7 +393,7 @@ class MainFrame(tkb.Frame):
         label.pack(side=LEFT)
         if padding:
             label.pack_configure(padx=(2, 0))
-            
+
         return label
 
     def create_short_entry(self, master, width=15, padding=True):
@@ -341,6 +422,17 @@ class MainFrame(tkb.Frame):
             btn.pack_configure(padx=(2, 0))
 
         return btn
+
+    def create_text_box(self, master):
+        """Create a Tk text box."""
+        textbox = tk.Text(
+            master=master,
+            wrap=WORD,
+            height=3,
+            width=53,
+        )
+        textbox.pack(side=LEFT, fill=BOTH)
+        return textbox
 
 
 if __name__ == '__main__':
