@@ -21,25 +21,30 @@ class MainFrame(tkb.Frame):
         style = Style()
         style.configure('TLabelframe.Label', font=('', 12, 'bold'))
 
-        # Side panel frame
-        side_panel_frame = tkb.Frame(self)
-        side_panel_frame.grid(row=0, column=0, sticky=NSEW)
+        # # Side panel frame
+        # side_panel_frame = tkb.Frame(self)
+        # side_panel_frame.grid(row=0, column=0, sticky=NSEW)
 
-        # Side panel buttons
-        refill_btn = self.create_side_panel_btn(side_panel_frame, 'Refill')
+        # # Side panel buttons
+        # refill_btn = self.create_side_panel_btn(side_panel_frame, 'Refill')
 
         # Main display frame
         main_display_frame = tkb.Frame(self)
         main_display_frame.grid(row=0, column=1, sticky=NSEW)
 
+        # Notebook
+        notebook = tkb.Notebook(main_display_frame)
+        notebook.pack()
+
         # ========================== REFILL ===================================#
 
-        # Refill display frame
+        # Refill display frame (tab)
         refill_display_frame = tkb.Frame(
-            master=main_display_frame,
+            master=notebook,
             padding=20,
         )
         refill_display_frame.pack()
+        notebook.add(refill_display_frame, text='Refill')
 
         # ===== REFILL QUESTIONS =====#
 
@@ -206,10 +211,48 @@ class MainFrame(tkb.Frame):
             padding=False
         )
 
+        medication_efficacy_a_lot_btn = self.create_tk_btn(
+            master=medication_efficacy_row_1,
+            text='A lot'
+        )
+
+        medication_efficacy_a_little_btn = self.create_tk_btn(
+            master=medication_efficacy_row_1,
+            text='A little'
+        )
+
+        medication_efficacy_cant_tell_btn = self.create_tk_btn(
+            master=medication_efficacy_row_1,
+            text='Can\'t tell'
+        )
+
+        # Spoke with
+
+        # Row 1
+        spoke_with_row_1 = self.create_inner_frame(
+            master=spoke_with_labelframe
+        )
+
+        spoke_with_entry = self.create_short_entry(
+            master=spoke_with_row_1,
+            padding=False,
+            width=30
+        )
+
+        # ========================= INTERVENTION ==============================#
+
+        # Intervention display frame (tab)
+        intervention_display_frame = tkb.Frame(
+            master=notebook,
+            padding=20,
+        )
+        intervention_display_frame.pack()
+        notebook.add(intervention_display_frame, text='Intervention')
+
         # ===== INTERVENTION QUESTIONS =====#
 
         # Intervention questions frame
-        intervention_questions_frame = tkb.Frame(refill_display_frame)
+        intervention_questions_frame = tkb.Frame(intervention_display_frame)
         intervention_questions_frame.pack(side=RIGHT)
 
     def create_side_panel_btn(self, master, text):
