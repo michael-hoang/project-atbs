@@ -65,7 +65,7 @@ class MainFrame(tkb.Frame):
             refill_questions_frame, 'Medication Efficacy'
         )
         spoke_with_labelframe = self.create_labelframe(
-            refill_questions_frame, 'Spoke with'
+            refill_questions_frame, 'Spoke with', False
         )
 
         # Medication
@@ -266,7 +266,7 @@ class MainFrame(tkb.Frame):
         btn.pack(side=TOP, fill=BOTH, ipadx=10, ipady=10)
         return btn
 
-    def create_labelframe(self, master, text):
+    def create_labelframe(self, master, text, padding=True):
         """Create a label frame."""
         labelframe = tkb.Labelframe(
             master=master,
@@ -275,6 +275,9 @@ class MainFrame(tkb.Frame):
             padding=10,
         )
         labelframe.pack(side=TOP, fill=BOTH, pady=(0, 10))
+        if not padding:
+            labelframe.pack_configure(pady=0)
+
         return labelframe
 
     def create_inner_frame(self, master):
