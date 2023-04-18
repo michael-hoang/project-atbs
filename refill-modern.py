@@ -251,9 +251,26 @@ class MainFrame(tkb.Frame):
 
         # ===== INTERVENTION QUESTIONS =====#
 
-        # Intervention questions frame
+        # Labelframes
         intervention_questions_frame = tkb.Frame(intervention_display_frame)
-        intervention_questions_frame.pack(side=RIGHT)
+        intervention_questions_frame.pack(side=LEFT)
+
+        changes_labelframe = self.create_labelframe(
+            intervention_questions_frame, 'Changes'
+        )
+
+        side_effects_labelframe = self.create_labelframe(
+            intervention_questions_frame, 'Side Effects'
+        )
+
+        adherence_labelframe = self.create_labelframe(
+            intervention_questions_frame, 'Adherence'
+        )
+
+        additional_notes_labelframe = self.create_labelframe(
+            intervention_questions_frame, 'Additional Notes'
+        )
+
 
     def create_side_panel_btn(self, master, text):
         """Create side panel buttons."""
