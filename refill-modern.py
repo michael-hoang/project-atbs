@@ -151,12 +151,12 @@ class MainFrame(tkb.Frame):
         dispense_date_calendar.entry.config(width=10)
         dispense_date_calendar.pack(side=LEFT, padx=(2, 0))
 
-        dispense_date_pickup_time_label = self.create_label(
+        dispense_date_time_to_label = self.create_label(
             master=dispense_date_row_2,
             text='Time:'
         )
 
-        dispense_date_pickup_time_entry = self.create_short_entry(
+        dispense_date_time_location_entry = self.create_short_entry(
             master=dispense_date_row_2
         )
 
@@ -190,7 +190,20 @@ class MainFrame(tkb.Frame):
 
         dispense_date_comments_entry = self.create_short_entry(
             master=dispense_date_row_4,
-            width=25
+            width=30
+        )
+
+        # Medication Efficacy
+
+        # Row 1
+        medication_efficacy_row_1 = self.create_inner_frame(
+            master=medication_efficacy_labelframe
+        )
+
+        medication_efficacy_is_working_label = self.create_label(
+            master=medication_efficacy_row_1,
+            text='Is medication working?',
+            padding=False
         )
 
         # ===== INTERVENTION QUESTIONS =====#
