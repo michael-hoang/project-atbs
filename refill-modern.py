@@ -169,6 +169,30 @@ class MainFrame(tkb.Frame):
             padding=False
         )
 
+        dispense_date_yes_btn = self.create_tk_btn(
+            master=dispense_date_row_3,
+            text='Yes'
+        )
+
+        dispense_date_no_btn = self.create_tk_btn(
+            master=dispense_date_row_3,
+            text='No'
+        )
+
+        # Row 4
+        dispense_date_row_4 = self.create_inner_frame(dispense_date_labelframe)
+
+        dispense_date_comments_label = self.create_label(
+            master=dispense_date_row_4,
+            text='Comments:',
+            padding=False
+        )
+
+        dispense_date_comments_entry = self.create_short_entry(
+            master=dispense_date_row_4,
+            width=25
+        )
+
         # ===== INTERVENTION QUESTIONS =====#
 
         # Intervention questions frame
