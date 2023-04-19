@@ -498,31 +498,42 @@ class MainFrame(tkb.Frame):
 
     # Various methods for button commands
 
-    def update_radio_btn_states(self, btn_group: dict, btn_clicked: str):
-        """Update the state of all radio buttons in a particular group."""
+    def _update_radio_btn_states(self, btn_group: dict, btn_clicked: str):
+        """
+        (Helper method.)
+        Update the state of all radio buttons in a particular radio button group.
+        """
         for btn in btn_group:
             if btn == btn_clicked:
                 btn_group[btn] = 1
             else:
                 btn_group[btn] = 0
 
-    def select_injection_cycle_btn(self, btn_clicked: str, label: str):
+    def _select_injection_cycle_btn(self, btn_clicked: str, label: str):
+        """
+        (Helper method.)
+        Update label text and radio button states. Display entry.
+        """
         self.medication_on_hand_due_start_label.config(text=label)
-        self.update_radio_btn_states(self.inj_cyc_btn_state, btn_clicked)
+        self._update_radio_btn_states(self.inj_cyc_btn_state, btn_clicked)
         self.medication_on_hand_due_start_entry.pack(side=LEFT, padx=(3, 0))
 
-    def unselect_injection_cycle_btn(self, btn_clicked: str):
+    def _unselect_injection_cycle_btn(self, btn_clicked: str):
+        """
+        (Helper method.)
+        Remove label text and entry. Set radio button state to off.
+        """
         self.inj_cyc_str_var.set(None)
         self.medication_on_hand_due_start_label.config(text='')
         self.inj_cyc_btn_state[btn_clicked] = 0
         self.medication_on_hand_due_start_entry.pack_forget()
 
     def click_injection_cycle_btn(self, btn_clicked: str, label: str):
-        """Toggle label text and entry for the next injection/cycle."""
+        """Toggle label text and entry for the next injection/therapy cycle."""
         if self.inj_cyc_btn_state[btn_clicked] == 0:
-            self.select_injection_cycle_btn(btn_clicked, label)
+            self._select_injection_cycle_btn(btn_clicked, label)
         else:
-            self.unselect_injection_cycle_btn(btn_clicked)
+            self._unselect_injection_cycle_btn(btn_clicked)
 
 
 if __name__ == '__main__':
