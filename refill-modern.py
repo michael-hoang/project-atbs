@@ -32,9 +32,34 @@ class MainFrame(tkb.Frame):
         main_display_frame = tkb.Frame(self)
         main_display_frame.grid(row=0, column=1, sticky=NSEW)
 
+        # ===== TOOLBAR ===== #
+
+        # Toolbar container
+        toolbar_container = tkb.Frame(
+            master=main_display_frame
+        )
+        toolbar_container.grid(row=0, column=0, pady=10)
+
+        # Toggle intervention button
+        intervention_toggle_btn = tkb.Checkbutton(
+            master=toolbar_container,
+            bootstyle='round-toggle',
+            text='Intervention'
+        )
+        intervention_toggle_btn.grid(row=0, column=0, padx=(10, 0))
+
+        # Clear button
+        clear_btn = tkb.Button(
+            master=toolbar_container,
+            text='Clear',
+        )
+        clear_btn.grid(row=0, column=1, padx=(240, 0))
+
+        # ===== NOTEBOOK ===== #
+
         # Notebook
         notebook = tkb.Notebook(main_display_frame)
-        notebook.pack()
+        notebook.grid(row=1, column=0, columnspan=3)
 
         # ========================== REFILL ===================================#
 
@@ -46,7 +71,7 @@ class MainFrame(tkb.Frame):
         refill_display_frame.pack()
         notebook.add(refill_display_frame, text='Refill')
 
-        # ===== REFILL QUESTIONS =====#
+        # ===== REFILL QUESTIONS ===== #
 
         # Labelframes
         refill_questions_frame = tkb.Frame(refill_display_frame)
@@ -249,7 +274,7 @@ class MainFrame(tkb.Frame):
         intervention_display_frame.pack()
         notebook.add(intervention_display_frame, text='Intervention')
 
-        # ===== INTERVENTION QUESTIONS =====#
+        # ===== INTERVENTION QUESTIONS ===== #
 
         # Labelframes
         intervention_questions_frame = tkb.Frame(intervention_display_frame)
