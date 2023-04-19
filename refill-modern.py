@@ -153,7 +153,7 @@ class MainFrame(tkb.Frame):
         self.medication_on_hand_due_start_label = self.create_label(
             master=medication_on_hand_row_2,
             text='',
-            width=5
+            width=6
         )
 
         self.medication_on_hand_due_start_entry = self.create_short_entry(
@@ -435,6 +435,7 @@ class MainFrame(tkb.Frame):
             master=master,
             text=text,
             width=width,
+            anchor='center'
         )
         label.pack(side=LEFT, padx=(3, 0))
         if not padding:
