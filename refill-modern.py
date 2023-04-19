@@ -22,10 +22,10 @@ class MainFrame(tkb.Frame):
         style.configure('TLabelframe.Label', font=('', 12, 'bold'))
 
         # Initialize string variables
-        self.inj_cyc_str_var =  tkb.StringVar()
+        self.inj_cyc_str_var = tkb.StringVar()
 
         # Initialize state of radio buttons
-        self.radio_btns_state = {
+        self.inj_cyc_btn_state = {
             'Injection': 0,
             'Cycle': 0,
         }
@@ -137,7 +137,8 @@ class MainFrame(tkb.Frame):
             text='Injection',
             variable=self.inj_cyc_str_var,
             value='Injection',
-            command=self.update_inj_cyc_label,
+            command=lambda: self.click_injection_cycle_btn(
+                'Injection', 'is due'),
             padding=False
         )
 
@@ -146,7 +147,7 @@ class MainFrame(tkb.Frame):
             text='Cycle',
             variable=self.inj_cyc_str_var,
             value='Cycle',
-            command=self.update_inj_cyc_label
+            command=lambda: self.click_injection_cycle_btn('Cycle', 'starts')
         )
 
         self.medication_on_hand_due_start_label = self.create_label(
@@ -396,7 +397,7 @@ class MainFrame(tkb.Frame):
         additional_notes_textbox = self.create_text_box(additional_notes_row_1)
 
     # Widget Creation Methods
-    
+
     def create_side_panel_btn(self, master, text):
         """Create side panel buttons."""
         btn = tkb.Button(
@@ -467,7 +468,7 @@ class MainFrame(tkb.Frame):
             btn.pack_configure(padx=0)
 
         return btn
-    
+
     def create_tool_btn(
             self, master, text, variable, value, command, padding=True
     ):
@@ -497,42 +498,36 @@ class MainFrame(tkb.Frame):
 
     # Various methods for button commands
 
-    def update_inj_cyc_label(self):
-        """Update the inj_cyc_str_var string variable."""
-        inj_cyc_str_var = self.inj_cyc_str_var.get()
-        if inj_cyc_str_var == 'Injection':
-            if self.radio_btns_state['Injection'] == 0:
-                self.medication_on_hand_due_start_label.config(text='is due')
-                self.radio_btns_state['Injection'] = 1
-                self.radio_btns_state['Cycle'] = 0
-                self.medication_on_hand_due_start_entry.pack(
-                    side=LEFT, padx=(3, 0)
-                )
+    def update_radio_btn_states(self, btn_group: dict, btn_clicked: str):
+        """Update the state of all radio buttons in a particular group."""
+        for btn in btn_group:
+            if btn == btn_clicked:
+                btn_group[btn] = 1
             else:
-                self.inj_cyc_str_var.set(None)
-                self.medication_on_hand_due_start_label.config(text='')
-                self.radio_btns_state['Injection'] = 0
-                self.medication_on_hand_due_start_entry.pack_forget()
-        elif inj_cyc_str_var == 'Cycle':
-            if self.radio_btns_state['Cycle'] == 0:
-                self.medication_on_hand_due_start_label.config(text='starts')
-                self.radio_btns_state['Cycle'] = 1
-                self.radio_btns_state['Injection'] = 0
-                self.medication_on_hand_due_start_entry.pack(
-                    side=LEFT, padx=(3, 0)
-                )
+                btn_group[btn] = 0
 
-            else:
-                self.inj_cyc_str_var.set(None)
-                self.medication_on_hand_due_start_label.config(text='')
-                self.radio_btns_state['Cycle'] = 0
-                self.medication_on_hand_due_start_entry.pack_forget()
-            
+    def select_injection_cycle_btn(self, btn_clicked: str, label: str):
+        self.medication_on_hand_due_start_label.config(text=label)
+        self.update_radio_btn_states(self.inj_cyc_btn_state, btn_clicked)
+        self.medication_on_hand_due_start_entry.pack(side=LEFT, padx=(3, 0))
+
+    def unselect_injection_cycle_btn(self, btn_clicked: str):
+        self.inj_cyc_str_var.set(None)
+        self.medication_on_hand_due_start_label.config(text='')
+        self.inj_cyc_btn_state[btn_clicked] = 0
+        self.medication_on_hand_due_start_entry.pack_forget()
+
+    def click_injection_cycle_btn(self, btn_clicked: str, label: str):
+        """Toggle label text and entry for the next injection/cycle."""
+        if self.inj_cyc_btn_state[btn_clicked] == 0:
+            self.select_injection_cycle_btn(btn_clicked, label)
+        else:
+            self.unselect_injection_cycle_btn(btn_clicked)
 
 
 if __name__ == '__main__':
     app = tkb.Window(
-        'Refill Coordination', 'superhero', resizable=(False, False)
+        'Refill Coordination', 'litera', resizable=(False, False)
     )
     MainFrame(app)
     app.place_window_center()
