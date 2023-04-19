@@ -21,6 +21,15 @@ class MainFrame(tkb.Frame):
         style = Style()
         style.configure('TLabelframe.Label', font=('', 12, 'bold'))
 
+        # Initialize string variables
+        self.inj_cyc_str_var =  tkb.StringVar()
+
+        # Initialize state of radio buttons
+        self.radio_btns_state = {
+            'Injection': 0,
+            'Cycle': 0,
+        }
+
         # # Side panel frame
         # side_panel_frame = tkb.Frame(self)
         # side_panel_frame.grid(row=0, column=0, sticky=NSEW)
@@ -123,25 +132,33 @@ class MainFrame(tkb.Frame):
             master=medication_on_hand_labelframe,
         )
 
-        medication_on_hand_injection_btn = self.create_tk_btn(
+        self.medication_on_hand_injection_btn = self.create_tool_btn(
             master=medication_on_hand_row_2,
             text='Injection',
+            variable=self.inj_cyc_str_var,
+            value='Injection',
+            command=self.update_inj_cyc_label,
             padding=False
         )
 
-        medication_on_hand_cycle_btn = self.create_tk_btn(
+        self.medication_on_hand_cycle_btn = self.create_tool_btn(
             master=medication_on_hand_row_2,
             text='Cycle',
+            variable=self.inj_cyc_str_var,
+            value='Cycle',
+            command=self.update_inj_cyc_label
         )
 
-        medication_on_hand_due_start_label = self.create_label(
+        self.medication_on_hand_due_start_label = self.create_label(
             master=medication_on_hand_row_2,
-            text='is due'
+            text='',
+            width=5
         )
 
-        medication_on_hand_due_start_entry = self.create_short_entry(
+        self.medication_on_hand_due_start_entry = self.create_short_entry(
             master=medication_on_hand_row_2
         )
+        self.medication_on_hand_due_start_entry.pack_forget()
 
         # Dispense date
 
@@ -179,7 +196,7 @@ class MainFrame(tkb.Frame):
             master=dispense_date_row_2,
         )
         dispense_date_calendar.entry.config(width=10)
-        dispense_date_calendar.pack(side=LEFT, padx=(2, 0))
+        dispense_date_calendar.pack(side=LEFT, padx=(3, 0))
 
         dispense_date_time_to_label = self.create_label(
             master=dispense_date_row_2,
@@ -378,6 +395,8 @@ class MainFrame(tkb.Frame):
 
         additional_notes_textbox = self.create_text_box(additional_notes_row_1)
 
+    # Widget Creation Methods
+    
     def create_side_panel_btn(self, master, text):
         """Create side panel buttons."""
         btn = tkb.Button(
@@ -409,15 +428,16 @@ class MainFrame(tkb.Frame):
         frame.pack(anchor='w', fill=BOTH, pady=(10, 0))
         return frame
 
-    def create_label(self, master, text, padding=True):
+    def create_label(self, master, text, padding=True, width=DEFAULT):
         """Create a label."""
         label = tkb.Label(
             master=master,
-            text=text
+            text=text,
+            width=width,
         )
-        label.pack(side=LEFT)
-        if padding:
-            label.pack_configure(padx=(2, 0))
+        label.pack(side=LEFT, padx=(3, 0))
+        if not padding:
+            label.pack_configure(padx=0)
 
         return label
 
@@ -427,9 +447,9 @@ class MainFrame(tkb.Frame):
             master=master,
             width=width,
         )
-        entry.pack(side=LEFT)
-        if padding:
-            entry.pack_configure(padx=(2, 0))
+        entry.pack(side=LEFT, padx=(3, 0))
+        if not padding:
+            entry.pack_configure(padx=0)
 
         return entry
 
@@ -442,11 +462,27 @@ class MainFrame(tkb.Frame):
             padx=6,
             pady=3,
         )
-        btn.pack(side=LEFT)
-        if padding:
-            btn.pack_configure(padx=(2, 0))
+        btn.pack(side=LEFT, padx=(2, 0))
+        if not padding:
+            btn.pack_configure(padx=0)
 
         return btn
+    
+    def create_tool_btn(
+            self, master, text, variable, value, command, padding=True
+    ):
+        """Create a rectangular toolbutton (radio button)."""
+        tool_btn = tkb.Radiobutton(
+            master=master,
+            bootstyle='toolbutton',
+            text=text,
+            variable=variable,
+            value=value,
+            command=command
+        )
+        tool_btn.pack(side=LEFT, padx=(2, 0))
+        if not padding:
+            tool_btn.pack_configure(padx=0)
 
     def create_text_box(self, master):
         """Create a Tk text box."""
@@ -458,6 +494,40 @@ class MainFrame(tkb.Frame):
         )
         textbox.pack(side=LEFT, fill=BOTH)
         return textbox
+
+    # Various methods for button commands
+
+    def update_inj_cyc_label(self):
+        """Update the inj_cyc_str_var string variable."""
+        inj_cyc_str_var = self.inj_cyc_str_var.get()
+        if inj_cyc_str_var == 'Injection':
+            if self.radio_btns_state['Injection'] == 0:
+                self.medication_on_hand_due_start_label.config(text='is due')
+                self.radio_btns_state['Injection'] = 1
+                self.radio_btns_state['Cycle'] = 0
+                self.medication_on_hand_due_start_entry.pack(
+                    side=LEFT, padx=(3, 0)
+                )
+            else:
+                self.inj_cyc_str_var.set(None)
+                self.medication_on_hand_due_start_label.config(text='')
+                self.radio_btns_state['Injection'] = 0
+                self.medication_on_hand_due_start_entry.pack_forget()
+        elif inj_cyc_str_var == 'Cycle':
+            if self.radio_btns_state['Cycle'] == 0:
+                self.medication_on_hand_due_start_label.config(text='starts')
+                self.radio_btns_state['Cycle'] = 1
+                self.radio_btns_state['Injection'] = 0
+                self.medication_on_hand_due_start_entry.pack(
+                    side=LEFT, padx=(3, 0)
+                )
+
+            else:
+                self.inj_cyc_str_var.set(None)
+                self.medication_on_hand_due_start_label.config(text='')
+                self.radio_btns_state['Cycle'] = 0
+                self.medication_on_hand_due_start_entry.pack_forget()
+            
 
 
 if __name__ == '__main__':
