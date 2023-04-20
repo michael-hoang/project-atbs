@@ -23,8 +23,9 @@ class MainFrame(tkb.Frame):
 
         # Initialize string variables
         refill_str_var_list = [
-            'medication_name', 'days_on_hand', 'inj_cyc_btn', 'dispense_method_btn',
-            'dispense_date', 'pickup_time', 'walkover_location', 'sig_required_btn',
+            'medication_name', 'days_on_hand', 'inj_cyc_btn',
+            'inj_cyc_start_date', 'dispense_method_btn', 'dispense_date',
+            'pickup_time', 'walkover_location', 'sig_required_btn',
             'dispense_comments', 'medication_efficacy_btn', 'spoke_with'
         ]
 
@@ -115,7 +116,10 @@ class MainFrame(tkb.Frame):
         # Row 1
         medication_row_1 = self.create_inner_frame(medication_labelframe)
 
-        medication_entry = tkb.Entry(medication_row_1)
+        medication_entry = tkb.Entry(
+            master=medication_row_1,
+            textvariable=self.refill_str_vars['medication_name']
+        )
         medication_entry.pack(fill=BOTH)
 
         # Medication on hand
@@ -127,7 +131,8 @@ class MainFrame(tkb.Frame):
 
         medication_on_hand_entry = self.create_short_entry(
             master=medication_on_hand_row_1,
-            padding=False
+            padding=False,
+            text_var=self.refill_str_vars['days_on_hand']
         )
 
         medication_on_hand_days_label = self.create_label(
@@ -165,7 +170,8 @@ class MainFrame(tkb.Frame):
         )
 
         self.medication_on_hand_due_start_entry = self.create_short_entry(
-            master=medication_on_hand_row_2
+            master=medication_on_hand_row_2,
+            text_var=self.refill_str_vars['inj_cyc_start_date']
         )
         self.medication_on_hand_due_start_entry.pack_forget()
 
@@ -451,11 +457,12 @@ class MainFrame(tkb.Frame):
 
         return label
 
-    def create_short_entry(self, master, width=15, padding=True):
+    def create_short_entry(self, master, width=15, padding=True, text_var=None):
         """Create an entry field."""
         entry = tkb.Entry(
             master=master,
             width=width,
+            textvariable=text_var
         )
         entry.pack(side=LEFT, padx=(3, 0))
         if not padding:
