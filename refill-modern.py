@@ -225,7 +225,7 @@ class MainFrame(tkb.Frame):
             variable=self.refill_str_vars['dispense_method_btn'],
             value='Walk over',
             command=lambda: self.click_dispense_method_btn(
-                'dispense_method_btn', 'Walk Over', 'Walking over on', 'to'
+                'dispense_method_btn', 'Walk Over', 'Walking over on', '  to'
             )
         )
 
@@ -235,26 +235,37 @@ class MainFrame(tkb.Frame):
         self.dispense_date_method_label = self.create_label(
             master=dispense_date_row_2,
             text='Dispense Date:',
-            padding=False,
-            width=15
+            width=15,
+            grid=True
         )
+        self.dispense_date_method_label.grid(row=0, column=0)
 
         self.dispense_date_calendar = tkb.DateEntry(
             master=dispense_date_row_2,
         )
         self.dispense_date_calendar.entry.config(width=10)
-        self.dispense_date_calendar.pack(side=LEFT, padx=(3, 0))
+        self.dispense_date_calendar.grid(row=0, column=1, padx=(3, 0))
+        self.dispense_date_calendar.entry.delete(0, END)
 
         self.dispense_date_time_to_label = self.create_label(
             master=dispense_date_row_2,
             text='',
-            width=15
+            grid=True
+        )
+        self.dispense_date_time_to_label.grid(
+            row=0, column=2, sticky='w', padx=(3, 0)
         )
 
         self.dispense_date_time_location_entry = self.create_short_entry(
             master=dispense_date_row_2,
-            text_var=self.refill_str_vars['time_location']
+            text_var=self.refill_str_vars['time_location'],
+            grid=True
         )
+        self.dispense_date_time_location_entry.grid(
+            row=0, column=3, padx=(3, 0)
+        )
+        dispense_date_row_2.columnconfigure(2, minsize=143)
+        self.dispense_date_time_location_entry.grid_forget()
 
         # Row 3
         dispense_date_row_3 = self.create_inner_frame(dispense_date_labelframe)
@@ -444,6 +455,12 @@ class MainFrame(tkb.Frame):
 
         additional_notes_textbox = self.create_text_box(additional_notes_row_1)
 
+
+    # Events and binds
+        self.dispense_date_calendar.bind(
+            '<FocusIn>', self._check_if_fedex_selected
+        )
+
     # Widget Creation Methods
 
     def create_side_panel_btn(self, master, text):
@@ -477,30 +494,32 @@ class MainFrame(tkb.Frame):
         frame.pack(anchor='w', fill=BOTH, pady=(10, 0))
         return frame
 
-    def create_label(self, master, text, padding=True, width=DEFAULT):
+    def create_label(self, master, text, anchor='e',  width=DEFAULT, padding=True, grid=False):
         """Create a label."""
         label = tkb.Label(
             master=master,
             text=text,
             width=width,
-            anchor='center'
+            anchor=anchor
         )
-        label.pack(side=LEFT, padx=(3, 0))
-        if not padding:
-            label.pack_configure(padx=0)
+        if not grid:
+            label.pack(side=LEFT, padx=(3, 0))
+            if not padding:
+                label.pack_configure(padx=0)
 
         return label
 
-    def create_short_entry(self, master, width=15, padding=True, text_var=None):
+    def create_short_entry(self, master, width=15, padding=True, text_var=None, grid=False):
         """Create an entry field."""
         entry = tkb.Entry(
             master=master,
             width=width,
             textvariable=text_var
         )
-        entry.pack(side=LEFT, padx=(3, 0))
-        if not padding:
-            entry.pack_configure(padx=0)
+        if not grid:
+            entry.pack(side=LEFT, padx=(3, 0))
+            if not padding:
+                entry.pack_configure(padx=0)
 
         return entry
 
@@ -590,18 +609,25 @@ class MainFrame(tkb.Frame):
         (Helper method.)
         Update label text and radio button states. Display entry field.
         """
-        self.dispense_date_method_label.config(text=label1)
         self._update_radio_btn_states(btn_group, btn_clicked)
-        if btn_clicked == 'FedEx':
-            delivery_date = self.get_fedex_delivery_date()
-            if delivery_date:
-                self.dispense_date_time_to_label.config(
-                    text=f'for {delivery_date} delivery'
-                )
+        if btn_clicked == 'DCS':
+            self.dispense_date_method_label.config(text=label1)
+            self.dispense_date_time_to_label.config(text='')
+            self.dispense_date_time_location_entry.grid_forget()
+        elif btn_clicked == 'FedEx':
+            self.dispense_date_method_label.config(text=label1)
+            self._update_fedex_delivery_label()
+            self.dispense_date_time_location_entry.grid_forget()
         elif btn_clicked == 'Pick Up':
-            self.dispense_date_time_to_label.config(text='Time:')
+            self.dispense_date_time_to_label.config(text=label2)
+            self.dispense_date_time_location_entry.grid(
+                row=0, column=2, columnspan=2, padx=(35, 0)
+            )
         elif btn_clicked == 'Walk Over':
-            self.dispense_date_time_to_label.config(text='to')
+            self.dispense_date_time_to_label.config(text=label2)
+            self.dispense_date_time_location_entry.grid(
+                row=0, column=2, columnspan=2, padx=(35, 0)
+            )
         else:
             self.dispense_date_time_to_label.config(text='')
 
@@ -614,7 +640,7 @@ class MainFrame(tkb.Frame):
         self.tool_btn_states[btn_group][btn_clicked] = 0
         self.dispense_date_method_label.config(text='Dispense Date:')
         self.dispense_date_time_to_label.config(text='')
-        self.dispense_date_time_location_entry.pack_forget()
+        self.dispense_date_time_location_entry.grid_forget()
 
     def click_dispense_method_btn(self, btn_group: str, btn_clicked: str, label1: str, label2: str = None):
         """Toggle label texts, date entry, and time/location entry for dispensing."""
@@ -637,6 +663,18 @@ class MainFrame(tkb.Frame):
                 return ''
         else:
             return ''
+
+    def _update_fedex_delivery_label(self):
+        delivery_date = self.get_fedex_delivery_date().strip()
+        if delivery_date:
+            self.dispense_date_time_to_label.config(
+                text=f'for {delivery_date} delivery'
+            )
+
+    def _check_if_fedex_selected(self, e):
+        """Update FedEx delivery date label."""
+        if self.tool_btn_states['dispense_method_btn']['FedEx'] == 1:
+            self._update_fedex_delivery_label()
 
 
 if __name__ == '__main__':
