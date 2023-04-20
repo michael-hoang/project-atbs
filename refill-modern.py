@@ -22,7 +22,15 @@ class MainFrame(tkb.Frame):
         style.configure('TLabelframe.Label', font=('', 12, 'bold'))
 
         # Initialize string variables
-        self.inj_cyc_str_var = tkb.StringVar()
+        refill_str_var_list = [
+            'medication_name', 'days_on_hand', 'inj_cyc_btn', 'dispense_method_btn',
+            'dispense_date', 'pickup_time', 'walkover_location', 'sig_required_btn',
+            'dispense_comments', 'medication_efficacy_btn', 'spoke_with'
+        ]
+
+        self.refill_str_vars = {
+            str_var: tkb.StringVar() for str_var in refill_str_var_list
+        }
 
         # Initialize state of radio buttons
         self.inj_cyc_btn_state = {
@@ -135,7 +143,7 @@ class MainFrame(tkb.Frame):
         self.medication_on_hand_injection_btn = self.create_tool_btn(
             master=medication_on_hand_row_2,
             text='Injection',
-            variable=self.inj_cyc_str_var,
+            variable=self.refill_str_vars['inj_cyc_btn'],
             value='Injection',
             command=lambda: self.click_injection_cycle_btn(
                 'Injection', 'is due'),
@@ -145,7 +153,7 @@ class MainFrame(tkb.Frame):
         self.medication_on_hand_cycle_btn = self.create_tool_btn(
             master=medication_on_hand_row_2,
             text='Cycle',
-            variable=self.inj_cyc_str_var,
+            variable=self.refill_str_vars['inj_cyc_btn'],
             value='Cycle',
             command=lambda: self.click_injection_cycle_btn('Cycle', 'starts')
         )
@@ -524,7 +532,7 @@ class MainFrame(tkb.Frame):
         (Helper method.)
         Remove label text and entry. Set radio button state to off.
         """
-        self.inj_cyc_str_var.set(None)
+        self.refill_str_vars['inj_cyc_btn'].set(None)
         self.medication_on_hand_due_start_label.config(text='')
         self.inj_cyc_btn_state[btn_clicked] = 0
         self.medication_on_hand_due_start_entry.pack_forget()
