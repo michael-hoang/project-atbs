@@ -34,9 +34,12 @@ class MainFrame(tkb.Frame):
         }
 
         # Initialize state of radio buttons
-        self.inj_cyc_btn_state = {
-            'Injection': 0,
-            'Cycle': 0,
+        tool_btn_list = [
+            'Injection', 'Cycle', 'DCS', 'FedEx', 'Pick Up', 'Walk Over', 'Yes',
+            'No', 'A lot', 'A little', 'Can\'t tell'
+        ]
+        self.tool_btn_states = {
+            btn_state: 0 for btn_state in tool_btn_list
         }
 
         # # Side panel frame
@@ -180,22 +183,36 @@ class MainFrame(tkb.Frame):
         # Row 1
         dispense_date_row_1 = self.create_inner_frame(dispense_date_labelframe)
 
-        dispense_date_dcs_btn = self.create_tk_btn(
+        dispense_date_dcs_btn = self.create_tool_btn(
             master=dispense_date_row_1,
             text='DCS',
-            padding=False
+            padding=False,
+            variable=self.refill_str_vars['dispense_method_btn'],
+            value='DCS',
+            command=lambda: self.click_dispense_method_btn(
+                'DCS', 'Shipping out on'
+            )
         )
-        dispense_date_fedex_btn = self.create_tk_btn(
+        dispense_date_fedex_btn = self.create_tool_btn(
             master=dispense_date_row_1,
-            text='FedEx'
+            text='FedEx',
+            variable=self.refill_str_vars['dispense_method_btn'],
+            value='FedEx',
+            command=None
         )
-        dispense_date_pickup_btn = self.create_tk_btn(
+        dispense_date_pickup_btn = self.create_tool_btn(
             master=dispense_date_row_1,
-            text='Pick Up'
+            text='Pick Up',
+            variable=self.refill_str_vars['dispense_method_btn'],
+            value='Pick up',
+            command=None
         )
-        dispense_date_walkover_btn = self.create_tk_btn(
+        dispense_date_walkover_btn = self.create_tool_btn(
             master=dispense_date_row_1,
-            text='Walk Over'
+            text='Walk Over',
+            variable=self.refill_str_vars['dispense_method_btn'],
+            value='Walk over',
+            command=None
         )
 
         # Row 2
@@ -531,7 +548,7 @@ class MainFrame(tkb.Frame):
         Update label text and radio button states. Display entry.
         """
         self.medication_on_hand_due_start_label.config(text=label)
-        self._update_radio_btn_states(self.inj_cyc_btn_state, btn_clicked)
+        self._update_radio_btn_states(self.tool_btn_states, btn_clicked)
         self.medication_on_hand_due_start_entry.pack(side=LEFT, padx=(3, 0))
 
     def _unselect_injection_cycle_btn(self, btn_clicked: str):
@@ -541,15 +558,20 @@ class MainFrame(tkb.Frame):
         """
         self.refill_str_vars['inj_cyc_btn'].set(None)
         self.medication_on_hand_due_start_label.config(text='')
-        self.inj_cyc_btn_state[btn_clicked] = 0
+        self.tool_btn_states[btn_clicked] = 0
         self.medication_on_hand_due_start_entry.pack_forget()
 
     def click_injection_cycle_btn(self, btn_clicked: str, label: str):
         """Toggle label text and entry for the next injection/therapy cycle."""
-        if self.inj_cyc_btn_state[btn_clicked] == 0:
+        if self.tool_btn_states[btn_clicked] == 0:
             self._select_injection_cycle_btn(btn_clicked, label)
         else:
             self._unselect_injection_cycle_btn(btn_clicked)
+
+    def click_dispense_method_btn(self, btn_clicked: str, label1: str, label2: str = None):
+        """Toggle label texts, date entry, and time/location entry for dispensing."""
+        if self.tool_btn_states[btn_clicked] == 0:
+            pass
 
 
 if __name__ == '__main__':
