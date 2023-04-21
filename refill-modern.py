@@ -101,7 +101,7 @@ class MainFrame(tkb.Frame):
         clear_btn.grid(
             row=0, column=1, rowspan=2, padx=(235, 0), pady=(0, 655)
         )
-        ToolTip(clear_btn, 'Clear entries', delay=500)
+        ToolTip(clear_btn, 'Clear entries and clipboard', delay=500)
 
         # ===== NOTEBOOK ===== #
 
@@ -149,6 +149,11 @@ class MainFrame(tkb.Frame):
         )
         self.copy_template_btn.grid(
             row=4, column=0, padx=(251, 0), pady=(10, 0), ipady=5
+        )
+        ToolTip(
+            widget=self.copy_template_btn,
+            text='Copy Refill Coordination template to clipboard',
+            delay=500
         )
 
         # Medication
@@ -350,6 +355,11 @@ class MainFrame(tkb.Frame):
         )
         self.copy_wam_notes_btn.grid(
             row=2, column=0, rowspan=2, padx=(278, 0), pady=(30, 0), ipady=1
+        )
+        ToolTip(
+            widget=self.copy_wam_notes_btn,
+            text='Copy WAM dispense notes to clipboard',
+            delay=500
         )
 
         # Row 4
@@ -628,7 +638,7 @@ class MainFrame(tkb.Frame):
         return btn
 
     def create_tool_btn(
-            self, master, text, variable, value, command, padding=True
+            self, master, text, variable, value, command, padding=True, tooltip=''
     ):
         """Create a rectangular toolbutton (radio button)."""
         tool_btn = tkb.Radiobutton(
@@ -642,6 +652,8 @@ class MainFrame(tkb.Frame):
         tool_btn.pack(side=LEFT, padx=(2, 0))
         if not padding:
             tool_btn.pack_configure(padx=0)
+
+        ToolTip(tool_btn, text=tooltip, delay=500)
 
     def create_text_box(self, master):
         """Create a Tk text box."""
