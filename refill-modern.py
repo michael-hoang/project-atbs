@@ -37,7 +37,7 @@ class MainFrame(tkb.Frame):
             str_var: tkb.StringVar() for str_var in refill_str_var_list
         }
 
-        # Initialize state of radio buttons
+        # Initialize Radio Button states
         self.tool_btn_states = {
             'inj_cyc_btn': {
                 'Injection': 0,
@@ -80,10 +80,15 @@ class MainFrame(tkb.Frame):
         toolbar_container.grid(row=0, column=0, pady=10)
 
         # Toggle intervention button
+        self.intervention_toggle_state = tkb.IntVar()
         intervention_toggle_btn = tkb.Checkbutton(
             master=toolbar_container,
             bootstyle='round-toggle',
             text='Intervention',
+            variable=self.intervention_toggle_state,
+            onvalue=1,
+            offvalue=0,
+            command=None,
             style='Roundtoggle.Toolbutton'
         )
         intervention_toggle_btn.grid(row=0, column=0, padx=(10, 0))
