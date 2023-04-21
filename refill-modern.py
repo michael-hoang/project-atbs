@@ -22,7 +22,7 @@ class MainFrame(tkb.Frame):
         style = Style()
         style.configure('TLabelframe.Label', font=('', 11, 'bold'))
         style.configure('TButton', font=('', 11, ''))
-        style.configure('Roundtoggle.Toolbutton', font=('', 11, '')) # broken
+        style.configure('Roundtoggle.Toolbutton', font=('', 11, ''))  # broken
         style.configure('TNotebook.Tab', font=('', 9, ''))
 
         # Initialize string variables
@@ -211,7 +211,11 @@ class MainFrame(tkb.Frame):
         # Dispense date
 
         # Row 1
-        dispense_date_row_1 = self.create_inner_frame(dispense_date_labelframe)
+        dispense_date_row_1 = self.create_inner_frame(
+            master=dispense_date_labelframe,
+            grid=True
+        )
+        dispense_date_row_1.grid(row=0, column=0, sticky='w', pady=(10, 0))
 
         dispense_date_dcs_btn = self.create_tool_btn(
             master=dispense_date_row_1,
@@ -252,7 +256,11 @@ class MainFrame(tkb.Frame):
         )
 
         # Row 2
-        dispense_date_row_2 = self.create_inner_frame(dispense_date_labelframe)
+        dispense_date_row_2 = self.create_inner_frame(
+            master=dispense_date_labelframe,
+            grid=True
+        )
+        dispense_date_row_2.grid(row=1, column=0, sticky='w', pady=(10, 0))
 
         self.dispense_date_method_label = self.create_label(
             master=dispense_date_row_2,
@@ -293,7 +301,11 @@ class MainFrame(tkb.Frame):
         self.dispense_date_time_location_entry.grid_forget()
 
         # Row 3
-        dispense_date_row_3 = self.create_inner_frame(dispense_date_labelframe)
+        dispense_date_row_3 = self.create_inner_frame(
+            master=dispense_date_labelframe,
+            grid=True
+        )
+        dispense_date_row_3.grid(row=2, column=0, sticky='w', pady=(10, 0))
 
         dispense_date_signature_required_label = self.create_label(
             master=dispense_date_row_3,
@@ -321,8 +333,21 @@ class MainFrame(tkb.Frame):
             )
         )
 
+        self.copy_wam_notes_btn = tkb.Button(
+            master=dispense_date_labelframe,
+            text='Copy WAM\n    Notes',
+            state='disabled'
+        )
+        self.copy_wam_notes_btn.grid(
+            row=2, column=0, rowspan=2, padx=(278, 0), pady=(30, 0)
+        )
+
         # Row 4
-        dispense_date_row_4 = self.create_inner_frame(dispense_date_labelframe)
+        dispense_date_row_4 = self.create_inner_frame(
+            master=dispense_date_labelframe,
+            grid=True
+        )
+        dispense_date_row_4.grid(row=3, column=0, sticky='w', pady=(10, 0))
 
         dispense_date_comments_label = self.create_label(
             master=dispense_date_row_4,
@@ -539,10 +564,12 @@ class MainFrame(tkb.Frame):
 
         return labelframe
 
-    def create_inner_frame(self, master):
+    def create_inner_frame(self, master, grid=False):
         """Create an inner frame."""
         frame = tkb.Frame(master)
-        frame.pack(anchor='w', fill=BOTH, pady=(10, 0))
+        if not grid:
+            frame.pack(anchor='w', fill=BOTH, pady=(10, 0))
+
         return frame
 
     def create_label(self, master, text, anchor='e',  width=DEFAULT, padding=True, grid=False):
