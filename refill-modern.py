@@ -308,8 +308,10 @@ class MainFrame(tkb.Frame):
         )
         self.dispense_date_calendar.entry.config(
             textvariable=self.refill_str_vars['dispense_date'],
-            width=10
+            width=10,
+            state='disabled'
         )
+        self.dispense_date_calendar.button.config(state='disabled')
         self.dispense_date_calendar.grid(row=0, column=1, padx=(3, 0))
         self.dispense_date_calendar.entry.delete(0, END)
         ToolTip(
@@ -352,7 +354,7 @@ class MainFrame(tkb.Frame):
             padding=False
         )
 
-        dispense_date_yes_btn = self.create_tool_btn(
+        self.dispense_date_yes_btn = self.create_tool_btn(
             master=dispense_date_row_3,
             text='Yes',
             variable=self.refill_str_vars['sig_required_btn'],
@@ -360,10 +362,11 @@ class MainFrame(tkb.Frame):
             command=lambda: self.click_sig_required_btn(
                 'sig_required_btn', 'Yes'
             ),
+            state='disabled',
             tooltip='Signature required\n(Required for Medicare Part B and Humana Part D)'
         )
 
-        dispense_date_no_btn = self.create_tool_btn(
+        self.dispense_date_no_btn = self.create_tool_btn(
             master=dispense_date_row_3,
             text='No',
             variable=self.refill_str_vars['sig_required_btn'],
@@ -371,6 +374,7 @@ class MainFrame(tkb.Frame):
             command=lambda: self.click_sig_required_btn(
                 'sig_required_btn', 'No'
             ),
+            state='disabled',
             tooltip='No signature required'
         )
 
@@ -670,7 +674,7 @@ class MainFrame(tkb.Frame):
         return btn
 
     def create_tool_btn(
-            self, master, text, variable, value, command, padding=True, tooltip=''
+            self, master, text, variable, value, command, padding=True, state='normal', tooltip=''
     ):
         """Create a rectangular toolbutton (radio button)."""
         tool_btn = tkb.Radiobutton(
@@ -679,13 +683,15 @@ class MainFrame(tkb.Frame):
             text=text,
             variable=variable,
             value=value,
-            command=command
+            command=command,
+            state=state
         )
         tool_btn.pack(side=LEFT, padx=(2, 0))
         if not padding:
             tool_btn.pack_configure(padx=0)
 
         ToolTip(tool_btn, text=tooltip, delay=500)
+        return tool_btn
 
     def create_text_box(self, master):
         """Create a Tk text box."""
@@ -707,6 +713,7 @@ class MainFrame(tkb.Frame):
         self.dispense_date_method_label.config(text='Dispense Date:')
         self.dispense_date_time_to_label.config(text='')
         self.dispense_date_time_location_entry.grid_forget()
+        self._enable_disable_dispense_widgets('disabled')
         for str_var in self.refill_str_vars:
             self.refill_str_vars[str_var].set('')
 
@@ -753,12 +760,24 @@ class MainFrame(tkb.Frame):
         else:
             self._unselect_injection_cycle_btn(btn_group, btn_clicked)
 
+    def _enable_disable_dispense_widgets(self, state: str):
+        """
+        Enable/disable dispense widgets once a dispense method button is selected/unselected.
+        """
+        widgets = [
+            self.dispense_date_calendar.entry, self.dispense_date_calendar.button,
+            self.dispense_date_yes_btn, self.dispense_date_no_btn
+        ]
+        for widget in widgets:
+            widget.config(state=state)
+
     def _select_dispense_method_btn(self, btn_group, btn_clicked, label1, label2=None):
         """
         (Helper method)
         Update label text and radio button states. Display entry field.
         """
         self._update_radio_btn_states(btn_group, btn_clicked)
+        self._enable_disable_dispense_widgets(state='normal')
         if btn_clicked == 'DCS':
             self.dispense_date_method_label.config(text=label1)
             self.dispense_date_time_to_label.config(text='')
@@ -788,6 +807,7 @@ class MainFrame(tkb.Frame):
         self.dispense_date_time_to_label.config(text='')
         self.dispense_date_calendar.entry.delete(0, END)
         self.dispense_date_time_location_entry.grid_forget()
+        self._enable_disable_dispense_widgets(state='disabled')
 
     def click_dispense_method_btn(self, btn_group: str, btn_clicked: str, label1: str, label2: str = None):
         """Toggle label texts, date entry, and time/location entry for dispensing."""
