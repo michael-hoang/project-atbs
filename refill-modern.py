@@ -48,6 +48,11 @@ class MainFrame(tkb.Frame):
             'sig_required_btn': {
                 'Yes': 0,
                 'No': 0,
+            },
+            'medication_efficacy_btn': {
+                'A lot': 0,
+                'A little': 0,
+                'Can\'t tell': 0,
             }
         }
 
@@ -331,19 +336,34 @@ class MainFrame(tkb.Frame):
             padding=False
         )
 
-        medication_efficacy_a_lot_btn = self.create_tk_btn(
+        medication_efficacy_a_lot_btn = self.create_tool_btn(
             master=medication_efficacy_row_1,
-            text='A lot'
+            text='A lot',
+            variable=self.refill_str_vars['medication_efficacy_btn'],
+            value='A lot',
+            command=lambda: self.click_medication_efficacy_btn(
+                'medication_efficacy_btn', 'A lot'
+            )
         )
 
-        medication_efficacy_a_little_btn = self.create_tk_btn(
+        medication_efficacy_a_little_btn = self.create_tool_btn(
             master=medication_efficacy_row_1,
-            text='A little'
+            text='A little',
+            variable=self.refill_str_vars['medication_efficacy_btn'],
+            value='A little',
+            command=lambda: self.click_medication_efficacy_btn(
+                'medication_efficacy_btn', 'A little'
+            )
         )
 
-        medication_efficacy_cant_tell_btn = self.create_tk_btn(
+        medication_efficacy_cant_tell_btn = self.create_tool_btn(
             master=medication_efficacy_row_1,
-            text='Can\'t tell'
+            text='Can\'t tell',
+            variable=self.refill_str_vars['medication_efficacy_btn'],
+            value='Can\'t tell',
+            command=lambda: self.click_medication_efficacy_btn(
+                'medication_efficacy_btn', 'Can\'t tell'
+            )
         )
 
         # Spoke with
@@ -688,6 +708,14 @@ class MainFrame(tkb.Frame):
 
     def click_sig_required_btn(self, btn_group: str, btn_clicked: str):
         """Toggle the 'Yes' and 'No' buttons on or off if signature is required."""
+        if self.tool_btn_states[btn_group][btn_clicked] == 0:
+            self._update_radio_btn_states(btn_group, btn_clicked)
+        else:
+            self.tool_btn_states[btn_group][btn_clicked] = 0
+            self.refill_str_vars[btn_group].set(None)
+
+    def click_medication_efficacy_btn(self, btn_group:str, btn_clicked: str):
+        """Toggle `A lot`, `A little` and `Can't tell` buttons on or off."""
         if self.tool_btn_states[btn_group][btn_clicked] == 0:
             self._update_radio_btn_states(btn_group, btn_clicked)
         else:
