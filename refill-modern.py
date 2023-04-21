@@ -376,7 +376,8 @@ class MainFrame(tkb.Frame):
         spoke_with_entry = self.create_short_entry(
             master=spoke_with_row_1,
             padding=False,
-            width=30
+            width=30,
+            text_var=self.refill_str_vars['spoke_with']
         )
 
         # ========================= INTERVENTION ==============================#
