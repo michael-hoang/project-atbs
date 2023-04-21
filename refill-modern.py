@@ -16,6 +16,7 @@ class MainFrame(tkb.Frame):
     """MainFrame object that houses the side panel buttons and main display."""
 
     def __init__(self, master):
+        """Initialize string variables, radio button states, and widgets."""
         super().__init__(master)
         self.pack(fill=BOTH, expand=YES)
         style = Style()
@@ -87,6 +88,7 @@ class MainFrame(tkb.Frame):
         clear_btn = tkb.Button(
             master=toolbar_container,
             text='Clear',
+            command=self.clear_entries
         )
         clear_btn.grid(row=0, column=1, padx=(240, 0))
 
@@ -605,6 +607,11 @@ class MainFrame(tkb.Frame):
 
     # Various methods for button commands
 
+    def clear_entries(self):
+        """Clear all entries from Refill and Intervention forms."""
+        for str_var in self.refill_str_vars:
+            self.refill_str_vars[str_var].set('')
+
     def _update_radio_btn_states(self, btn_group, btn_clicked):
         """
         (Helper method)
@@ -659,7 +666,7 @@ class MainFrame(tkb.Frame):
         elif btn_clicked == 'Pick Up' or btn_clicked == 'Walk Over':
             self.dispense_date_method_label.config(text=label1)
             self.dispense_date_time_to_label.config(text=label2)
-            self.dispense_date_time_location_entry.delete(0, 'end')
+            self.dispense_date_time_location_entry.delete(0, END)
             self.dispense_date_time_location_entry.grid(
                 row=0, column=2, columnspan=2, padx=(35, 0)
             )
