@@ -69,20 +69,14 @@ class MainFrame(tkb.Frame):
 
         # Main display frame
         main_display_frame = tkb.Frame(self)
-        main_display_frame.grid(row=0, column=1, sticky=NSEW)
+        main_display_frame.grid(row=0, column=1, sticky=NSEW, pady=(15, 0))
 
-        # ===== TOOLBAR ===== #
-
-        # Toolbar container
-        toolbar_container = tkb.Frame(
-            master=main_display_frame
-        )
-        toolbar_container.grid(row=0, column=0, pady=10)
-
+        # ===== TOOL BUTTONS ===== #
+        
         # Toggle intervention button
         self.intervention_toggle_state = tkb.IntVar()
         intervention_toggle_btn = tkb.Checkbutton(
-            master=toolbar_container,
+            master=main_display_frame,
             bootstyle='round-toggle',
             text='Intervention',
             variable=self.intervention_toggle_state,
@@ -91,23 +85,24 @@ class MainFrame(tkb.Frame):
             command=None,
             style='Roundtoggle.Toolbutton'
         )
-        intervention_toggle_btn.grid(row=0, column=0, padx=(10, 0))
+        intervention_toggle_btn.grid(row=0, column=0, padx=(15, 0), pady=(0, 15), sticky='w')
 
         # Clear button
         clear_btn = tkb.Button(
-            master=toolbar_container,
+            master=main_display_frame,
             text='Clear',
             command=self.clear_entries,
             style='TButton',
             width=6
         )
-        clear_btn.grid(row=0, column=1, padx=(240, 0))
+        clear_btn.grid(row=0, column=1, rowspan=2, padx=(235, 0), pady=(0, 655))
 
         # ===== NOTEBOOK ===== #
 
         # Notebook
         notebook = tkb.Notebook(main_display_frame, style='TNotebook.Tab')
         notebook.grid(row=1, column=0, columnspan=3)
+        clear_btn.lift()
 
         # ========================== REFILL ===================================#
 
@@ -126,19 +121,28 @@ class MainFrame(tkb.Frame):
         refill_questions_frame.pack(side=LEFT)
 
         medication_labelframe = self.create_labelframe(
-            refill_questions_frame, 'Medication'
+            refill_questions_frame, 'Medication', 0
         )
         medication_on_hand_labelframe = self.create_labelframe(
-            refill_questions_frame, 'Medication On Hand'
+            refill_questions_frame, 'Medication On Hand', 1
         )
         dispense_date_labelframe = self.create_labelframe(
-            refill_questions_frame, 'Dispense Date'
+            refill_questions_frame, 'Dispense Date', 2
         )
         medication_efficacy_labelframe = self.create_labelframe(
-            refill_questions_frame, 'Medication Efficacy'
+            refill_questions_frame, 'Medication Efficacy', 3
         )
         spoke_with_labelframe = self.create_labelframe(
-            refill_questions_frame, 'Spoke with', False
+            refill_questions_frame, 'Spoke with', 4, sticky='w', padding=False
+        )
+
+        self.copy_template_btn = tkb.Button(
+            master=refill_questions_frame,
+            text='Copy Template',
+            state='disabled'
+        )
+        self.copy_template_btn.grid(
+            row=4, column=0, padx=(251, 0), pady=(10, 0), ipady=5
         )
 
         # Medication
@@ -339,7 +343,7 @@ class MainFrame(tkb.Frame):
             state='disabled'
         )
         self.copy_wam_notes_btn.grid(
-            row=2, column=0, rowspan=2, padx=(278, 0), pady=(30, 0)
+            row=2, column=0, rowspan=2, padx=(278, 0), pady=(30, 0), ipady=1
         )
 
         # Row 4
@@ -414,7 +418,7 @@ class MainFrame(tkb.Frame):
         spoke_with_entry = self.create_short_entry(
             master=spoke_with_row_1,
             padding=False,
-            width=30,
+            width=35,
             text_var=self.refill_str_vars['spoke_with']
         )
 
@@ -435,19 +439,19 @@ class MainFrame(tkb.Frame):
         intervention_questions_frame.pack(side=LEFT)
 
         changes_labelframe = self.create_labelframe(
-            intervention_questions_frame, 'Changes'
+            intervention_questions_frame, 'Changes', 0
         )
 
         side_effects_labelframe = self.create_labelframe(
-            intervention_questions_frame, 'Side Effects'
+            intervention_questions_frame, 'Side Effects', 1
         )
 
         adherence_labelframe = self.create_labelframe(
-            intervention_questions_frame, 'Adherence'
+            intervention_questions_frame, 'Adherence', 2
         )
 
         additional_notes_labelframe = self.create_labelframe(
-            intervention_questions_frame, 'Additional Notes', False
+            intervention_questions_frame, 'Additional Notes', 3, padding=False
         )
 
         # Changes
@@ -550,7 +554,7 @@ class MainFrame(tkb.Frame):
         btn.pack(side=TOP, fill=BOTH, ipadx=10, ipady=10)
         return btn
 
-    def create_labelframe(self, master, text, padding=True):
+    def create_labelframe(self, master, text, row, col=0, sticky='we', padding=True):
         """Create a label frame."""
         labelframe = tkb.Labelframe(
             master=master,
@@ -558,9 +562,9 @@ class MainFrame(tkb.Frame):
             style='TLabelframe.Label',
             padding=10,
         )
-        labelframe.pack(side=TOP, fill=BOTH, pady=(0, 10))
+        labelframe.grid(row=row, column=col, sticky=sticky, pady=(0, 10))
         if not padding:
-            labelframe.pack_configure(pady=0)
+            labelframe.grid_configure(pady=0)
 
         return labelframe
 
