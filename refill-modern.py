@@ -10,6 +10,7 @@ from win32 import win32clipboard
 from tkinter import WORD
 from tkinter.ttk import Style
 from ttkbootstrap.constants import *
+from ttkbootstrap.tooltip import ToolTip
 
 
 class MainFrame(tkb.Frame):
@@ -72,7 +73,7 @@ class MainFrame(tkb.Frame):
         main_display_frame.grid(row=0, column=1, sticky=NSEW, pady=(15, 0))
 
         # ===== TOOL BUTTONS ===== #
-        
+
         # Toggle intervention button
         self.intervention_toggle_state = tkb.IntVar()
         intervention_toggle_btn = tkb.Checkbutton(
@@ -85,7 +86,9 @@ class MainFrame(tkb.Frame):
             command=None,
             style='Roundtoggle.Toolbutton'
         )
-        intervention_toggle_btn.grid(row=0, column=0, padx=(15, 0), pady=(0, 15), sticky='w')
+        intervention_toggle_btn.grid(
+            row=0, column=0, padx=(15, 0), pady=(0, 15), sticky='w'
+        )
 
         # Clear button
         clear_btn = tkb.Button(
@@ -95,7 +98,10 @@ class MainFrame(tkb.Frame):
             style='TButton',
             width=6
         )
-        clear_btn.grid(row=0, column=1, rowspan=2, padx=(235, 0), pady=(0, 655))
+        clear_btn.grid(
+            row=0, column=1, rowspan=2, padx=(235, 0), pady=(0, 655)
+        )
+        ToolTip(clear_btn, 'Clear entries', delay=500)
 
         # ===== NOTEBOOK ===== #
 
@@ -163,7 +169,7 @@ class MainFrame(tkb.Frame):
             master=medication_on_hand_labelframe,
         )
 
-        medication_on_hand_entry = self.create_short_entry(
+        self.medication_on_hand_entry = self.create_short_entry(
             master=medication_on_hand_row_1,
             padding=False,
             text_var=self.refill_str_vars['days_on_hand']
@@ -660,6 +666,10 @@ class MainFrame(tkb.Frame):
         for str_var in self.refill_str_vars:
             self.refill_str_vars[str_var].set('')
 
+        for btn_group in self.tool_btn_states.values():
+            for btn_state in btn_group:
+                btn_group[btn_state] = 0
+
     def _update_radio_btn_states(self, btn_group, btn_clicked):
         """
         (Helper method)
@@ -676,6 +686,8 @@ class MainFrame(tkb.Frame):
         (Helper method)
         Update label text and radio button states. Display entry field.
         """
+        if self.medication_on_hand_entry.get() == '':
+            self.medication_on_hand_entry.insert(0, '0')
         self.medication_on_hand_due_start_label.config(text=label)
         self._update_radio_btn_states(btn_group, btn_clicked)
         self.medication_on_hand_due_start_entry.pack(side=LEFT, padx=(3, 0))
