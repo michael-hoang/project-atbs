@@ -16,11 +16,14 @@ class MainFrame(tkb.Frame):
     """MainFrame object that houses the side panel buttons and main display."""
 
     def __init__(self, master):
-        """Initialize string variables, radio button states, and widgets."""
+        """Initialize string variables, style, radio button states, and widgets."""
         super().__init__(master)
         self.pack(fill=BOTH, expand=YES)
         style = Style()
-        style.configure('TLabelframe.Label', font=('', 12, 'bold'))
+        style.configure('TLabelframe.Label', font=('', 11, 'bold'))
+        style.configure('TButton', font=('', 11, ''))
+        style.configure('Roundtoggle.Toolbutton', font=('', 11, '')) # broken
+        style.configure('TNotebook.Tab', font=('', 9, ''))
 
         # Initialize string variables
         refill_str_var_list = [
@@ -80,7 +83,8 @@ class MainFrame(tkb.Frame):
         intervention_toggle_btn = tkb.Checkbutton(
             master=toolbar_container,
             bootstyle='round-toggle',
-            text='Intervention'
+            text='Intervention',
+            style='Roundtoggle.Toolbutton'
         )
         intervention_toggle_btn.grid(row=0, column=0, padx=(10, 0))
 
@@ -88,14 +92,16 @@ class MainFrame(tkb.Frame):
         clear_btn = tkb.Button(
             master=toolbar_container,
             text='Clear',
-            command=self.clear_entries
+            command=self.clear_entries,
+            style='TButton',
+            width=6
         )
         clear_btn.grid(row=0, column=1, padx=(240, 0))
 
         # ===== NOTEBOOK ===== #
 
         # Notebook
-        notebook = tkb.Notebook(main_display_frame)
+        notebook = tkb.Notebook(main_display_frame, style='TNotebook.Tab')
         notebook.grid(row=1, column=0, columnspan=3)
 
         # ========================== REFILL ===================================#
@@ -188,7 +194,7 @@ class MainFrame(tkb.Frame):
         self.medication_on_hand_due_start_label = self.create_label(
             master=medication_on_hand_row_2,
             text='',
-            width=6
+            width=5
         )
 
         self.medication_on_hand_due_start_entry = self.create_short_entry(
@@ -278,7 +284,7 @@ class MainFrame(tkb.Frame):
         self.dispense_date_time_location_entry.grid(
             row=0, column=3, padx=(3, 0)
         )
-        dispense_date_row_2.columnconfigure(2, minsize=143)
+        dispense_date_row_2.columnconfigure(2, minsize=148)
         self.dispense_date_time_location_entry.grid_forget()
 
         # Row 3
@@ -540,7 +546,8 @@ class MainFrame(tkb.Frame):
             master=master,
             text=text,
             width=width,
-            anchor=anchor
+            anchor=anchor,
+            font=('', 10, '')
         )
         if not grid:
             label.pack(side=LEFT, padx=(3, 0))
@@ -609,6 +616,11 @@ class MainFrame(tkb.Frame):
 
     def clear_entries(self):
         """Clear all entries from Refill and Intervention forms."""
+        self.medication_on_hand_due_start_label.config(text='')
+        self.medication_on_hand_due_start_entry.pack_forget()
+        self.dispense_date_method_label.config(text='Dispense Date:')
+        self.dispense_date_time_to_label.config(text='')
+        self.dispense_date_time_location_entry.grid_forget()
         for str_var in self.refill_str_vars:
             self.refill_str_vars[str_var].set('')
 
@@ -713,6 +725,8 @@ class MainFrame(tkb.Frame):
             self.dispense_date_time_to_label.config(
                 text=f'for {delivery_date} delivery'
             )
+        else:
+            self.dispense_date_time_to_label.config(text='')
 
     def click_sig_required_btn(self, btn_group: str, btn_clicked: str):
         """Toggle the 'Yes' and 'No' buttons on or off if signature is required."""
@@ -722,7 +736,7 @@ class MainFrame(tkb.Frame):
             self.tool_btn_states[btn_group][btn_clicked] = 0
             self.refill_str_vars[btn_group].set(None)
 
-    def click_medication_efficacy_btn(self, btn_group:str, btn_clicked: str):
+    def click_medication_efficacy_btn(self, btn_group: str, btn_clicked: str):
         """Toggle `A lot`, `A little` and `Can't tell` buttons on or off."""
         if self.tool_btn_states[btn_group][btn_clicked] == 0:
             self._update_radio_btn_states(btn_group, btn_clicked)
