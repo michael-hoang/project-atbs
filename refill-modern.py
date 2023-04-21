@@ -314,7 +314,8 @@ class MainFrame(tkb.Frame):
 
         dispense_date_comments_entry = self.create_short_entry(
             master=dispense_date_row_4,
-            width=30
+            width=30,
+            text_var=self.refill_str_vars['dispense_comments']
         )
 
         # Medication Efficacy
