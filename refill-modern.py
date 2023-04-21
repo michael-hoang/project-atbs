@@ -45,6 +45,10 @@ class MainFrame(tkb.Frame):
                 'Pick Up': 0,
                 'Walk Over': 0,
             },
+            'sig_required_btn': {
+                'Yes': 0,
+                'No': 0,
+            }
         }
 
         # # Side panel frame
@@ -243,7 +247,10 @@ class MainFrame(tkb.Frame):
         self.dispense_date_calendar = tkb.DateEntry(
             master=dispense_date_row_2,
         )
-        self.dispense_date_calendar.entry.config(width=10)
+        self.dispense_date_calendar.entry.config(
+            textvariable=self.refill_str_vars['dispense_date'],
+            width=10
+        )
         self.dispense_date_calendar.grid(row=0, column=1, padx=(3, 0))
         self.dispense_date_calendar.entry.delete(0, END)
 
@@ -276,14 +283,24 @@ class MainFrame(tkb.Frame):
             padding=False
         )
 
-        dispense_date_yes_btn = self.create_tk_btn(
+        dispense_date_yes_btn = self.create_tool_btn(
             master=dispense_date_row_3,
-            text='Yes'
+            text='Yes',
+            variable=self.refill_str_vars['sig_required_btn'],
+            value='Yes',
+            command=lambda: self.click_sig_required_btn(
+                'sig_required_btn', 'Yes'
+            )
         )
 
-        dispense_date_no_btn = self.create_tk_btn(
+        dispense_date_no_btn = self.create_tool_btn(
             master=dispense_date_row_3,
-            text='No'
+            text='No',
+            variable=self.refill_str_vars['sig_required_btn'],
+            value='No',
+            command=lambda: self.click_sig_required_btn(
+                'sig_required_btn', 'No'
+            )
         )
 
         # Row 4
@@ -455,7 +472,6 @@ class MainFrame(tkb.Frame):
 
         additional_notes_textbox = self.create_text_box(additional_notes_row_1)
 
-
     # Events and binds
         self.dispense_date_calendar.bind(
             '<FocusIn>', self._check_if_fedex_selected
@@ -569,7 +585,7 @@ class MainFrame(tkb.Frame):
 
     def _update_radio_btn_states(self, btn_group, btn_clicked):
         """
-        (Helper method.)
+        (Helper method)
         Update the state of all radio buttons in a particular radio button group.
         """
         for btn in self.tool_btn_states[btn_group]:
@@ -580,7 +596,7 @@ class MainFrame(tkb.Frame):
 
     def _select_injection_cycle_btn(self, btn_group, btn_clicked, label):
         """
-        (Helper method.)
+        (Helper method)
         Update label text and radio button states. Display entry field.
         """
         self.medication_on_hand_due_start_label.config(text=label)
@@ -589,7 +605,7 @@ class MainFrame(tkb.Frame):
 
     def _unselect_injection_cycle_btn(self, btn_group, btn_clicked):
         """
-        (Helper method.)
+        (Helper method)
         Remove label text and entry. Set radio button state to off.
         """
         self.refill_str_vars[btn_group].set(None)
@@ -606,7 +622,7 @@ class MainFrame(tkb.Frame):
 
     def _select_dispense_method_btn(self, btn_group, btn_clicked, label1, label2=None):
         """
-        (Helper method.)
+        (Helper method)
         Update label text and radio button states. Display entry field.
         """
         self._update_radio_btn_states(btn_group, btn_clicked)
@@ -618,13 +634,10 @@ class MainFrame(tkb.Frame):
             self.dispense_date_method_label.config(text=label1)
             self._update_fedex_delivery_label()
             self.dispense_date_time_location_entry.grid_forget()
-        elif btn_clicked == 'Pick Up':
+        elif btn_clicked == 'Pick Up' or btn_clicked == 'Walk Over':
+            self.dispense_date_method_label.config(text=label1)
             self.dispense_date_time_to_label.config(text=label2)
-            self.dispense_date_time_location_entry.grid(
-                row=0, column=2, columnspan=2, padx=(35, 0)
-            )
-        elif btn_clicked == 'Walk Over':
-            self.dispense_date_time_to_label.config(text=label2)
+            self.dispense_date_time_location_entry.delete(0, 'end')
             self.dispense_date_time_location_entry.grid(
                 row=0, column=2, columnspan=2, padx=(35, 0)
             )
@@ -633,13 +646,14 @@ class MainFrame(tkb.Frame):
 
     def _unselect_dispense_method_btn(self, btn_group, btn_clicked):
         """
-        (Helper method.)
+        (Helper method)
         Update label text and radio button states. Display entry field.
         """
         self.refill_str_vars[btn_group].set(None)
         self.tool_btn_states[btn_group][btn_clicked] = 0
         self.dispense_date_method_label.config(text='Dispense Date:')
         self.dispense_date_time_to_label.config(text='')
+        self.dispense_date_calendar.entry.delete(0, END)
         self.dispense_date_time_location_entry.grid_forget()
 
     def click_dispense_method_btn(self, btn_group: str, btn_clicked: str, label1: str, label2: str = None):
@@ -671,6 +685,16 @@ class MainFrame(tkb.Frame):
                 text=f'for {delivery_date} delivery'
             )
 
+    def click_sig_required_btn(self, btn_group: str, btn_clicked: str):
+        """Toggle the 'Yes' and 'No' buttons on or off if signature is required."""
+        if self.tool_btn_states[btn_group][btn_clicked] == 0:
+            self._update_radio_btn_states(btn_group, btn_clicked)
+        else:
+            self.tool_btn_states[btn_group][btn_clicked] = 0
+            self.refill_str_vars[btn_group].set(None)
+
+    # Event bind callbacks
+
     def _check_if_fedex_selected(self, e):
         """Update FedEx delivery date label."""
         if self.tool_btn_states['dispense_method_btn']['FedEx'] == 1:
@@ -679,7 +703,7 @@ class MainFrame(tkb.Frame):
 
 if __name__ == '__main__':
     app = tkb.Window(
-        'Refill Coordination', 'litera', resizable=(False, False)
+        'Refill Coordination', 'superhero', resizable=(False, False)
     )
     MainFrame(app)
     app.place_window_center()
