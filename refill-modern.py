@@ -89,6 +89,11 @@ class MainFrame(tkb.Frame):
         intervention_toggle_btn.grid(
             row=0, column=0, padx=(15, 0), pady=(0, 15), sticky='w'
         )
+        ToolTip(
+            widget=intervention_toggle_btn,
+            text='Toggle Intervention',
+            delay=500
+        )
 
         # Clear button
         clear_btn = tkb.Button(
@@ -166,6 +171,11 @@ class MainFrame(tkb.Frame):
             textvariable=self.refill_str_vars['medication_name']
         )
         medication_entry.pack(fill=BOTH)
+        ToolTip(
+            widget=medication_entry,
+            text='Enter medication name',
+            delay=500
+        )
 
         # Medication on hand
 
@@ -177,7 +187,8 @@ class MainFrame(tkb.Frame):
         self.medication_on_hand_entry = self.create_short_entry(
             master=medication_on_hand_row_1,
             padding=False,
-            text_var=self.refill_str_vars['days_on_hand']
+            text_var=self.refill_str_vars['days_on_hand'],
+            tooltip='Enter day supply on hand'
         )
 
         medication_on_hand_days_label = self.create_label(
@@ -198,7 +209,8 @@ class MainFrame(tkb.Frame):
             command=lambda: self.click_injection_cycle_btn(
                 'inj_cyc_btn', 'Injection', 'is due'
             ),
-            padding=False
+            padding=False,
+            tooltip='Enter when the next injection is due'
         )
 
         self.medication_on_hand_cycle_btn = self.create_tool_btn(
@@ -208,7 +220,8 @@ class MainFrame(tkb.Frame):
             value='Cycle',
             command=lambda: self.click_injection_cycle_btn(
                 'inj_cyc_btn', 'Cycle', 'starts'
-            )
+            ),
+            tooltip='Enter when the next cycle starts'
         )
 
         self.medication_on_hand_due_start_label = self.create_label(
@@ -219,7 +232,8 @@ class MainFrame(tkb.Frame):
 
         self.medication_on_hand_due_start_entry = self.create_short_entry(
             master=medication_on_hand_row_2,
-            text_var=self.refill_str_vars['inj_cyc_start_date']
+            text_var=self.refill_str_vars['inj_cyc_start_date'],
+            tooltip='Enter the next injection or cycle date'
         )
         self.medication_on_hand_due_start_entry.pack_forget()
 
@@ -240,7 +254,8 @@ class MainFrame(tkb.Frame):
             value='DCS',
             command=lambda: self.click_dispense_method_btn(
                 'dispense_method_btn', 'DCS', 'Shipping out on'
-            )
+            ),
+            tooltip='DCS\nSame day delivery. Reserved strictly for Orange County.'
         )
         dispense_date_fedex_btn = self.create_tool_btn(
             master=dispense_date_row_1,
@@ -249,7 +264,8 @@ class MainFrame(tkb.Frame):
             value='FedEx',
             command=lambda: self.click_dispense_method_btn(
                 'dispense_method_btn', 'FedEx', 'Shipping out on', 'for 4/12 delivery'
-            )
+            ),
+            tooltip='FedEx\nNext day delivery. No fridge shipments on Thursdays.'
         )
         dispense_date_pickup_btn = self.create_tool_btn(
             master=dispense_date_row_1,
@@ -258,7 +274,8 @@ class MainFrame(tkb.Frame):
             value='Pick up',
             command=lambda: self.click_dispense_method_btn(
                 'dispense_method_btn', 'Pick Up', 'Picking up on', 'Time:'
-            )
+            ),
+            tooltip='Pick Up'
         )
         dispense_date_walkover_btn = self.create_tool_btn(
             master=dispense_date_row_1,
@@ -267,7 +284,8 @@ class MainFrame(tkb.Frame):
             value='Walk over',
             command=lambda: self.click_dispense_method_btn(
                 'dispense_method_btn', 'Walk Over', 'Walking over on', '  to'
-            )
+            ),
+            tooltip='Clinic delivery\n(i.e. PAV 1, PAV 3, Inpatient)'
         )
 
         # Row 2
@@ -294,6 +312,11 @@ class MainFrame(tkb.Frame):
         )
         self.dispense_date_calendar.grid(row=0, column=1, padx=(3, 0))
         self.dispense_date_calendar.entry.delete(0, END)
+        ToolTip(
+            widget=self.dispense_date_calendar.button,
+            text='Select dispense date',
+            delay=500
+        )
 
         self.dispense_date_time_to_label = self.create_label(
             master=dispense_date_row_2,
@@ -307,7 +330,8 @@ class MainFrame(tkb.Frame):
         self.dispense_date_time_location_entry = self.create_short_entry(
             master=dispense_date_row_2,
             text_var=self.refill_str_vars['time_location'],
-            grid=True
+            grid=True,
+            tooltip='Pick Up: Enter pick up time\nWalk Over: Enter walk over location'
         )
         self.dispense_date_time_location_entry.grid(
             row=0, column=3, padx=(3, 0)
@@ -335,7 +359,8 @@ class MainFrame(tkb.Frame):
             value='Yes',
             command=lambda: self.click_sig_required_btn(
                 'sig_required_btn', 'Yes'
-            )
+            ),
+            tooltip='Signature required\n(Required for Medicare Part B and Humana Part D)'
         )
 
         dispense_date_no_btn = self.create_tool_btn(
@@ -345,7 +370,8 @@ class MainFrame(tkb.Frame):
             value='No',
             command=lambda: self.click_sig_required_btn(
                 'sig_required_btn', 'No'
-            )
+            ),
+            tooltip='No signature required'
         )
 
         self.copy_wam_notes_btn = tkb.Button(
@@ -378,7 +404,8 @@ class MainFrame(tkb.Frame):
         dispense_date_comments_entry = self.create_short_entry(
             master=dispense_date_row_4,
             width=30,
-            text_var=self.refill_str_vars['dispense_comments']
+            text_var=self.refill_str_vars['dispense_comments'],
+            tooltip='Enter any dispense, pick up, or delivery comments'
         )
 
         # Medication Efficacy
@@ -401,7 +428,8 @@ class MainFrame(tkb.Frame):
             value='A lot',
             command=lambda: self.click_medication_efficacy_btn(
                 'medication_efficacy_btn', 'A lot'
-            )
+            ),
+            tooltip='Medication is working a lot'
         )
 
         medication_efficacy_a_little_btn = self.create_tool_btn(
@@ -411,7 +439,8 @@ class MainFrame(tkb.Frame):
             value='A little',
             command=lambda: self.click_medication_efficacy_btn(
                 'medication_efficacy_btn', 'A little'
-            )
+            ),
+            tooltip='Medication is working a little'
         )
 
         medication_efficacy_cant_tell_btn = self.create_tool_btn(
@@ -421,7 +450,8 @@ class MainFrame(tkb.Frame):
             value='Can\'t tell',
             command=lambda: self.click_medication_efficacy_btn(
                 'medication_efficacy_btn', 'Can\'t tell'
-            )
+            ),
+            tooltip='Can\'t tell if medication is working'
         )
 
         # Spoke with
@@ -435,7 +465,8 @@ class MainFrame(tkb.Frame):
             master=spoke_with_row_1,
             padding=False,
             width=35,
-            text_var=self.refill_str_vars['spoke_with']
+            text_var=self.refill_str_vars['spoke_with'],
+            tooltip='Name of the person you spoke with'
         )
 
         # ========================= INTERVENTION ==============================#
@@ -608,7 +639,7 @@ class MainFrame(tkb.Frame):
 
         return label
 
-    def create_short_entry(self, master, width=15, padding=True, text_var=None, grid=False):
+    def create_short_entry(self, master, width=15, padding=True, text_var=None, grid=False, tooltip=''):
         """Create an entry field."""
         entry = tkb.Entry(
             master=master,
@@ -620,6 +651,7 @@ class MainFrame(tkb.Frame):
             if not padding:
                 entry.pack_configure(padx=0)
 
+        ToolTip(widget=entry, text=tooltip, delay=500)
         return entry
 
     def create_tk_btn(self, master, text, padding=True):
