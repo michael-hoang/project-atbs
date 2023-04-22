@@ -26,7 +26,7 @@ class MainFrame(tkb.Frame):
         style.configure('Roundtoggle.Toolbutton', font=('', 11, ''))  # broken
         style.configure('TNotebook.Tab', font=('', 9, ''))
 
-        # Initialize string variables
+        # Initialize string variables for solid toolbuttons (radiobuttons)
         refill_str_var_list = [
             'medication_name', 'days_on_hand', 'inj_cyc_btn',
             'inj_cyc_start_date', 'dispense_method_btn', 'dispense_date',
@@ -38,8 +38,9 @@ class MainFrame(tkb.Frame):
             str_var: tkb.StringVar() for str_var in refill_str_var_list
         }
 
-        # Initialize Radio Button states
-        self.tool_btn_states = {
+        # Initialize Radio Button states to manage selecting/unselecting of
+        # solid toolbuttons (radiobuttons)
+        self.solid_tool_btn_states = {
             'inj_cyc_btn': {
                 'Injection': 0,
                 'Cycle': 0,
@@ -60,6 +61,21 @@ class MainFrame(tkb.Frame):
                 'Can\'t tell': 0,
             }
         }
+
+        # Initialize integer varaibles for toolbuttons (checkbuttons)
+        intervention_int_var_list = [
+            'dose_direction_btn', 'medication_profile_btn', 'new_allergies_btn',
+            'medical_conditoin_btn', 'other_changes_btn', 'other_side_effects_btn',
+            'injection_site_rxn_btn', 'hospitalized_er_btn'
+        ]
+
+        self.intervention_int_vars = {
+            int_var: tkb.IntVar() for int_var in intervention_int_var_list
+        }
+
+        # Initialize lists to track any changes or symptoms reported
+        self.changes = []
+        self.symptoms = []
 
         # # Side panel frame
         # side_panel_frame = tkb.Frame(self)
@@ -201,7 +217,7 @@ class MainFrame(tkb.Frame):
             master=medication_on_hand_labelframe,
         )
 
-        self.medication_on_hand_injection_btn = self.create_tool_btn(
+        self.medication_on_hand_injection_btn = self.create_solid_tool_btn(
             master=medication_on_hand_row_2,
             text='Injection',
             variable=self.refill_str_vars['inj_cyc_btn'],
@@ -213,7 +229,7 @@ class MainFrame(tkb.Frame):
             tooltip='Enter when the next injection is due'
         )
 
-        self.medication_on_hand_cycle_btn = self.create_tool_btn(
+        self.medication_on_hand_cycle_btn = self.create_solid_tool_btn(
             master=medication_on_hand_row_2,
             text='Cycle',
             variable=self.refill_str_vars['inj_cyc_btn'],
@@ -246,7 +262,7 @@ class MainFrame(tkb.Frame):
         )
         dispense_date_row_1.grid(row=0, column=0, sticky='w', pady=(10, 0))
 
-        dispense_date_dcs_btn = self.create_tool_btn(
+        dispense_date_dcs_btn = self.create_solid_tool_btn(
             master=dispense_date_row_1,
             text='DCS',
             padding=False,
@@ -257,7 +273,7 @@ class MainFrame(tkb.Frame):
             ),
             tooltip='DCS\nSame day delivery. Reserved strictly for Orange County.'
         )
-        dispense_date_fedex_btn = self.create_tool_btn(
+        dispense_date_fedex_btn = self.create_solid_tool_btn(
             master=dispense_date_row_1,
             text='FedEx',
             variable=self.refill_str_vars['dispense_method_btn'],
@@ -267,7 +283,7 @@ class MainFrame(tkb.Frame):
             ),
             tooltip='FedEx\nNext day delivery. No fridge shipments on Thursdays.'
         )
-        dispense_date_pickup_btn = self.create_tool_btn(
+        dispense_date_pickup_btn = self.create_solid_tool_btn(
             master=dispense_date_row_1,
             text='Pick Up',
             variable=self.refill_str_vars['dispense_method_btn'],
@@ -277,7 +293,7 @@ class MainFrame(tkb.Frame):
             ),
             tooltip='Pick Up'
         )
-        dispense_date_walkover_btn = self.create_tool_btn(
+        dispense_date_walkover_btn = self.create_solid_tool_btn(
             master=dispense_date_row_1,
             text='Walk Over',
             variable=self.refill_str_vars['dispense_method_btn'],
@@ -354,7 +370,7 @@ class MainFrame(tkb.Frame):
             padding=False
         )
 
-        self.dispense_date_yes_btn = self.create_tool_btn(
+        self.dispense_date_yes_btn = self.create_solid_tool_btn(
             master=dispense_date_row_3,
             text='Yes',
             variable=self.refill_str_vars['sig_required_btn'],
@@ -366,7 +382,7 @@ class MainFrame(tkb.Frame):
             tooltip='Signature required\n(Required for Medicare Part B and Humana Part D)'
         )
 
-        self.dispense_date_no_btn = self.create_tool_btn(
+        self.dispense_date_no_btn = self.create_solid_tool_btn(
             master=dispense_date_row_3,
             text='No',
             variable=self.refill_str_vars['sig_required_btn'],
@@ -405,11 +421,12 @@ class MainFrame(tkb.Frame):
             padding=False
         )
 
-        dispense_date_comments_entry = self.create_short_entry(
+        self.dispense_date_comments_entry = self.create_short_entry(
             master=dispense_date_row_4,
             width=30,
             text_var=self.refill_str_vars['dispense_comments'],
-            tooltip='Enter any dispense, pick up, or delivery comments'
+            tooltip='Enter any dispense, pick up, or delivery comments',
+            state='disabled'
         )
 
         # Medication Efficacy
@@ -425,7 +442,7 @@ class MainFrame(tkb.Frame):
             padding=False
         )
 
-        medication_efficacy_a_lot_btn = self.create_tool_btn(
+        medication_efficacy_a_lot_btn = self.create_solid_tool_btn(
             master=medication_efficacy_row_1,
             text='A lot',
             variable=self.refill_str_vars['medication_efficacy_btn'],
@@ -436,7 +453,7 @@ class MainFrame(tkb.Frame):
             tooltip='Medication is working a lot'
         )
 
-        medication_efficacy_a_little_btn = self.create_tool_btn(
+        medication_efficacy_a_little_btn = self.create_solid_tool_btn(
             master=medication_efficacy_row_1,
             text='A little',
             variable=self.refill_str_vars['medication_efficacy_btn'],
@@ -447,7 +464,7 @@ class MainFrame(tkb.Frame):
             tooltip='Medication is working a little'
         )
 
-        medication_efficacy_cant_tell_btn = self.create_tool_btn(
+        medication_efficacy_cant_tell_btn = self.create_solid_tool_btn(
             master=medication_efficacy_row_1,
             text='Can\'t tell',
             variable=self.refill_str_vars['medication_efficacy_btn'],
@@ -510,10 +527,17 @@ class MainFrame(tkb.Frame):
         # Row 1
         changes_row_1 = self.create_inner_frame(changes_labelframe)
 
-        changes_dose_direction_btn = self.create_tk_btn(
+        changes_dose_direction_btn = self.create_tool_btn(
             master=changes_row_1,
             text='Dose/Direction',
-            padding=False
+            variable=self.intervention_int_vars['dose_direction_btn'],
+            command=lambda: self.click_intervention_tool_btns(
+                btn_clicked='dose_direction_btn',
+                list=self.changes,
+                value='Change to dose/directions of current medication'
+            ),
+            padding=False,
+            tooltip='Changes to dose or direction of current medication'
         )
 
         changes_medication_profile_btn = self.create_tk_btn(
@@ -643,12 +667,13 @@ class MainFrame(tkb.Frame):
 
         return label
 
-    def create_short_entry(self, master, width=15, padding=True, text_var=None, grid=False, tooltip=''):
+    def create_short_entry(self, master, width=15, padding=True, text_var=None, state='normal', grid=False, tooltip=''):
         """Create an entry field."""
         entry = tkb.Entry(
             master=master,
             width=width,
-            textvariable=text_var
+            textvariable=text_var,
+            state=state
         )
         if not grid:
             entry.pack(side=LEFT, padx=(3, 0))
@@ -673,16 +698,35 @@ class MainFrame(tkb.Frame):
 
         return btn
 
-    def create_tool_btn(
+    def create_solid_tool_btn(
             self, master, text, variable, value, command, padding=True, state='normal', tooltip=''
     ):
-        """Create a rectangular toolbutton (radio button)."""
-        tool_btn = tkb.Radiobutton(
+        """Create a rectangular solid toolbutton (Radiobutton)."""
+        solid_tool_btn = tkb.Radiobutton(
             master=master,
             bootstyle='toolbutton',
             text=text,
             variable=variable,
             value=value,
+            command=command,
+            state=state
+        )
+        solid_tool_btn.pack(side=LEFT, padx=(2, 0))
+        if not padding:
+            solid_tool_btn.pack_configure(padx=0)
+
+        ToolTip(solid_tool_btn, text=tooltip, delay=500)
+        return solid_tool_btn
+
+    def create_tool_btn(
+            self, master, text, variable, command, padding=True, state='normal', tooltip=''
+    ):
+        """Create a rectangular toolbutton (Checkbutton)."""
+        tool_btn = tkb.Checkbutton(
+            master=master,
+            bootstyle='toolbutton',
+            text=text,
+            variable=variable,
             command=command,
             state=state
         )
@@ -717,7 +761,7 @@ class MainFrame(tkb.Frame):
         for str_var in self.refill_str_vars:
             self.refill_str_vars[str_var].set('')
 
-        for btn_group in self.tool_btn_states.values():
+        for btn_group in self.solid_tool_btn_states.values():
             for btn_state in btn_group:
                 btn_group[btn_state] = 0
 
@@ -726,11 +770,11 @@ class MainFrame(tkb.Frame):
         (Helper method)
         Update the state of all radio buttons in a particular radio button group.
         """
-        for btn in self.tool_btn_states[btn_group]:
+        for btn in self.solid_tool_btn_states[btn_group]:
             if btn == btn_clicked:
-                self.tool_btn_states[btn_group][btn] = 1
+                self.solid_tool_btn_states[btn_group][btn] = 1
             else:
-                self.tool_btn_states[btn_group][btn] = 0
+                self.solid_tool_btn_states[btn_group][btn] = 0
 
     def _select_injection_cycle_btn(self, btn_group, btn_clicked, label):
         """
@@ -750,12 +794,12 @@ class MainFrame(tkb.Frame):
         """
         self.refill_str_vars[btn_group].set(None)
         self.medication_on_hand_due_start_label.config(text='')
-        self.tool_btn_states[btn_group][btn_clicked] = 0
+        self.solid_tool_btn_states[btn_group][btn_clicked] = 0
         self.medication_on_hand_due_start_entry.pack_forget()
 
     def click_injection_cycle_btn(self, btn_group: str, btn_clicked: str, label: str):
         """Toggle label text and entry for the next injection/therapy cycle."""
-        if self.tool_btn_states[btn_group][btn_clicked] == 0:
+        if self.solid_tool_btn_states[btn_group][btn_clicked] == 0:
             self._select_injection_cycle_btn(btn_group, btn_clicked, label)
         else:
             self._unselect_injection_cycle_btn(btn_group, btn_clicked)
@@ -766,7 +810,8 @@ class MainFrame(tkb.Frame):
         """
         widgets = [
             self.dispense_date_calendar.entry, self.dispense_date_calendar.button,
-            self.dispense_date_yes_btn, self.dispense_date_no_btn
+            self.dispense_date_yes_btn, self.dispense_date_no_btn,
+            self.dispense_date_comments_entry
         ]
         for widget in widgets:
             widget.config(state=state)
@@ -802,7 +847,7 @@ class MainFrame(tkb.Frame):
         Update label text and radio button states. Display entry field.
         """
         self.refill_str_vars[btn_group].set(None)
-        self.tool_btn_states[btn_group][btn_clicked] = 0
+        self.solid_tool_btn_states[btn_group][btn_clicked] = 0
         self.dispense_date_method_label.config(text='Dispense Date:')
         self.dispense_date_time_to_label.config(text='')
         self.dispense_date_calendar.entry.delete(0, END)
@@ -811,7 +856,7 @@ class MainFrame(tkb.Frame):
 
     def click_dispense_method_btn(self, btn_group: str, btn_clicked: str, label1: str, label2: str = None):
         """Toggle label texts, date entry, and time/location entry for dispensing."""
-        if self.tool_btn_states[btn_group][btn_clicked] == 0:
+        if self.solid_tool_btn_states[btn_group][btn_clicked] == 0:
             self._select_dispense_method_btn(
                 btn_group, btn_clicked, label1, label2
             )
@@ -842,31 +887,41 @@ class MainFrame(tkb.Frame):
 
     def click_sig_required_btn(self, btn_group: str, btn_clicked: str):
         """Toggle the 'Yes' and 'No' buttons on or off if signature is required."""
-        if self.tool_btn_states[btn_group][btn_clicked] == 0:
+        if self.solid_tool_btn_states[btn_group][btn_clicked] == 0:
             self._update_radio_btn_states(btn_group, btn_clicked)
         else:
-            self.tool_btn_states[btn_group][btn_clicked] = 0
+            self.solid_tool_btn_states[btn_group][btn_clicked] = 0
             self.refill_str_vars[btn_group].set(None)
 
     def click_medication_efficacy_btn(self, btn_group: str, btn_clicked: str):
         """Toggle `A lot`, `A little` and `Can't tell` buttons on or off."""
-        if self.tool_btn_states[btn_group][btn_clicked] == 0:
+        if self.solid_tool_btn_states[btn_group][btn_clicked] == 0:
             self._update_radio_btn_states(btn_group, btn_clicked)
         else:
-            self.tool_btn_states[btn_group][btn_clicked] = 0
+            self.solid_tool_btn_states[btn_group][btn_clicked] = 0
             self.refill_str_vars[btn_group].set(None)
+
+    def click_intervention_tool_btns(self, btn_clicked: str, list: list, value: str):
+        """Append or remove values from changes or symptoms list."""
+        if self.intervention_int_vars[btn_clicked].get() == 1:
+            list.append(value)
+        else:
+            list.remove(value)
+        
+        for item in list: # debug
+            print(item)
 
     # Event bind callbacks
 
     def _check_if_fedex_selected(self, e):
         """Update FedEx delivery date label."""
-        if self.tool_btn_states['dispense_method_btn']['FedEx'] == 1:
+        if self.solid_tool_btn_states['dispense_method_btn']['FedEx'] == 1:
             self._update_fedex_delivery_label()
 
 
 if __name__ == '__main__':
     app = tkb.Window(
-        'Refill Coordination', 'superhero', resizable=(False, False)
+        'Refill Coordination', 'litera', resizable=(False, False)
     )
     MainFrame(app)
     app.place_window_center()
