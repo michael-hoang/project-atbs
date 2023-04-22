@@ -732,21 +732,6 @@ class MainFrame(tkb.Frame):
         ToolTip(widget=entry, text=tooltip, delay=500)
         return entry
 
-    def create_tk_btn(self, master, text, padding=True):
-        """Create a Tk button."""
-        btn = tk.Button(
-            master=master,
-            text=text,
-            activeforeground='white',
-            padx=6,
-            pady=3,
-        )
-        btn.pack(side=LEFT, padx=(2, 0))
-        if not padding:
-            btn.pack_configure(padx=0)
-
-        return btn
-
     def create_solid_tool_btn(
             self, master, text, variable, value, command, padding=True, state='normal', tooltip=''
     ):
