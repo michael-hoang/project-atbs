@@ -65,7 +65,7 @@ class MainFrame(tkb.Frame):
         # Initialize integer varaibles for toolbuttons (checkbuttons)
         intervention_int_var_list = [
             'dose_direction_btn', 'medication_profile_btn', 'new_allergies_btn',
-            'medical_conditoin_btn', 'other_changes_btn', 'other_side_effects_btn',
+            'medical_condition_btn', 'other_changes_btn', 'other_side_effects_btn',
             'injection_site_rxn_btn', 'hospitalized_er_btn'
         ]
 
@@ -540,28 +540,56 @@ class MainFrame(tkb.Frame):
             tooltip='Changes to dose or direction of current medication'
         )
 
-        changes_medication_profile_btn = self.create_tk_btn(
+        changes_medication_profile_btn = self.create_tool_btn(
             master=changes_row_1,
-            text='Medication Profile'
+            text='Medication Profile',
+            variable=self.intervention_int_vars['medication_profile_btn'],
+            command=lambda: self.click_intervention_tool_btns(
+                btn_clicked='medication_profile_btn',
+                list=self.changes,
+                value='Change to medication profile',
+            ),
+            tooltip='Change to medication profile'
         )
 
-        changes_new_allergies_btn = self.create_tk_btn(
+        changes_new_allergies_btn = self.create_tool_btn(
             master=changes_row_1,
-            text='New Allergies'
+            text='New Allergies',
+            variable=self.intervention_int_vars['new_allergies_btn'],
+            command=lambda: self.click_intervention_tool_btns(
+                btn_clicked='new_allergies_btn',
+                list=self.changes,
+                value='Changes in allergies'
+            ),
+            tooltip='Changes in allergies'
         )
 
         # Row 2
         changes_row_2 = self.create_inner_frame(changes_labelframe)
 
-        changes_medical_condition_btn = self.create_tk_btn(
+        changes_medical_condition_btn = self.create_tool_btn(
             master=changes_row_2,
             text='Medical Conditions',
-            padding=False
+            variable=self.intervention_int_vars['medical_condition_btn'],
+            command=lambda: self.click_intervention_tool_btns(
+                btn_clicked='medical_condition_btn',
+                list=self.changes,
+                value='New Medication Condition(s)'
+            ),
+            padding=False,
+            tooltip='Patient has new medical condition(s)'
         )
 
-        changes_other_btn = self.create_tk_btn(
+        changes_other_btn = self.create_tool_btn(
             master=changes_row_2,
-            text='Other'
+            text='Other',
+            variable=self.intervention_int_vars['other_changes_btn'],
+            command=lambda: self.click_intervention_tool_btns(
+                btn_clicked='other_changes_btn',
+                list=self.changes,
+                value='Other'
+            ),
+            tooltip='Patient has other changes.\nAdd details in the text box below.'
         )
 
         # Row 3
@@ -908,8 +936,7 @@ class MainFrame(tkb.Frame):
         else:
             list.remove(value)
         
-        for item in list: # debug
-            print(item)
+        print(list) # debug
 
     # Event bind callbacks
 
