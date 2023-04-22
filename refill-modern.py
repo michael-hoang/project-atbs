@@ -602,20 +602,41 @@ class MainFrame(tkb.Frame):
         # Row 1
         side_effects_row_1 = self.create_inner_frame(side_effects_labelframe)
 
-        side_effects_other_btn = self.create_tk_btn(
+        side_effects_other_btn = self.create_tool_btn(
             master=side_effects_row_1,
             text='Other',
-            padding=False
+            variable=self.intervention_int_vars['other_side_effects_btn'],
+            command=lambda: self.click_intervention_tool_btns(
+                btn_clicked='other_side_effects_btn',
+                list=self.symptoms,
+                value='Other'
+            ),
+            padding=False,
+            tooltip='Patient has other symptoms or side effects'
         )
 
-        side_effects_injection_site_rxn_btn = self.create_tk_btn(
+        side_effects_injection_site_rxn_btn = self.create_tool_btn(
             master=side_effects_row_1,
-            text='Injection site reaction'
+            text='Injection site reaction',
+            variable=self.intervention_int_vars['injection_site_rxn_btn'],
+            command=lambda: self.click_intervention_tool_btns(
+                btn_clicked='injection_site_rxn_btn',
+                list=self.symptoms,
+                value='Injection site reaction'
+            ),
+            tooltip='Patient has injection site reaction'
         )
 
-        side_effects_hospitalized_er_btn = self.create_tk_btn(
+        side_effects_hospitalized_er_btn = self.create_tool_btn(
             master=side_effects_row_1,
-            text='Hospitalized/ER'
+            text='Hospitalized/ER',
+            variable=self.intervention_int_vars['hospitalized_er_btn'],
+            command=lambda: self.click_intervention_tool_btns(
+                btn_clicked='hospitalized_er_btn',
+                list=self.symptoms,
+                value='Hospitalized/ER visit'
+            ),
+            tooltip='Patient was hospitalized or had an ER visit'
         )
 
         # Row 2
@@ -935,8 +956,6 @@ class MainFrame(tkb.Frame):
             list.append(value)
         else:
             list.remove(value)
-        
-        print(list) # debug
 
     # Event bind callbacks
 
