@@ -771,13 +771,14 @@ class MainFrame(tkb.Frame):
         ToolTip(tool_btn, text=tooltip, delay=500)
         return tool_btn
 
-    def create_text_box(self, master):
+    def create_text_box(self, master, state='disabled'):
         """Create a Tk text box."""
         textbox = tk.Text(
             master=master,
             wrap=WORD,
             height=3,
-            width=53,
+            width=60,
+            state=state
         )
         textbox.pack(side=LEFT, fill=BOTH)
         return textbox
