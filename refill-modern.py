@@ -785,6 +785,47 @@ class MainFrame(tkb.Frame):
 
     # Various methods for button commands
 
+    def _clear_intervention_text_boxes(self):
+        """
+        (Helper method)
+        Clear all the contents of Intervention text boxes.
+        """
+        text_boxes = [
+            self.changes_textbox, self.side_effects_textbox,
+            self.adherence_textbox, self.additional_notes_textbox
+        ]
+        for text_box in text_boxes:
+            text_box.config(state='normal')
+            text_box.delete(1.0, END)
+            text_box.config(state='disabled')
+
+    def _disable_intervention_toolbuttons(self):
+        """
+        (Helper method)
+        Disable all intervention toolbuttons.
+        """
+        intervention_widgets = [
+            self.changes_dose_direction_btn, self.changes_medication_profile_btn,
+            self.changes_new_allergies_btn, self.changes_medical_condition_btn,
+            self.changes_other_btn, self.changes_textbox,
+            self.side_effects_other_btn, self.side_effects_injection_site_rxn_btn,
+            self.side_effects_hospitalized_er_btn, self.side_effects_textbox,
+            self.adherence_textbox, self.additional_notes_textbox
+        ]
+        for widget in intervention_widgets:
+            widget.config(state='disabled')
+
+    def clear_intervention_tab(self):
+        """Clear all entires in the intervention tab."""
+        for int_var in self.intervention_int_vars:
+            self.intervention_int_vars[int_var].set(0)
+
+        self.changes.clear()
+        self.symptoms.clear()
+        self._clear_intervention_text_boxes()
+        self._disable_intervention_toolbuttons()
+        self.intervention_toggle_state.set(0)
+
     def clear_entries(self):
         """Clear all entries from Refill and Intervention forms."""
         self.medication_on_hand_due_start_label.config(text='')
@@ -799,6 +840,8 @@ class MainFrame(tkb.Frame):
         for btn_group in self.solid_tool_btn_states.values():
             for btn_state in btn_group:
                 btn_group[btn_state] = 0
+
+        self.clear_intervention_tab()
 
     def _update_radio_btn_states(self, btn_group, btn_clicked):
         """
