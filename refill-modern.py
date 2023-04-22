@@ -97,9 +97,7 @@ class MainFrame(tkb.Frame):
             bootstyle='round-toggle',
             text='Intervention',
             variable=self.intervention_toggle_state,
-            onvalue=1,
-            offvalue=0,
-            command=None,
+            command=self.toggle_intervention,
             style='Roundtoggle.Toolbutton'
         )
         intervention_toggle_btn.grid(
@@ -527,7 +525,7 @@ class MainFrame(tkb.Frame):
         # Row 1
         changes_row_1 = self.create_inner_frame(changes_labelframe)
 
-        changes_dose_direction_btn = self.create_tool_btn(
+        self.changes_dose_direction_btn = self.create_tool_btn(
             master=changes_row_1,
             text='Dose/Direction',
             variable=self.intervention_int_vars['dose_direction_btn'],
@@ -540,7 +538,7 @@ class MainFrame(tkb.Frame):
             tooltip='Changes to dose or direction of current medication'
         )
 
-        changes_medication_profile_btn = self.create_tool_btn(
+        self.changes_medication_profile_btn = self.create_tool_btn(
             master=changes_row_1,
             text='Medication Profile',
             variable=self.intervention_int_vars['medication_profile_btn'],
@@ -552,7 +550,7 @@ class MainFrame(tkb.Frame):
             tooltip='Change to medication profile'
         )
 
-        changes_new_allergies_btn = self.create_tool_btn(
+        self.changes_new_allergies_btn = self.create_tool_btn(
             master=changes_row_1,
             text='New Allergies',
             variable=self.intervention_int_vars['new_allergies_btn'],
@@ -567,7 +565,7 @@ class MainFrame(tkb.Frame):
         # Row 2
         changes_row_2 = self.create_inner_frame(changes_labelframe)
 
-        changes_medical_condition_btn = self.create_tool_btn(
+        self.changes_medical_condition_btn = self.create_tool_btn(
             master=changes_row_2,
             text='Medical Conditions',
             variable=self.intervention_int_vars['medical_condition_btn'],
@@ -580,7 +578,7 @@ class MainFrame(tkb.Frame):
             tooltip='Patient has new medical condition(s)'
         )
 
-        changes_other_btn = self.create_tool_btn(
+        self.changes_other_btn = self.create_tool_btn(
             master=changes_row_2,
             text='Other',
             variable=self.intervention_int_vars['other_changes_btn'],
@@ -595,14 +593,14 @@ class MainFrame(tkb.Frame):
         # Row 3
         changes_row_3 = self.create_inner_frame(changes_labelframe)
 
-        changes_textbox = self.create_text_box(master=changes_row_3)
+        self.changes_textbox = self.create_text_box(master=changes_row_3)
 
         # Side effects
 
         # Row 1
         side_effects_row_1 = self.create_inner_frame(side_effects_labelframe)
 
-        side_effects_other_btn = self.create_tool_btn(
+        self.side_effects_other_btn = self.create_tool_btn(
             master=side_effects_row_1,
             text='Other',
             variable=self.intervention_int_vars['other_side_effects_btn'],
@@ -615,7 +613,7 @@ class MainFrame(tkb.Frame):
             tooltip='Patient has other symptoms or side effects'
         )
 
-        side_effects_injection_site_rxn_btn = self.create_tool_btn(
+        self.side_effects_injection_site_rxn_btn = self.create_tool_btn(
             master=side_effects_row_1,
             text='Injection site reaction',
             variable=self.intervention_int_vars['injection_site_rxn_btn'],
@@ -627,7 +625,7 @@ class MainFrame(tkb.Frame):
             tooltip='Patient has injection site reaction'
         )
 
-        side_effects_hospitalized_er_btn = self.create_tool_btn(
+        self.side_effects_hospitalized_er_btn = self.create_tool_btn(
             master=side_effects_row_1,
             text='Hospitalized/ER',
             variable=self.intervention_int_vars['hospitalized_er_btn'],
@@ -642,14 +640,14 @@ class MainFrame(tkb.Frame):
         # Row 2
         side_effects_row_2 = self.create_inner_frame(side_effects_labelframe)
 
-        side_effects_textbox = self.create_text_box(side_effects_row_2)
+        self.side_effects_textbox = self.create_text_box(side_effects_row_2)
 
         # Adherence
 
         # Row 1
         adherence_row_1 = self.create_inner_frame(adherence_labelframe)
 
-        adherence_textbox = self.create_text_box(adherence_row_1)
+        self.adherence_textbox = self.create_text_box(adherence_row_1)
 
         # Additional notes
 
@@ -658,7 +656,9 @@ class MainFrame(tkb.Frame):
             additional_notes_labelframe
         )
 
-        additional_notes_textbox = self.create_text_box(additional_notes_row_1)
+        self.additional_notes_textbox = self.create_text_box(
+            additional_notes_row_1
+        )
 
     # Events and binds
         self.dispense_date_calendar.bind(
@@ -942,6 +942,24 @@ class MainFrame(tkb.Frame):
             list.append(value)
         else:
             list.remove(value)
+
+    def toggle_intervention(self):
+        """
+        Enable or disable the intervention tab when clicking on the Intervention toggle button.
+        """
+        intervention_widgets = [
+            self.changes_dose_direction_btn, self.changes_medication_profile_btn,
+            self.changes_new_allergies_btn, self.changes_medical_condition_btn,
+            self.changes_other_btn, self.changes_textbox,
+            self.side_effects_other_btn, self.side_effects_injection_site_rxn_btn,
+            self.side_effects_hospitalized_er_btn, self.side_effects_textbox,
+            self.adherence_textbox, self.additional_notes_textbox
+        ]
+        for widget in intervention_widgets:
+            if self.intervention_toggle_state.get() == 1:
+                widget.config(state='normal')
+            else:
+                widget.config(state='disabled')
 
     # Event bind callbacks
 
