@@ -753,7 +753,7 @@ class MainFrame(tkb.Frame):
         return solid_tool_btn
 
     def create_tool_btn(
-            self, master, text, variable, command, padding=True, state='normal', tooltip=''
+            self, master, text, variable, command, padding=True, state='disabled', tooltip=''
     ):
         """Create a rectangular toolbutton (Checkbutton)."""
         tool_btn = tkb.Checkbutton(
