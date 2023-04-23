@@ -16,7 +16,7 @@ from ttkbootstrap.tooltip import ToolTip
 class MainFrame(tkb.Frame):
     """MainFrame object that houses the side panel buttons and main display."""
 
-    def __init__(self, master):
+    def __init__(self, root, master):
         """Initialize string variables, style, radio button states, and widgets."""
         super().__init__(master)
         self.pack(fill=BOTH, expand=YES)
@@ -76,6 +76,9 @@ class MainFrame(tkb.Frame):
         # Initialize lists to track any changes or symptoms reported
         self.changes = []
         self.symptoms = []
+
+        # Register validation callback
+        date_func = root.register(self._validate_date)
 
         # # Side panel frame
         # side_panel_frame = tkb.Frame(self)
@@ -323,7 +326,9 @@ class MainFrame(tkb.Frame):
         self.dispense_date_calendar.entry.config(
             textvariable=self.refill_str_vars['dispense_date'],
             width=10,
-            state='disabled'
+            state='disabled',
+            validate='all',
+            validatecommand=(date_func, '%P')
         )
         self.dispense_date_calendar.button.config(state='disabled')
         self.dispense_date_calendar.grid(row=0, column=1, padx=(3, 0))
@@ -663,6 +668,10 @@ class MainFrame(tkb.Frame):
     # Events and binds
         self.dispense_date_calendar.bind(
             '<FocusIn>', self._check_if_fedex_selected
+        )
+
+        self.dispense_date_calendar.entry.bind(
+            '<Button>', self._open_calendar
         )
 
     # Widget Creation Methods
@@ -1011,11 +1020,32 @@ class MainFrame(tkb.Frame):
         if self.solid_tool_btn_states['dispense_method_btn']['FedEx'] == 1:
             self._update_fedex_delivery_label()
 
+    def _open_calendar(self, e):
+        """Open DateEntry popup calendar."""
+        self.dispense_date_calendar.button.invoke()
+
+    # Validation methods
+
+    def _validate_date(self, value_if_allowed):
+        """Ensure DateEntry is not selected before present."""
+        try:
+            selected_datetime = dt.datetime.strptime(value_if_allowed, '%m/%d/%Y')
+            selected_date = selected_datetime.date()
+            if selected_date >= dt.date.today():
+                return True
+        except:
+            pass
+
+        if value_if_allowed == '':
+            return True
+        
+        return False
+
 
 if __name__ == '__main__':
     app = tkb.Window(
-        'Refill Coordination', 'litera', resizable=(False, False)
+        'Refill Coordination', 'superhero', resizable=(False, False)
     )
-    MainFrame(app)
+    MainFrame(app, app)
     app.place_window_center()
     app.mainloop()
