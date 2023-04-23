@@ -9,6 +9,7 @@ import tkinter as tk
 import ttkbootstrap as tkb
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox
+from tkinter.ttk import Style
 from PyPDF2 import PdfReader, PdfWriter
 from settings import Settings
 from dateutil.relativedelta import relativedelta
@@ -20,8 +21,10 @@ class CardPayment(tkb.Frame):
     """
 
     def __init__(self, master):
-        super().__init__(master, padding=(20, 10))
-        self.pack(fill=BOTH, expand=YES)
+        super().__init__(master, padding=(12, 10))
+        self.pack(fill=BOTH, expand=YES, padx=(0, 5))
+        style = Style()
+        style.configure('TButton', font=('', 10, ''))
         
         # Form variables
         self.card_no = tkb.StringVar(value='')
@@ -68,7 +71,7 @@ class CardPayment(tkb.Frame):
         self.create_card_info_entries().pack(side=LEFT, fill=X, expand=YES, pady=5, padx=(18,0))
 
         # Buttons
-        self.create_buttonbox().pack(side=LEFT, fill=Y)
+        self.create_buttonbox().pack(side=LEFT, fill=Y, padx=(18, 0), pady=(0, 1))
 
         # Event bindings
         self.cardnumber.winfo_children()[1].bind('<BackSpace>', self._do_backspace)
@@ -104,18 +107,18 @@ class CardPayment(tkb.Frame):
     def create_long_form_entry(self, master, label, variable):
         """Create a single long form entry."""
         container = tkb.Frame(master)
-        lbl = tkb.Label(container, text=label, width=25)
+        lbl = tkb.Label(container, text=label, width=25, font=('', 10, ''))
         lbl.pack(side=TOP, anchor='w')
-        ent = tkb.Entry(container, textvariable=variable, width=25)
+        ent = tkb.Entry(container, textvariable=variable, width=25, font=('', 10, ''))
         ent.pack(side=LEFT, fill=X, expand=YES)
         return container
 
     def create_short_form_entry(self, master, label, variable):
         """Create a single short form entry."""
         container = tkb.Frame(master)
-        lbl = tkb.Label(container, text=label, width=13)
+        lbl = tkb.Label(container, text=label, width=13, font=('', 10, ''))
         lbl.pack(side=TOP, anchor='w')
-        ent = tkb.Entry(container, textvariable=variable, width=8)
+        ent = tkb.Entry(container, textvariable=variable, width=8, font=('', 10, ''))
         ent.pack(side=LEFT, fill=X, expand=YES)
         return container
 
@@ -145,11 +148,11 @@ class CardPayment(tkb.Frame):
         """Create a single item form entry."""
         container = tkb.Frame(master)
         container.pack(fill=X, expand=YES)
-        item_lbl = tkb.Label(container, text=item_label, width=2, anchor='e')
+        item_lbl = tkb.Label(container, text=item_label, width=2, anchor='e', font=('', 10, ''))
         item_lbl.pack(side=LEFT, padx=(0,3))
         item_ent = tkb.Entry(container, textvariable=item_var, width=25)
         item_ent.pack(side=LEFT, fill=X, expand=YES)
-        price_lbl = tkb.Label(container, text='$', width=2, anchor='e')
+        price_lbl = tkb.Label(container, text='$', width=2, anchor='e', font=('', 10, ''))
         price_lbl.pack(side=LEFT, padx=(0,3))
         price_ent = tkb.Entry(container, textvariable=price_var, width=10)
         price_ent.pack(side=LEFT, fill=X, expand=YES)
@@ -169,9 +172,9 @@ class CardPayment(tkb.Frame):
         """Create labels for the list header."""
         container = tkb.Frame(master)
         container.pack(fill=X, expand=YES)
-        item_col_lbl = tkb.Label(container, text='Medication')
+        item_col_lbl = tkb.Label(container, text='Medication', font=('', 10, ''))
         item_col_lbl.pack(side=LEFT, padx=(70,0))
-        price_col_lbl = tkb.Label(container, text='Price')
+        price_col_lbl = tkb.Label(container, text='Price', font=('', 10, ''))
         price_col_lbl.pack(side=RIGHT, padx=(0,25))
 
     def create_card_image(self, master):
@@ -184,7 +187,7 @@ class CardPayment(tkb.Frame):
     def create_buttonbox(self):
         """Create the application buttonbox."""
         container = tkb.Frame(self)
-        self.total_lbl = tkb.Label(container, text='$0.00', width=12, anchor='center')
+        self.total_lbl = tkb.Label(container, text='$0.00', width=12, anchor='center', font=('', 10, ''))
         self.total_lbl.pack(side=TOP)
 
         self.sub_btn = tkb.Button(
@@ -193,6 +196,7 @@ class CardPayment(tkb.Frame):
             command=lambda: self.submit_message_box(e=None),
             bootstyle='DEFAULT',
             width=9,
+            style='TButton',
         )
         self.sub_btn.pack(side=BOTTOM, pady=(0,4))
         
@@ -211,6 +215,7 @@ class CardPayment(tkb.Frame):
             command=self.open_file_folder,
             bootstyle=DARK,
             width=9,
+            style='TButton.dark'
         )
         self.files_btn.pack(side=BOTTOM, pady=(0,12))
 
@@ -220,6 +225,7 @@ class CardPayment(tkb.Frame):
             command=lambda: self.toggle_notes_window(e=None),
             bootstyle=DARK,
             width=9,
+            style='TButton.dark'
         )
         notes_btn.pack(side=BOTTOM, pady=(0,12))
 
