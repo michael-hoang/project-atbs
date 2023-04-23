@@ -13,8 +13,8 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.tooltip import ToolTip
 
 
-class MainFrame(tkb.Frame):
-    """MainFrame object that houses the side panel buttons and main display."""
+class Refill(tkb.Frame):
+    """Refill object that houses the side panel buttons and main display."""
 
     def __init__(self, root, master):
         """Initialize string variables, style, radio button states, and widgets."""
@@ -1391,6 +1391,6 @@ if __name__ == '__main__':
     app = tkb.Window(
         'Refill Coordination', 'superhero', resizable=(False, False)
     )
-    MainFrame(app, app)
+    Refill(app, app)
     app.place_window_center()
     app.mainloop()
