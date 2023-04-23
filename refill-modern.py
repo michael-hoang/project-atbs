@@ -183,13 +183,13 @@ class MainFrame(tkb.Frame):
         # Row 1
         medication_row_1 = self.create_inner_frame(medication_labelframe)
 
-        medication_entry = tkb.Entry(
+        self.medication_entry = tkb.Entry(
             master=medication_row_1,
             textvariable=self.refill_str_vars['medication_name']
         )
-        medication_entry.pack(fill=BOTH)
+        self.medication_entry.pack(fill=BOTH)
         ToolTip(
-            widget=medication_entry,
+            widget=self.medication_entry,
             text='Enter medication name',
             delay=500
         )
@@ -323,6 +323,7 @@ class MainFrame(tkb.Frame):
         self.dispense_date_calendar = tkb.DateEntry(
             master=dispense_date_row_2,
         )
+        self.dispense_date_calendar.grid(row=0, column=1, padx=(3, 0))
         self.dispense_date_calendar.entry.config(
             textvariable=self.refill_str_vars['dispense_date'],
             width=10,
@@ -330,9 +331,12 @@ class MainFrame(tkb.Frame):
             validate='all',
             validatecommand=(date_func, '%P')
         )
+        ToolTip(
+            widget=self.dispense_date_calendar.entry,
+            text='Select dispense date',
+            delay=500
+        )
         self.dispense_date_calendar.button.config(state='disabled')
-        self.dispense_date_calendar.grid(row=0, column=1, padx=(3, 0))
-        self.dispense_date_calendar.entry.delete(0, END)
         ToolTip(
             widget=self.dispense_date_calendar.button,
             text='Select dispense date',
@@ -377,7 +381,7 @@ class MainFrame(tkb.Frame):
             master=dispense_date_row_3,
             text='Yes',
             variable=self.refill_str_vars['sig_required_btn'],
-            value='Yes',
+            value='sig required',
             command=lambda: self.click_sig_required_btn(
                 'sig_required_btn', 'Yes'
             ),
@@ -389,7 +393,7 @@ class MainFrame(tkb.Frame):
             master=dispense_date_row_3,
             text='No',
             variable=self.refill_str_vars['sig_required_btn'],
-            value='No',
+            value='no sig',
             command=lambda: self.click_sig_required_btn(
                 'sig_required_btn', 'No'
             ),
@@ -400,6 +404,7 @@ class MainFrame(tkb.Frame):
         self.copy_wam_notes_btn = tkb.Button(
             master=dispense_date_labelframe,
             text='Copy WAM\n    Notes',
+            command=self.copy_formatted_wam_notes,
             state='disabled'
         )
         self.copy_wam_notes_btn.grid(
@@ -674,6 +679,9 @@ class MainFrame(tkb.Frame):
             '<Button>', self._open_calendar
         )
 
+    # Recursive loop to check the state of copy buttons
+        self.after(ms=50, func=self._check_copy_btns_state)
+
     # Widget Creation Methods
 
     def create_side_panel_btn(self, master, text):
@@ -852,6 +860,11 @@ class MainFrame(tkb.Frame):
 
         self.clear_intervention_tab()
 
+        win32clipboard.OpenClipboard(0)
+        win32clipboard.EmptyClipboard()
+        win32clipboard.CloseClipboard()
+        self.medication_entry.focus()
+
     def _update_radio_btn_states(self, btn_group, btn_clicked):
         """
         (Helper method)
@@ -925,6 +938,9 @@ class MainFrame(tkb.Frame):
             self.dispense_date_time_location_entry.grid(
                 row=0, column=2, columnspan=2, padx=(35, 0)
             )
+            self.refill_str_vars['sig_required_btn'].set(None)
+            self.dispense_date_yes_btn.config(state='disabled')
+            self.dispense_date_no_btn.config(state='disabled')
         else:
             self.dispense_date_time_to_label.config(text='')
 
@@ -934,6 +950,7 @@ class MainFrame(tkb.Frame):
         Update label text and radio button states. Display entry field.
         """
         self.refill_str_vars[btn_group].set(None)
+        self.refill_str_vars['sig_required_btn'].set(None)
         self.solid_tool_btn_states[btn_group][btn_clicked] = 0
         self.dispense_date_method_label.config(text='Dispense Date:')
         self.dispense_date_time_to_label.config(text='')
@@ -978,7 +995,7 @@ class MainFrame(tkb.Frame):
             self._update_radio_btn_states(btn_group, btn_clicked)
         else:
             self.solid_tool_btn_states[btn_group][btn_clicked] = 0
-            self.refill_str_vars[btn_group].set(None)
+            self.refill_str_vars[btn_group].set('')
 
     def click_medication_efficacy_btn(self, btn_group: str, btn_clicked: str):
         """Toggle `A lot`, `A little` and `Can't tell` buttons on or off."""
@@ -986,7 +1003,7 @@ class MainFrame(tkb.Frame):
             self._update_radio_btn_states(btn_group, btn_clicked)
         else:
             self.solid_tool_btn_states[btn_group][btn_clicked] = 0
-            self.refill_str_vars[btn_group].set(None)
+            self.refill_str_vars[btn_group].set('')
 
     def click_intervention_tool_btns(self, btn_clicked: str, list: list, value: str):
         """Append or remove values from changes or symptoms list."""
@@ -1029,7 +1046,9 @@ class MainFrame(tkb.Frame):
     def _validate_date(self, value_if_allowed):
         """Ensure DateEntry is not selected before present."""
         try:
-            selected_datetime = dt.datetime.strptime(value_if_allowed, '%m/%d/%Y')
+            selected_datetime = dt.datetime.strptime(
+                value_if_allowed, '%m/%d/%Y'
+            )
             selected_date = selected_datetime.date()
             if selected_date >= dt.date.today():
                 return True
@@ -1038,8 +1057,148 @@ class MainFrame(tkb.Frame):
 
         if value_if_allowed == '':
             return True
-        
+
         return False
+
+    def _check_wam_copy_btn_conditions(self) -> bool:
+        """Return True if Copy WAM Notes button conditions are met."""
+        dispense_method = self.refill_str_vars['dispense_method_btn'].get(
+        ).strip()
+        dispense_date = self.refill_str_vars['dispense_date'].get().strip()
+        sig_required = self.refill_str_vars['sig_required_btn'].get().strip()
+        time_location = self.refill_str_vars['time_location'].get().strip()
+        if dispense_method in ('DCS', 'FedEx'):
+            if dispense_date and sig_required:
+                return True
+            else:
+                return False
+        elif dispense_method in ('Pick up', 'Walk over'):
+            if dispense_date and time_location:
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    def _check_template_copy_btn_conditions(self) -> bool:
+        """Return True if Copy Template button conditions are met."""
+        if self.refill_str_vars['medication_name'].get().strip()\
+                and self.refill_str_vars['days_on_hand'].get().strip()\
+                and self.refill_str_vars['medication_efficacy_btn'].get()\
+                and self.refill_str_vars['spoke_with'].get().strip():
+            return True
+        else:
+            return False
+
+    def _check_copy_btns_state(self):
+        """Enable or disable the copy buttons if the conditions are met."""
+        if self._check_wam_copy_btn_conditions():
+            self.copy_wam_notes_btn.config(state='normal')
+            dispense_date_satisfied = True
+        else:
+            self.copy_wam_notes_btn.config(state='disabled')
+            dispense_date_satisfied = False
+
+        if dispense_date_satisfied and self._check_template_copy_btn_conditions():
+            self.copy_template_btn.config(state='normal')
+        else:
+            self.copy_template_btn.config(state='disabled')
+
+        self.after(ms=50, func=self._check_copy_btns_state)
+
+# Methods for copying notes to clipboard
+
+    def copy_rtf_to_clipboard(self, formatted_text: str):
+        """Copy formatted rich text to clipboard."""
+        rtf = bytearray(
+            fr'{{\rtf1\ansi\deff0 {{\fonttbl {{\f0 Arial;}}}}{{\colortbl;\red0\green0\blue0;\red255\green0\blue0;\red255\green255\blue0;}} {formatted_text}}}', 'utf8'
+        )
+        win32clipboard.OpenClipboard(0)
+        win32clipboard.EmptyClipboard()
+        win32clipboard.SetClipboardData(self.cf_rtf, rtf)
+        win32clipboard.CloseClipboard()
+
+    def copy_plaintext_to_clipboard(self, formatted_text: str):
+        """Copy formatted plain text to clipboard."""
+        win32clipboard.OpenClipboard(0)
+        win32clipboard.EmptyClipboard()
+        win32clipboard.SetClipboardText(formatted_text, win32clipboard.CF_TEXT)
+        win32clipboard.CloseClipboard()
+
+    def get_formatted_dispense_date(self) -> str:
+        """Get formatted dispense date from datetime object."""
+        dispense_date = self.refill_str_vars['dispense_date'].get().strip()
+        try:
+            disp_date_dt_obj = dt.datetime.strptime(dispense_date, '%m/%d/%Y')
+        except:
+            return ''
+
+        return f'{disp_date_dt_obj.month}/{disp_date_dt_obj.day}'
+
+    def format_wam_notes(self, format='plain') -> str:
+        """Format WAM notes with plain or rich text."""
+        dispense_method = self.refill_str_vars['dispense_method_btn'].get()
+        signature = self.refill_str_vars['sig_required_btn'].get()
+        time_location = self.refill_str_vars['time_location'].get().strip()
+        dispense_comments = self.refill_str_vars['dispense_comments'].get().capitalize()
+        if format == 'plain':
+            wam_notes = f'{dispense_method} {self.get_formatted_dispense_date()}' 
+            if dispense_method == 'DCS':
+                wam_notes += f', {signature}'
+                if dispense_comments:
+                    wam_notes += f'\n{dispense_comments}'
+                    
+            elif dispense_method == 'FedEx':
+                wam_notes += f' for {self.get_fedex_delivery_date()} delivery, {signature}'       
+                if dispense_comments:
+                    wam_notes += f'\n{dispense_comments}'
+
+            elif dispense_method == 'Pick up':
+                pickup_time = time_location
+                if pickup_time[0].isdigit():
+                    wam_notes += f' at'
+                
+                wam_notes += f' {pickup_time}'
+                if dispense_comments:
+                    wam_notes += f'\n{dispense_comments}'
+            else:
+                wam_notes += f' to {time_location.upper()}'
+                if dispense_comments:
+                    wam_notes += f'\n{dispense_comments}'
+                    
+        elif format == 'rich':
+            wam_notes = fr'{{{dispense_method}}} {{{self.get_formatted_dispense_date()}}}' 
+            if dispense_method == 'DCS':
+                wam_notes += fr', {{{signature}}}'
+                if dispense_comments:
+                    wam_notes += fr'\line{{{dispense_comments}}}'
+                
+            elif dispense_method == 'FedEx':
+                wam_notes += fr' for {{{self.get_fedex_delivery_date()}}} delivery, {{{signature}}}'     
+                if dispense_comments:
+                    wam_notes += fr'\line{{{dispense_comments}}}'
+
+            elif dispense_method == 'Pick up':
+                pickup_time = time_location
+                if pickup_time[0].isdigit():
+                    wam_notes += fr' at'
+                    
+                wam_notes += fr' {{{pickup_time}}}'
+                if dispense_comments:
+                    wam_notes += fr'\line{{{dispense_comments}}}'
+
+            else:
+                wam_notes += fr' to {{{time_location.upper()}}}'
+                if dispense_comments:
+                    wam_notes += fr'\line{{{dispense_comments}}}'
+                
+        return wam_notes
+    
+
+    def copy_formatted_wam_notes(self):
+        """Copy formatted WAM notes to clipboard."""
+        wam_notes = self.format_wam_notes(format='plain')
+        self.copy_plaintext_to_clipboard(wam_notes)
 
 
 if __name__ == '__main__':
