@@ -58,6 +58,7 @@ class WrapUp(tkb.Frame):
             master=row_3,
             width=2,
         )
+        self.days_entry.insert(0, '7')
         days_before_label = self.create_label(
             master=row_3,
             text='days before',
@@ -76,7 +77,7 @@ class WrapUp(tkb.Frame):
         copy_btn = tkb.Button(
             master=row_5,
             text='Copy',
-            command=None,
+            command=self.copy_plaintext_to_clipboard,
             width=10,
             padding=5
         )
@@ -85,7 +86,7 @@ class WrapUp(tkb.Frame):
         clear_btn = tkb.Button(
             master=row_5,
             text='Clear',
-            command=None,
+            command=self.clear,
             width=10,
             padding=5,
             style='TButton.secondary'
@@ -94,12 +95,25 @@ class WrapUp(tkb.Frame):
 
         self.after(ms=50, func=self.calculate_wrap_up_date)
 
-    def copy_plaintext_to_clipboard(self, text: str):
+        self.days_entry.bind('<FocusIn>', self.highlight_text)
+
+    def highlight_text(self, event):
+        """Highlight custom wrap up Entry box when clicked."""
+        self.days_entry.selection_range(0, END)
+
+    def copy_plaintext_to_clipboard(self):
         """Copy formatted plain text to clipboard."""
         win32clipboard.OpenClipboard(0)
         win32clipboard.EmptyClipboard()
-        win32clipboard.SetClipboardText(text, win32clipboard.CF_TEXT)
+        win32clipboard.SetClipboardText(self.next_wrap_up_date, win32clipboard.CF_TEXT)
         win32clipboard.CloseClipboard()
+
+    def clear(self):
+        """Clear all entries."""
+        self.dispense_date_entry.entry.delete(0, END)
+        self.day_supply_entry.delete(0, END)
+        self.next_wrap_up_label.config(text='Next Wrap Up Date:')
+        self.dispense_date_entry.focus()
 
     def calculate_wrap_up_date(self):
         """Calculate the next wrap up date."""
@@ -117,6 +131,7 @@ class WrapUp(tkb.Frame):
                     # if only 1 digit in the year
                     if len(dispense_date_split[2]) == 1:
                         self.next_wrap_up_label.config(text=f'Next Wrap Up Date:')
+                        self.next_wrap_up_date = ''
                         return
                 else:
                     dispense_year = dt.datetime.now().year
@@ -149,6 +164,7 @@ class WrapUp(tkb.Frame):
 
             if wrap_up_date < dt.datetime.today() and len(entered_dispense_date) < 10:
                 self.next_wrap_up_label.config(text='Next Wrap Up Date:')
+                self.next_wrap_up_date = ''
                 return
 
             formatted_wrap_up_date = wrap_up_date.strftime('%m/%d/%Y')
@@ -156,6 +172,7 @@ class WrapUp(tkb.Frame):
             self.next_wrap_up_date = formatted_wrap_up_date
         except:
             self.next_wrap_up_label.config(text='Next Wrap Up Date:')
+            self.next_wrap_up_date = ''
 
         self.after(ms=50, func=self.calculate_wrap_up_date)
 
@@ -176,7 +193,7 @@ class WrapUp(tkb.Frame):
             text=text,
             width=width,
             anchor=anchor,
-            font=('', 10, '')
+            font=('', 11, '')
         )
         if not grid:
             label.pack(side=LEFT, fill=BOTH, expand=YES, padx=(3, 0))
