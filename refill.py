@@ -14,7 +14,7 @@ from ttkbootstrap.tooltip import ToolTip
 
 
 class Refill(tkb.Frame):
-    """Refill object that houses the side panel buttons and main display."""
+    """Refill Coordination form template."""
 
     def __init__(self, root, master):
         """Initialize string variables, style, radio button states, and widgets."""
