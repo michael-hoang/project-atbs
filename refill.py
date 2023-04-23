@@ -19,7 +19,7 @@ class Refill(tkb.Frame):
     def __init__(self, root, master):
         """Initialize string variables, style, radio button states, and widgets."""
         super().__init__(master)
-        self.pack(fill=BOTH, expand=YES)
+        self.pack(side=LEFT, fill=BOTH, expand=YES)
         style = Style()
         style.configure('TLabelframe.Label', font=('', 11, 'bold'))
         style.configure('TButton', font=('', 11, ''))

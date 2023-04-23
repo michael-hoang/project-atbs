@@ -7,6 +7,7 @@ import time
 import datetime as dt
 import tkinter as tk
 import ttkbootstrap as tkb
+
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox
 from tkinter.ttk import Style
@@ -14,17 +15,19 @@ from PyPDF2 import PdfReader, PdfWriter
 from settings import Settings
 from dateutil.relativedelta import relativedelta
 
+from refill import Refill
 
 class CardPayment(tkb.Frame):
     """
     Card Payment Form interface to automate printing of filled credit card forms.
     """
 
-    def __init__(self, master):
+    def __init__(self,root, master):
         super().__init__(master, padding=(12, 10))
-        self.pack(fill=BOTH, expand=YES, padx=(0, 5))
+        self.pack(side=LEFT, fill=X, expand=YES, padx=(0, 5))
         style = Style()
         style.configure('TButton', font=('', 10, ''))
+        self.root = root
         
         # Form variables
         self.card_no = tkb.StringVar(value='')
@@ -78,15 +81,15 @@ class CardPayment(tkb.Frame):
         self.cardnumber.winfo_children()[1].bind('<Key>', self._check_card_number_format)
         self.cardnumber.winfo_children()[1].bind('<KeyRelease>', self._delete_non_numeric_char)
         self.security_ent.winfo_children()[1].bind('<KeyRelease>', self._delete_non_numeric_char_for_sec_code)
-        master.bind('<Control-Return>', self.submit_message_box)
-        # master.bind('<Control-s>', self.toggle_settings_window)
-        master.bind('<Control-n>', self.toggle_notes_window)
+        root.bind('<Control-Return>', self.submit_message_box)
+        # root.bind('<Control-s>', self.toggle_settings_window)
+        root.bind('<Control-n>', self.toggle_notes_window)
    
         # Register validation callbacks
-        self.valid_card_func = master.register(self._validate_card_number)
-        self.valid_digit_func = master.register(self._validate_only_digits)
-        self.valid_exp_func = master.register(self._validate_exp_date)
-        self.valid_sec_code_func = master.register(self._validate_security_code)
+        self.valid_card_func = root.register(self._validate_card_number)
+        self.valid_digit_func = root.register(self._validate_only_digits)
+        self.valid_exp_func = root.register(self._validate_exp_date)
+        self.valid_sec_code_func = root.register(self._validate_security_code)
 
         # Validate numeric entries
         self.cardnumber.winfo_children()[1].configure(validate='focus', validatecommand=(self.valid_card_func, '%P'))
@@ -200,14 +203,15 @@ class CardPayment(tkb.Frame):
         )
         self.sub_btn.pack(side=BOTTOM, pady=(0,4))
         
-        # set_btn = tkb.Button(
-        #     master=container,
-        #     text="Settings",
-        #     command=lambda: self.toggle_settings_window(e=None),
-        #     bootstyle=DARK,
-        #     width=9,
-        # )
-        # set_btn.pack(side=BOTTOM, pady=(0,12))
+        set_btn = tkb.Button(
+            master=container,
+            text="Settings",
+            command=lambda: self.toggle_settings_window(e=None),
+            bootstyle=DARK,
+            width=9,
+            style='TButton.dark'
+        )
+        set_btn.pack(side=BOTTOM, pady=(0,12))
 
         self.files_btn = tkb.Button(
             master=container,
@@ -577,13 +581,13 @@ class CardPayment(tkb.Frame):
         if self.notes_isHidden:
             self.notes_isHidden = False
             self.lift()
-            self.master.attributes('-disabled', 0)
+            self.root.attributes('-disabled', 0)
             self.focus()
             self.notes_window.withdraw()
         else:
             self.center_child_to_parent(self.notes_window, self.master, 'notes')
             self.notes_isHidden = True
-            self.master.attributes('-disabled', 1)
+            self.root.attributes('-disabled', 1)
             self.notes_window.attributes('-topmost', 1)
             self.notes_window.deiconify()
             self.notes_text_box.focus()
@@ -606,13 +610,13 @@ class CardPayment(tkb.Frame):
         if self.settings_isHidden:
             self.settings_isHidden = False
             self.lift()
-            self.master.attributes('-disabled', 0)
+            self.root.attributes('-disabled', 0)
             self.focus()
             self.settings_window.withdraw()
         else:
             self.center_child_to_parent(self.settings_window, self.master, 'settings')
             self.settings_isHidden = True
-            self.master.attributes('-disabled', 1)
+            self.root.attributes('-disabled', 1)
             self.settings_window.attributes('-topmost', 1)
             self.settings_window.deiconify()
             self.settings_window.focus()
@@ -646,6 +650,15 @@ if __name__ == '__main__':
     app = tkb.Window(
         'Card Payment Form', 'superhero', resizable=(False, False)
     )
-    CardPayment(app)
+    app.config(padx=25, pady=25)
     app.place_window_center()
+
+    refill_frame = tkb.Labelframe(app, text='Refill Coordination')
+    refill_frame.pack(side=LEFT)
+    refill = Refill(app, refill_frame)
+
+    cardpayment_frame = tkb.Labelframe(app, text='Card Payment')
+    cardpayment_frame.pack(side=LEFT, padx=(25, 0))
+    cardpayment = CardPayment(app, cardpayment_frame)
+
     app.mainloop()
