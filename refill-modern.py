@@ -26,6 +26,9 @@ class MainFrame(tkb.Frame):
         style.configure('Roundtoggle.Toolbutton', font=('', 11, ''))  # broken
         style.configure('TNotebook.Tab', font=('', 9, ''))
 
+        # Initialize win32clipboard
+        self.cf_rtf = win32clipboard.RegisterClipboardFormat('Rich Text Format')
+
         # Initialize string variables for solid toolbuttons (radiobuttons)
         refill_str_var_list = [
             'medication_name', 'days_on_hand', 'inj_cyc_btn',
@@ -128,24 +131,24 @@ class MainFrame(tkb.Frame):
         # ===== NOTEBOOK ===== #
 
         # Notebook
-        notebook = tkb.Notebook(main_display_frame, style='TNotebook.Tab')
-        notebook.grid(row=1, column=0, columnspan=3)
+        self.notebook = tkb.Notebook(main_display_frame, style='TNotebook.Tab')
+        self.notebook.grid(row=1, column=0, columnspan=3)
         clear_btn.lift()
 
         # ========================== REFILL ===================================#
 
         # Refill display frame (tab)
-        refill_display_frame = tkb.Frame(
-            master=notebook,
+        self.refill_display_frame = tkb.Frame(
+            master=self.notebook,
             padding=20,
         )
-        refill_display_frame.pack()
-        notebook.add(refill_display_frame, text='Refill')
+        self.refill_display_frame.pack()
+        self.notebook.add(self.refill_display_frame, text='Refill')
 
         # ===== REFILL QUESTIONS ===== #
 
         # Labelframes
-        refill_questions_frame = tkb.Frame(refill_display_frame)
+        refill_questions_frame = tkb.Frame(self.refill_display_frame)
         refill_questions_frame.pack(side=LEFT)
 
         medication_labelframe = self.create_labelframe(
@@ -167,6 +170,7 @@ class MainFrame(tkb.Frame):
         self.copy_template_btn = tkb.Button(
             master=refill_questions_frame,
             text='Copy Template',
+            command=self.copy_formatted_template_notes,
             state='disabled'
         )
         self.copy_template_btn.grid(
@@ -222,7 +226,7 @@ class MainFrame(tkb.Frame):
             master=medication_on_hand_row_2,
             text='Injection',
             variable=self.refill_str_vars['inj_cyc_btn'],
-            value='Injection',
+            value='Injection is due',
             command=lambda: self.click_injection_cycle_btn(
                 'inj_cyc_btn', 'Injection', 'is due'
             ),
@@ -234,7 +238,7 @@ class MainFrame(tkb.Frame):
             master=medication_on_hand_row_2,
             text='Cycle',
             variable=self.refill_str_vars['inj_cyc_btn'],
-            value='Cycle',
+            value='Next cycle starts',
             command=lambda: self.click_injection_cycle_btn(
                 'inj_cyc_btn', 'Cycle', 'starts'
             ),
@@ -454,7 +458,7 @@ class MainFrame(tkb.Frame):
             master=medication_efficacy_row_1,
             text='A lot',
             variable=self.refill_str_vars['medication_efficacy_btn'],
-            value='A lot',
+            value='Yes, it\'s working a lot.',
             command=lambda: self.click_medication_efficacy_btn(
                 'medication_efficacy_btn', 'A lot'
             ),
@@ -465,7 +469,7 @@ class MainFrame(tkb.Frame):
             master=medication_efficacy_row_1,
             text='A little',
             variable=self.refill_str_vars['medication_efficacy_btn'],
-            value='A little',
+            value='Yes, it\'s working a little.',
             command=lambda: self.click_medication_efficacy_btn(
                 'medication_efficacy_btn', 'A little'
             ),
@@ -476,7 +480,7 @@ class MainFrame(tkb.Frame):
             master=medication_efficacy_row_1,
             text='Can\'t tell',
             variable=self.refill_str_vars['medication_efficacy_btn'],
-            value='Can\'t tell',
+            value='No, I don\'t feel a difference.',
             command=lambda: self.click_medication_efficacy_btn(
                 'medication_efficacy_btn', 'Can\'t tell'
             ),
@@ -502,11 +506,11 @@ class MainFrame(tkb.Frame):
 
         # Intervention display frame (tab)
         intervention_display_frame = tkb.Frame(
-            master=notebook,
+            master=self.notebook,
             padding=20,
         )
         intervention_display_frame.pack()
-        notebook.add(intervention_display_frame, text='Intervention')
+        self.notebook.add(intervention_display_frame, text='Intervention')
 
         # ===== INTERVENTION QUESTIONS ===== #
 
@@ -863,6 +867,7 @@ class MainFrame(tkb.Frame):
         win32clipboard.OpenClipboard(0)
         win32clipboard.EmptyClipboard()
         win32clipboard.CloseClipboard()
+        self.notebook.select(self.refill_display_frame)
         self.medication_entry.focus()
 
     def _update_radio_btn_states(self, btn_group, btn_clicked):
@@ -938,7 +943,7 @@ class MainFrame(tkb.Frame):
             self.dispense_date_time_location_entry.grid(
                 row=0, column=2, columnspan=2, padx=(35, 0)
             )
-            self.refill_str_vars['sig_required_btn'].set(None)
+            self.refill_str_vars['sig_required_btn'].set('')
             self.dispense_date_yes_btn.config(state='disabled')
             self.dispense_date_no_btn.config(state='disabled')
         else:
@@ -1194,11 +1199,192 @@ class MainFrame(tkb.Frame):
                 
         return wam_notes
     
+    def get_notes_from_text_box(self, text_widget: tk.Text) -> str:
+        """Retrieve contents of Changes Text widget."""
+        contents =  text_widget.get(1.0, 'end').strip()
+        if contents == 'Notes':
+            contents = ''
+        elif contents:
+            contents = contents[0].capitalize() + contents[1:]
+            if contents[-1] != '.':
+                contents += '.'
+      
+        return contents
+    
+    def format_template_notes(self) -> str:
+        """Format Template notes with rich text."""
+        medication = self.medication_entry.get().strip().capitalize()
+        dispense_method = self.refill_str_vars['dispense_method_btn'].get().strip()
+
+
+        if dispense_method == 'Pick up':
+            hipaa_verification = 'Name, DOB, Drug Prescribed'
+        else:
+            hipaa_verification = 'Name, DOB, Address, Drug Prescribed'
+        
+        ready_to_fill = 'Yes, refill initiated in WAM.'
+        days_supply = self.refill_str_vars['days_on_hand'].get().strip()
+        injection_cycle = self.refill_str_vars['inj_cyc_btn'].get()
+        injection_cycle_date = self.refill_str_vars['inj_cyc_start_date'].get().strip()
+        if injection_cycle_date:
+            next_injection_cycle_due = f' {injection_cycle} {injection_cycle_date}'
+        else:
+            next_injection_cycle_due = ''
+
+        delivery_pickup = dispense_method
+        if delivery_pickup == 'Walk over':
+            delivery_pickup = 'Clinic delivery'
+
+        dispense_date = self.format_wam_notes(format='rich')
+        allergies_reviewed = 'Yes'
+        medication_review = 'Yes,'
+        spoke_with = self.refill_str_vars['spoke_with'].get().strip()
+        if spoke_with.lower() in ('patient', 'the patient', 'pt', 'pateint', 'thepatient', 'patients'):
+            medication_review_confirmation = 'patient confirmation.'
+        else:
+            medication_review_confirmation = fr'other.\
+Confirmed with {spoke_with}'
+  
+        medical_conditions_review = 'Yes'
+        continuation_therapy = 'Yes'
+        med_working = self.refill_str_vars['medication_efficacy_btn'].get()
+        goal = 'Yes' 
+        user = 'USERNAME' # need to change
+        # Intervention variables
+        changes = 'None' 
+        new_allergies = 'No' 
+        new_medications = 'No'
+        medical_condition_changes = 'None'
+        review_symptoms = 'N/A'
+        intervention_necessary = 'No'
+        adherence = 'ADHERENT'
+        embedded_adherence_notes = ''
+        speak_to_rph = 'No'
+
+        if self.intervention_toggle_state.get():
+            speak_to_rph = 'Yes, intervention necessary.'
+            if self.changes:
+                number_of_different_changes = len(self.changes)
+                # Move 'Other' to the end of list
+                if 'Other' in self.changes and number_of_different_changes > 1:
+                    self.changes.append(self.changes.pop(self.changes.index('Other')))
+                changes = ''
+                if number_of_different_changes == 1:
+                    changes = self.changes[0]
+                elif number_of_different_changes == 2:
+                    changes = f'{self.changes[0]} and {self.changes[1]}'
+                else:
+                    for _change in self.changes:
+                        if _change == self.changes[-1]:
+                            changes += ', and '
+                        else:
+                            changes += ', '
+                        changes += _change
+                    changes = changes[2:]
+                
+                changes_notes = self.get_notes_from_text_box(self.changes_textbox)
+                if changes_notes:
+                    changes += f'\line\line\t {changes_notes}'
+
+            if self.intervention_int_vars['new_allergies_btn'].get():
+                new_allergies = 'Yes - updated new allergies'
+            if self.intervention_int_vars['medication_profile_btn'].get():
+                new_medications = 'Yes'
+            if self.intervention_int_vars['medical_condition_btn'].get():
+                medical_condition_changes = 'Yes - Noted new additions of medical conditions and appropriately documented.'
+            else:
+                medical_condition_changes = 'No'
+            if self.symptoms:
+                number_of_different_symptoms = len(self.symptoms)
+                # Move 'Other' to the end of the list
+                if 'Other' in self.symptoms and number_of_different_symptoms > 1:
+                    self.symptoms.append(self.symptoms.pop(self.symptoms.index('Other')))
+                review_symptoms = fr''
+                if number_of_different_symptoms == 1:
+                    review_symptoms = self.symptoms[0]
+                elif number_of_different_symptoms == 2:
+                    review_symptoms = fr'{{{self.symptoms[0]}}} and {{{self.symptoms[1]}}}'
+                else:
+                    for _symptom in self.symptoms:
+                        if _symptom == self.symptoms[-1]:
+                            review_symptoms += ', and '
+                        else:
+                            review_symptoms += ', '
+                        review_symptoms += _symptom
+                    review_symptoms = review_symptoms[2:]
+                
+                symptom_notes = self.get_notes_from_text_box(self.side_effects_textbox)
+                if symptom_notes:
+                    review_symptoms += fr'\line\tab {symptom_notes}'
+                review_symptoms += fr'\line\line\tab If side-effect reported, documented by tech. If documented by tech, triage to RPh? Yes.\line'
+                intervention_necessary = 'Yes. Routed to RPH.'
+
+            adherence_notes = self.get_notes_from_text_box(self.adherence_textbox)
+            if adherence_notes:
+                adherence = 'NOT ADHERENT'
+                embedded_adherence_notes = fr'\line\line\tab {adherence_notes}'
+
+        template = fr'\b\fs26Refill Reminder\b0\fs24\
+\
+Medication: {{{medication}}}\
+\
+Methods of HIPAA Verification: {{{hipaa_verification}}}\
+\
+Changes Since Last Visit: {{{changes}}}\
+\
+Is patient ready to fill? {{{ready_to_fill}}}\
+\
+Patient has {{{days_supply}}} days of medication on hand.{{{next_injection_cycle_due}}}\
+Please select the following: {{{delivery_pickup}}}\
+Ready to dispense date: {{{dispense_date}}}\
+\
+\b\fs26 Allergies Review \b0\fs24\
+Were allergies to medications reviewed: {{{allergies_reviewed}}}\
+Were there any new allergies: {{{new_allergies}}}\
+\
+\b\fs26 Medication Review \b0\fs24\
+Medication review was performed: {{{medication_review}}} through {{{medication_review_confirmation}}}\
+\
+Is patient taking any new medications, OTCs, or herbal supplements? {{{new_medications}}}\
+\
+\b\fs26 Medical Conditions Review \b0\fs24\
+Medical conditions review was performed: {{{medical_conditions_review}}}\
+Were there changes to the medical condition? {{{medical_condition_changes}}}\
+\
+\b\fs26 Is continuation of therapy appropriate: \b0\fs24 {{{continuation_therapy}}}\
+\
+\b\fs26 Do you feel like this medication is working for you:\b0\fs24  {{{med_working}}}\
+\
+Has the patient reported experiencing any of the following? {{{review_symptoms}}}\
+Is intervention necessary (if yes for any above): {{{intervention_necessary}}}\
+\
+Patient is {{{adherence}}} to therapy.{{{embedded_adherence_notes}}}\
+\
+***\
+\
+GOAL: Is patient meeting goal? {{{goal}}}\
+\
+Does patient need to speak to a pharmacist? {{{speak_to_rph}}}\
+\
+{{{user}}}\
+Specialty Pharmacy'
+
+        if self.intervention_toggle_state.get():
+            additional_notes = self.get_notes_from_text_box(self.additional_notes_textbox)
+            if additional_notes:
+                template = fr'{{{additional_notes}}}\line\line{{{template}}}'
+
+        return template
 
     def copy_formatted_wam_notes(self):
         """Copy formatted WAM notes to clipboard."""
         wam_notes = self.format_wam_notes(format='plain')
         self.copy_plaintext_to_clipboard(wam_notes)
+
+    def copy_formatted_template_notes(self):
+        """Copy formatted Template notes to clipboard."""
+        template = self.format_template_notes()
+        self.copy_rtf_to_clipboard(template)
 
 
 if __name__ == '__main__':
