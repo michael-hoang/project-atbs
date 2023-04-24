@@ -1,13 +1,16 @@
 import ttkbootstrap as tkb
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox
+from tkinter.ttk import Style
 
 
 class Settings(tkb.Frame):
 
     def __init__(self, master):
-        super().__init__(master, padding=10)
+        super().__init__(master, padding=12)
         self.pack(fill=BOTH, expand=YES)
+        style = Style()
+        style.configure('TRadiobutton', font=('', 10, ''))
 
         # Settings
         self.settings_labelframe = self.create_labelframe(
@@ -26,15 +29,16 @@ class Settings(tkb.Frame):
 
         # Row 2
 
-        row_2 = self.create_inner_frame(master=self.settings_labelframe)
+        settings_row_2 = self.create_inner_frame(
+            master=self.settings_labelframe)
 
         print_blank_form_label = self.create_label(
-            master=row_2,
+            master=settings_row_2,
             text='Print blank card payment forms',
         )
 
         print_blank_form_btn = self.create_solid_btn(
-            master=row_2,
+            master=settings_row_2,
             text='Print',
             command=None,
             width=7
@@ -43,30 +47,50 @@ class Settings(tkb.Frame):
 
         # Row 3
 
-        row_3 = self.create_inner_frame(master=self.settings_labelframe)
+        settings_row_3 = self.create_inner_frame(
+            master=self.settings_labelframe)
 
         change_user_label = self.create_label(
-            master=row_3,
+            master=settings_row_3,
             text='Change user'
         )
 
         change_user_btn = self.create_solid_btn(
-            master=row_3,
+            master=settings_row_3,
             text='Edit',
             command=None,
-             width=7,
-             state='disabled'
+            width=7,
+            state='disabled'
         )
         change_user_btn.pack_configure(side=RIGHT, padx=(10, 0))
 
         # Mode
 
-        mode_label_frame = self.create_labelframe(
+        self.mode_str_var = tkb.StringVar()
+
+        mode_labelframe = self.create_labelframe(
             master=self,
             text='Mode',
             row=1,
-            padding=False
         )
+
+        payment_mode = self.create_radio_btn(
+            master=mode_labelframe,
+            text='Payment',
+            command=None,
+            variable=self.mode_str_var,
+            value='Payment'
+        )
+
+        refill_mode = self.create_radio_btn(
+            master=mode_labelframe,
+            text='Refill',
+            command=None,
+            variable=self.mode_str_var,
+            value='Refill'
+        )
+
+        refill_mode.pack_configure(padx=(20, 0))
 
         # Theme menu
         themes = ['superhero', 'solar', 'darkly', 'cyborg', 'vapor'
@@ -74,17 +98,58 @@ class Settings(tkb.Frame):
                   'minty', 'pulse', 'sandstone', 'united', 'yeti',
                   'morph', 'simplex', 'cerculean']
 
-        theme_label_Frame = self.create_labelframe(
+        theme_labelframe = self.create_labelframe(
             master=self,
             text='Theme',
             row=2,
-            padding=False
         )
 
-        self.create_combobox(theme_label_Frame, themes, 0)
+        self.create_combobox(theme_labelframe, themes, 0)
+
+        # Info
+
+        info_labelframe = self.create_labelframe(
+            master=self,
+            text='Info',
+            row=3,
+        )
+
+        # Row 1
+
+        info_row_1 = self.create_inner_frame(info_labelframe)
+
+        title_label = self.create_label(
+            master=info_row_1,
+            text='Card Payment App'
+        )
+
+        # Ok button
+        ok_btn = tkb.Button(
+            master=self,
+            text='OK',
+            command=None,
+            width=10,
+        )
+
+        ok_btn.grid(row=4, pady=(10, 0))
+
+    def check_mode(self):
+        """Check if changing mode conditions are satisfied."""
+        selected_mode = self.mode_str_var.get()
+        if selected_mode == 'Refill':
+            # if user,
+            #   pass
+            # else,
+            #   prompt user setup()
+            #   if still no user
+            #       select Payment mode
+
+            pass
+
+    # Widget creation methods
 
     def create_labelframe(self, master, text, row, col=0, sticky='we', padding=True):
-        """Create a label frame."""
+        """Create a label frame grid."""
         labelframe = tkb.Labelframe(
             master=master,
             text=text,
@@ -106,7 +171,7 @@ class Settings(tkb.Frame):
 
         return frame
 
-    def create_label(self, master, text, anchor='e',  width=DEFAULT, padding=True, grid=False):
+    def create_label(self, master, text, anchor='e',  width=DEFAULT, grid=False):
         """Create a label."""
         label = tkb.Label(
             master=master,
@@ -116,9 +181,7 @@ class Settings(tkb.Frame):
             font=('', 10, '')
         )
         if not grid:
-            label.pack(side=LEFT, padx=(3, 0))
-            if not padding:
-                label.pack_configure(padx=0)
+            label.pack(side=LEFT)
 
         return label
 
@@ -146,6 +209,20 @@ class Settings(tkb.Frame):
 
         solid_btn.pack(side=LEFT)
         return solid_btn
+
+    def create_radio_btn(self, master, text, command, variable, value):
+        """Create a radiobutton."""
+        radiobutton = tkb.Radiobutton(
+            master=master,
+            text=text,
+            command=command,
+            variable=variable,
+            value=value,
+            style='TRadiobutton'
+        )
+
+        radiobutton.pack(side=LEFT)
+        return radiobutton
 
     def create_combobox(self, master, options: list, default_index: int):
         """Create a combobox drop down menu."""
