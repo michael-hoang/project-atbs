@@ -185,37 +185,59 @@ class Settings(tkb.Frame):
 
     def _user_setup_window(self):
         """Create user setup window."""
-        setup_window = tkb.Toplevel(self)
-        setup_window.title('User Setup')
-        setup_window.config(padx=25, pady=15)
+        self.setup_window = tkb.Toplevel(self)
+        self.setup_window.title('User Setup')
+        self.setup_window.config(padx=25, pady=15)
+        self.setup_window.resizable(False, False)
 
-        row_1 = self.create_inner_frame(setup_window)
+        row_1 = self.create_inner_frame(self.setup_window)
 
         self.create_label(
             master=row_1,
             text='First Name:'
         )
 
-        self.create_short_entry(master=row_1, width=20)
+        self.first_name_entry = self.create_short_entry(master=row_1, width=20)
 
-        row_2 = self.create_inner_frame(setup_window)
+        row_2 = self.create_inner_frame(self.setup_window)
 
         self.create_label(
             master=row_2,
             text='Last Name:'
         )
 
-        self.create_short_entry(master=row_2, width=20)
+        self.last_name_entry = self.create_short_entry(master=row_2, width=20)
 
         ok_btn = self.create_solid_btn(
-            master=setup_window,
+            master=self.setup_window,
             text='OK',
-            command=None,
+            command=self.user_setup_ok_btn_command,
             width=7
         )
         ok_btn.pack_configure(side=BOTTOM, pady=(15, 0))
 
+        self.cardpayment.root.attributes('-disabled', 1)
+        self.setup_window.wm_transient(self)
+        self.setup_window.deiconify()
+        self.first_name_entry.focus()
+
     # Button commands
+
+    def user_setup_ok_btn_command(self):
+        """Confirm user setup."""
+        first_name = self.first_name_entry.get().strip()
+        last_name = self.last_name_entry.get().strip()
+        if first_name and last_name:
+            first_name_title = first_name.title()
+            last_name_title = last_name.title()
+            user_data = {
+                'first_name': first_name_title,
+                'last_name': last_name_title,
+            }
+            self.current_settings['user'] = user_data
+            self.cardpayment.root.attributes('-disabled', 0)
+            self.cardpayment.root.deiconify()
+            self.setup_window.destroy()
 
     def save_settings(self):
         """Save current user settings to json file."""
@@ -241,8 +263,8 @@ class Settings(tkb.Frame):
             if self.current_settings['user']:
                 pass
 
-            # else:
-                # prompt user setup()
+            else:
+                self._user_setup_window()
                 #   if still no user
                 #       select Payment mode
 
@@ -347,6 +369,8 @@ class Settings(tkb.Frame):
         entry.pack(side=LEFT, padx=(3, 0))
         if not padding:
             entry.pack_configure(padx=0)
+
+        return entry
 
 
 if __name__ == '__main__':
