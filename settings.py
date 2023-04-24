@@ -183,6 +183,38 @@ class Settings(tkb.Frame):
         """Set user settings from settings.json file."""
         self.cardpayment._set_always_on_top_setting(self.current_settings)
 
+    def _user_setup_window(self):
+        """Create user setup window."""
+        setup_window = tkb.Toplevel(self)
+        setup_window.title('User Setup')
+        setup_window.config(padx=25, pady=15)
+
+        row_1 = self.create_inner_frame(setup_window)
+
+        self.create_label(
+            master=row_1,
+            text='First Name:'
+        )
+
+        self.create_short_entry(master=row_1, width=20)
+
+        row_2 = self.create_inner_frame(setup_window)
+
+        self.create_label(
+            master=row_2,
+            text='Last Name:'
+        )
+
+        self.create_short_entry(master=row_2, width=20)
+
+        ok_btn = self.create_solid_btn(
+            master=setup_window,
+            text='OK',
+            command=None,
+            width=7
+        )
+        ok_btn.pack_configure(side=BOTTOM, pady=(15, 0))
+
     # Button commands
 
     def save_settings(self):
@@ -206,16 +238,15 @@ class Settings(tkb.Frame):
         """Check if changing mode conditions are satisfied."""
         selected_mode = self.mode_str_var.get()
         if selected_mode == 'Refill':
-            # if user,
-            #   pass
-            # else,
-            #   prompt user setup()
-            #   if still no user
-            #       select Payment mode
+            if self.current_settings['user']:
+                pass
 
-            pass
+            # else:
+                # prompt user setup()
+                #   if still no user
+                #       select Payment mode
 
-    # Widget creation methods
+                # Widget creation methods
 
     def create_labelframe(self, master, text, row, col=0, sticky='we', padding=True):
         """Create a label frame grid."""
@@ -304,9 +335,25 @@ class Settings(tkb.Frame):
         combobox.current(default_index)
         combobox.pack(fill=X)
 
+    def create_short_entry(self, master, width=15, padding=True, text_var=None, state='normal'):
+        """Create an entry field."""
+        entry = tkb.Entry(
+            master=master,
+            width=width,
+            textvariable=text_var,
+            state=state
+        )
+
+        entry.pack(side=LEFT, padx=(3, 0))
+        if not padding:
+            entry.pack_configure(padx=0)
+
 
 if __name__ == '__main__':
+    from cardpayment import CardPayment
 
     app = tkb.Window("Settings", "superhero")
-    Settings(app)
+    cardpayment = CardPayment(app, app)
+    a = Settings(app, cardpayment)
+    a._user_setup_window()
     app.mainloop()
