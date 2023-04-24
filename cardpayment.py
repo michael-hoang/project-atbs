@@ -585,7 +585,7 @@ class CardPayment(tkb.Frame):
             self.focus()
             self.notes_window.withdraw()
         else:
-            self.center_child_to_parent(self.notes_window, self.master, 'notes')
+            self.center_child_to_parent(self.notes_window, self.root, 'notes')
             self.notes_isHidden = True
             self.root.attributes('-disabled', 1)
             self.notes_window.attributes('-topmost', 1)
@@ -614,7 +614,7 @@ class CardPayment(tkb.Frame):
             self.focus()
             self.settings_window.withdraw()
         else:
-            self.center_child_to_parent(self.settings_window, self.master, 'settings')
+            self.center_child_to_parent(self.settings_window, self, 'settings')
             self.settings_isHidden = True
             self.root.attributes('-disabled', 1)
             self.settings_window.attributes('-topmost', 1)

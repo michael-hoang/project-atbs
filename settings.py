@@ -1,308 +1,165 @@
-from pathlib import Path
-from tkinter import PhotoImage
-import ttkbootstrap as ttk
+import ttkbootstrap as tkb
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox
 
 
-PATH = Path(__file__).parent / 'assets'
-
-
-class Settings(ttk.Frame):
+class Settings(tkb.Frame):
 
     def __init__(self, master):
-        super().__init__(master)
+        super().__init__(master, padding=10)
         self.pack(fill=BOTH, expand=YES)
 
-        self.images = [
-            PhotoImage(
-                name='reset', 
-                file=PATH / 'icons8_reset_24px.png'),
-            PhotoImage(
-                name='reset-small', 
-                file=PATH / 'icons8_reset_16px.png'),
-            PhotoImage(
-                name='submit', 
-                file=PATH / 'icons8_submit_progress_24px.png'),
-            PhotoImage(
-                name='question', 
-                file=PATH / 'icons8_question_mark_16px.png'),
-            PhotoImage(
-                name='direction', 
-                file=PATH / 'icons8_move_16px.png'),
-            PhotoImage(
-                name='bluetooth', 
-                file=PATH / 'icons8_bluetooth_2_16px.png'),
-            PhotoImage(
-                name='buy', 
-                file=PATH / 'icons8_buy_26px_2.png'),
-            PhotoImage(
-                name='mouse', 
-                file=PATH / 'magic_mouse.png')
-        ]
-
-        for i in range(3):
-            self.columnconfigure(i, weight=1)
-        self.rowconfigure(0, weight=1)
-
-        # column 1
-        col1 = ttk.Frame(self, padding=10)
-        col1.grid(row=0, column=0, sticky=NSEW)
-
-        # device info
-        dev_info = ttk.Labelframe(col1, text='Device Info', padding=10)
-        dev_info.pack(side=TOP, fill=BOTH, expand=YES)
-
-        # header
-        dev_info_header = ttk.Frame(dev_info, padding=5)
-        dev_info_header.pack(fill=X)
-
-        btn = ttk.Button(
-            master=dev_info_header,
-            image='reset',
-            bootstyle=LINK,
-            command=self.callback
+        # Settings
+        self.settings_labelframe = self.create_labelframe(
+            master=self,
+            text='Settings',
+            row=0,
         )
-        btn.pack(side=LEFT)
 
-        lbl = ttk.Label(dev_info_header, text='Model 2009, 2xAA Batteries')
-        lbl.pack(side=LEFT, fill=X, padx=15)
-
-        btn = ttk.Button(
-            master=dev_info_header,
-            image='submit',
-            bootstyle=LINK,
-            command=self.callback
+        always_top_int_var = tkb.IntVar()
+        always_top_btn = self.create_toggle_btn(
+            master=self.settings_labelframe,
+            text='Always on top',
+            variable=always_top_int_var
         )
-        btn.pack(side=LEFT)
+        always_top_btn.pack_configure(anchor='w')
 
-        # image
-        ttk.Label(dev_info, image='mouse').pack(fill=X)
+        # Row 2
 
-        # progress message
-        self.setvar('progress', 'Battery is discharging.')
-        lbl = ttk.Label(
-            master=dev_info,
-            textvariable='progress',
-            font='Helvetica 8',
-            anchor=CENTER
+        row_2 = self.create_inner_frame(master=self.settings_labelframe)
+
+        print_blank_form_label = self.create_label(
+            master=row_2,
+            text='Print blank card payment forms',
         )
-        lbl.pack(fill=X)
 
-        # licence info
-        lic_info = ttk.Labelframe(col1, text='License Info', padding=20)
-        lic_info.pack(side=TOP, fill=BOTH, expand=YES, pady=(10, 0))
-        lic_info.rowconfigure(0, weight=1)
-        lic_info.columnconfigure(0, weight=2)
-
-        lic_title = ttk.Label(
-            master=lic_info,
-            text='Trial Version, 28 days left',
-            anchor=CENTER
+        print_blank_form_btn = self.create_solid_btn(
+            master=row_2,
+            text='Print',
+            command=None,
+            width=7
         )
-        lic_title.pack(fill=X, pady=(0, 20))
+        print_blank_form_btn.pack_configure(side=RIGHT, padx=(10, 0))
 
-        lbl = ttk.Label(
-            master=lic_info,
-            text='Mouse serial number:',
-            anchor=CENTER,
-            font='Helvetica 8'
+        # Row 3
+
+        row_3 = self.create_inner_frame(master=self.settings_labelframe)
+
+        change_user_label = self.create_label(
+            master=row_3,
+            text='Change user'
         )
-        lbl.pack(fill=X)
-        self.setvar('license', 'dtMM2-XYZGHIJKLMN3')
 
-        lic_num = ttk.Label(
-            master=lic_info,
-            textvariable='license',
-            bootstyle=PRIMARY,
-            anchor=CENTER
+        change_user_btn = self.create_solid_btn(
+            master=row_3,
+            text='Edit',
+            command=None,
+             width=7,
+             state='disabled'
         )
-        lic_num.pack(fill=X, pady=(0, 20))
+        change_user_btn.pack_configure(side=RIGHT, padx=(10, 0))
 
-        buy_now = ttk.Button(
-            master=lic_info,
-            image='buy',
-            text='Buy now',
-            compound=BOTTOM,
-            command=self.callback
+        # Mode
+
+        mode_label_frame = self.create_labelframe(
+            master=self,
+            text='Mode',
+            row=1,
+            padding=False
         )
-        buy_now.pack(padx=10, fill=X)
 
-        # Column 2
-        col2 = ttk.Frame(self, padding=10)
-        col2.grid(row=0, column=1, sticky=NSEW)
+        # Theme menu
+        themes = ['superhero', 'solar', 'darkly', 'cyborg', 'vapor'
+                  'cosmo', 'flatly', 'journal', 'litera', 'lumen',
+                  'minty', 'pulse', 'sandstone', 'united', 'yeti',
+                  'morph', 'simplex', 'cerculean']
 
-        # scrolling
-        scrolling = ttk.Labelframe(col2, text='Scrolling', padding=(15, 10))
-        scrolling.pack(side=TOP, fill=BOTH, expand=YES)
-
-        op1 = ttk.Checkbutton(scrolling, text='Scrolling', variable='op1')
-        op1.pack(fill=X, pady=5)
-
-        # no horizontal scrolling
-        op2 = ttk.Checkbutton(
-            master=scrolling,
-            text='No horizontal scrolling',
-            variable='op2'
+        theme_label_Frame = self.create_labelframe(
+            master=self,
+            text='Theme',
+            row=2,
+            padding=False
         )
-        op2.pack(fill=X, padx=(20, 0), pady=5)
 
-        btn = ttk.Button(
-            master=op2,
-            image='question',
-            bootstyle=LINK,
-            command=self.callback
+        self.create_combobox(theme_label_Frame, themes, 0)
+
+    def create_labelframe(self, master, text, row, col=0, sticky='we', padding=True):
+        """Create a label frame."""
+        labelframe = tkb.Labelframe(
+            master=master,
+            text=text,
+            # style='TLabelframe.Label',
+            padding=15,
         )
-        btn.pack(side=RIGHT)
 
-        # inverse
-        op3 = ttk.Checkbutton(
-            master=scrolling,
-            text='Inverse scroll directcion vertically',
-            variable='op3'
+        labelframe.grid(row=row, column=col, sticky=sticky, pady=(0, 10))
+        if not padding:
+            labelframe.grid_configure(pady=0)
+
+        return labelframe
+
+    def create_inner_frame(self, master, grid=False):
+        """Create an inner frame."""
+        frame = tkb.Frame(master)
+        if not grid:
+            frame.pack(anchor='w', fill=BOTH, pady=(10, 0))
+
+        return frame
+
+    def create_label(self, master, text, anchor='e',  width=DEFAULT, padding=True, grid=False):
+        """Create a label."""
+        label = tkb.Label(
+            master=master,
+            text=text,
+            width=width,
+            anchor=anchor,
+            font=('', 10, '')
         )
-        op3.pack(fill=X, padx=(20, 0), pady=5)
+        if not grid:
+            label.pack(side=LEFT, padx=(3, 0))
+            if not padding:
+                label.pack_configure(padx=0)
 
-        btn = ttk.Button(
-            master=op3,
-            image='direction',
-            bootstyle=LINK,
-            command=self.callback
+        return label
+
+    def create_toggle_btn(self, master, text: str, variable: tkb.IntVar):
+        """Create a toggle button ."""
+        toggle_btn = tkb.Checkbutton(
+            master=master,
+            text=text,
+            bootstyle='round-toggle',
+            variable=variable,
         )
-        btn.pack(side=RIGHT)
 
-        # Scroll only vertical or horizontal
-        op4 = ttk.Checkbutton(
-            master=scrolling,
-            text='Scroll only vertical or horizontal',
-            state=DISABLED
+        toggle_btn.pack(side=TOP)
+        return toggle_btn
+
+    def create_solid_btn(self, master, text, command, width=DEFAULT, state='normal'):
+        """Create a solid button."""
+        solid_btn = tkb.Button(
+            master=master,
+            text=text,
+            command=command,
+            width=width,
+            state=state
         )
-        op4.configure(variable='op4')
-        op4.pack(fill=X, padx=(20, 0), pady=5)
 
-        # smooth scrolling
-        op5 = ttk.Checkbutton(
-            master=scrolling,
-            text='Smooth scrolling',
-            variable='op5'
+        solid_btn.pack(side=LEFT)
+        return solid_btn
+
+    def create_combobox(self, master, options: list, default_index: int):
+        """Create a combobox drop down menu."""
+        combobox = tkb.Combobox(
+            master=master,
+            values=options,
         )
-        op5.pack(fill=X, padx=(20, 0), pady=5)
 
-        btn = ttk.Button(
-            master=op5,
-            image='bluetooth',
-            bootstyle=LINK,
-            command=self.callback
-        )
-        btn.pack(side=RIGHT)
-
-        # scroll speed
-        scroll_speed_frame = ttk.Frame(scrolling)
-        scroll_speed_frame.pack(fill=X, padx=(20, 0), pady=5)
-
-        lbl = ttk.Label(scroll_speed_frame, text='Speed:')
-        lbl.pack(side=LEFT)
-
-        scale = ttk.Scale(scroll_speed_frame, value=35, from_=1, to=100)
-        scale.pack(side=LEFT, fill=X, expand=YES, padx=5)
-
-        scroll_speed_btn = ttk.Button(
-            master=scroll_speed_frame,
-            image='reset-small',
-            bootstyle=LINK,
-            command=self.callback
-        )
-        scroll_speed_btn.pack(side=LEFT)
-
-        # scroll sense
-        scroll_sense_frame = ttk.Frame(scrolling)
-        scroll_sense_frame.pack(fill=X, padx=(20, 0), pady=(5, 0))
-
-        ttk.Label(scroll_sense_frame, text='Sense:').pack(side=LEFT)
-
-        scale = ttk.Scale(scroll_sense_frame, value=50, from_=1, to=100)
-        scale.pack(side=LEFT, fill=X, expand=YES, padx=5)
-
-        scroll_sense_btn = ttk.Button(
-            master=scroll_sense_frame,
-            image='reset-small',
-            bootstyle=LINK,
-            command=self.callback
-        )
-        scroll_sense_btn.pack(side=LEFT)
-
-        # 1 finger gestures
-        finger_gest = ttk.Labelframe(
-            master=col2,
-            text='1 Finger Gestures',
-            padding=(15, 10)
-        )
-        finger_gest.pack(
-            side=TOP,
-            fill=BOTH,
-            expand=YES,
-            pady=(10, 0)
-        )
-        op6 = ttk.Checkbutton(
-            master=finger_gest,
-            text='Fast swipe left/right',
-            variable='op6'
-        )
-        op6.pack(fill=X, pady=5)
-
-        cb = ttk.Checkbutton(
-            master=finger_gest,
-            text='Swap swipe direction',
-            variable='op7'
-        )
-        cb.pack(fill=X, padx=(20, 0), pady=5)
-
-        # gest sense
-        gest_sense_frame = ttk.Frame(finger_gest)
-        gest_sense_frame.pack(fill=X, padx=(20, 0), pady=(5, 0))
-
-        ttk.Label(gest_sense_frame, text='Sense:').pack(side=LEFT)
-
-        scale = ttk.Scale(gest_sense_frame, value=50, from_=1, to=100)
-        scale.pack(side=LEFT, fill=X, expand=YES, padx=5)
-
-        btn = ttk.Button(
-            master=gest_sense_frame,
-            image='reset-small',
-            bootstyle=LINK,
-            command=self.callback
-        )
-        btn.pack(side=LEFT)
-
-        # middle click
-        middle_click = ttk.Labelframe(
-            master=col2,
-            text='Middle Click',
-            padding=(15, 10)
-        )
-        middle_click.pack(
-            side=TOP,
-            fill=BOTH,
-            expand=YES,
-            pady=(10, 0)
-        )
-        cbo = ttk.Combobox(
-            master=middle_click,
-            values=['Any 2 finger', 'Other 1', 'Other 2']
-        )
-        cbo.current(0)
-        cbo.pack(fill=X)
-
-    def callback(self):
-        """Demo callback"""
-        Messagebox.ok(
-            title='Button callback', 
-            message="You pressed a button."
-        )
+        combobox.current(default_index)
+        combobox.pack(fill=X)
 
 
 if __name__ == '__main__':
 
-    app = ttk.Window("Magic Mouse", "yeti")
+    app = tkb.Window("Settings", "superhero")
     Settings(app)
     app.mainloop()
