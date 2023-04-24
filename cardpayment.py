@@ -1,5 +1,6 @@
 """This module contains a class that represents a card payment form GUI."""
 
+import json
 import os
 import subprocess
 import sys
@@ -28,6 +29,10 @@ class CardPayment(tkb.Frame):
         style = Style()
         style.configure('TButton', font=('', 10, ''))
         self.root = root
+
+        self.check_user_settings_json()
+        self.set_user_settings()
+        
         
         # Form variables
         self.card_no = tkb.StringVar(value='')
@@ -98,8 +103,10 @@ class CardPayment(tkb.Frame):
         self.mrn_ent.winfo_children()[1].configure(validate='key', validatecommand=(self.valid_digit_func, '%P'))
         self.security_ent.winfo_children()[1].configure(validate='focus', validatecommand=(self.valid_sec_code_func, '%P'))
 
-        # Settings window
-        # self.create_settings_window()
+        # Initialize Settings window
+        self.settings = self.create_settings_window()
+        self.settings._check_always_on_top()
+
         # Notes window
         self.create_notes_window()
 
@@ -598,12 +605,13 @@ class CardPayment(tkb.Frame):
         self.settings_window = tkb.Toplevel(self)
         self.settings_window.title('Settings')
         self.settings_window.resizable(False, False)
-        # self.notes_window.overrideredirect(True)
-        self.settings_frame = Settings(self.settings_window)
+        # self.settings_window.overrideredirect(True)
+        settings = Settings(self.settings_window, self)
         self.settings_isHidden = True
         self.toggle_settings_window(e=None)
         self.settings_window.protocol('WM_DELETE_WINDOW', func=lambda: self.toggle_settings_window(e=None))
         self.settings_window.bind('<Escape>', self.toggle_settings_window)
+        return settings
     
     def toggle_settings_window(self, e):
         """Toggle Settings window."""
@@ -614,7 +622,8 @@ class CardPayment(tkb.Frame):
             self.focus()
             self.settings_window.withdraw()
         else:
-            self.center_child_to_parent(self.settings_window, self, 'settings')
+            # self.settings_window.place_window_center()
+            self.center_child_to_parent(self.settings_window, self.root, 'settings')
             self.settings_isHidden = True
             self.root.attributes('-disabled', 1)
             self.settings_window.attributes('-topmost', 1)
@@ -644,21 +653,109 @@ class CardPayment(tkb.Frame):
                 os.unlink(file_path)
 
         self.after(ms=3_600_000, func=self.remove_files) # after 1 hour
+    
+    # Settings methods
+
+    def _get_program_path(self) -> str:
+        """Return the path to the running executable or script."""
+        if getattr(sys, 'frozen', False):
+            path = os.path.dirname(sys.executable)
+        else:
+            path = os.path.dirname(os.path.abspath(__file__))
+
+        return path
+    
+    def _get_abs_path_to_data_directory(self) -> str:
+        """Return the absolute path to the '.data' directory."""
+        program_path = self._get_program_path()
+        directory_path = '.data'
+        directory_abs_path = os.path.join(program_path, directory_path)
+        return directory_abs_path
+    
+    def _get_settings_json_path(self) -> str:
+        """Return the absolute path to 'settings.json' file."""
+        directory_abs_path = self._get_abs_path_to_data_directory()
+        file_name = 'settings.json'
+        file_path = os.path.join(directory_abs_path, file_name)
+        return file_path
+    
+    def _check_data_directory_path(self):
+        """Create '.data' hidden directory if it doesn't exist."""
+        directory_abs_path = self._get_abs_path_to_data_directory()
+        if not os.path.isdir(directory_abs_path):
+            os.makedirs(directory_abs_path)
+            # make directory hidden
+            subprocess.call(["attrib", "+h", directory_abs_path])
+    
+    def _create_settings_json_file(self, file_path: str):
+        """Create settings.json."""
+        default_settings = {
+            'always_on_top': 'no',
+            'user': 'none',
+            'mode': 'Payment',
+            'theme': 'superhero',
+        }
+        with open(file_path, 'w') as f:
+            data = json.dumps(default_settings, indent=4)
+            f.write(data)
+
+    def _check_settings_json_path(self):
+        """Create 'settings.json' file if it doesn't exist."""
+        settings_json_path = self._get_settings_json_path()
+        if not os.path.isfile(settings_json_path):
+            self._create_settings_json_file(settings_json_path)
+
+    def check_user_settings_json(self):
+        """Ensures settings.json file exists."""
+        self._check_data_directory_path()
+        self._check_settings_json_path()
+
+    def _read_settings_json_file(self) -> dict:
+        """Read the 'settings.json' file."""
+        settings_json_path = self._get_settings_json_path()
+        with open(settings_json_path, 'r') as f:
+            data = json.load(f)
+        
+        return data
+
+    def _set_always_on_top_setting(self, user_settings: dict):
+        """Read always on top setting."""
+        if user_settings['always_on_top'] == 'yes':
+            self.root.attributes('-topmost', 1)
+        else:
+            self.root.attributes('-topmost', 0)
+        
+        
+    def set_user_settings(self):
+        """Set user settings from settings.json file."""
+        user_settings = self._read_settings_json_file()
+        self._set_always_on_top_setting(user_settings)
+        
 
 
 if __name__ == '__main__':
     app = tkb.Window(
         'Card Payment Form', 'superhero', resizable=(False, False)
     )
-    app.config(padx=25, pady=25)
+
+    cardpayment = CardPayment(app, app)
     app.place_window_center()
 
-    refill_frame = tkb.Labelframe(app, text='Refill Coordination')
-    refill_frame.pack(side=LEFT)
-    refill = Refill(app, refill_frame)
-
-    cardpayment_frame = tkb.Labelframe(app, text='Card Payment')
-    cardpayment_frame.pack(side=LEFT, padx=(25, 0))
-    cardpayment = CardPayment(app, cardpayment_frame)
-
     app.mainloop()
+
+    # app = tkb.Window(
+    #     'Card Payment Form', 'superhero', resizable=(False, False)
+    # )
+    # app.config(padx=25, pady=25)
+
+    # refill_frame = tkb.Labelframe(app, text='Refill Coordination')
+    # refill_frame.pack(side=LEFT)
+    # refill = Refill(app, refill_frame)
+
+    # cardpayment_frame = tkb.Labelframe(app, text='Card Payment')
+    # cardpayment_frame.pack(side=LEFT, padx=(25, 0))
+    # cardpayment = CardPayment(app, cardpayment_frame)
+
+    # app.place_window_center()
+
+    # app.mainloop()

@@ -1,3 +1,6 @@
+import json
+import os
+import sys
 import ttkbootstrap as tkb
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox
@@ -6,24 +9,29 @@ from tkinter.ttk import Style
 
 class Settings(tkb.Frame):
 
-    def __init__(self, master):
+    def __init__(self, master, cardpayment):
         super().__init__(master, padding=12)
         self.pack(fill=BOTH, expand=YES)
         style = Style()
         style.configure('TRadiobutton', font=('', 10, ''))
 
+        self.cardpayment = cardpayment
+
         # Settings
+        self.current_settings = self._read_settings_json_file()
+
         self.settings_labelframe = self.create_labelframe(
             master=self,
             text='Settings',
             row=0,
         )
 
-        always_top_int_var = tkb.IntVar()
+        self.always_top_int_var = tkb.IntVar()
         always_top_btn = self.create_toggle_btn(
             master=self.settings_labelframe,
             text='Always on top',
-            variable=always_top_int_var
+            command=self.set_always_on_top,
+            variable=self.always_top_int_var,
         )
         always_top_btn.pack_configure(anchor='w')
 
@@ -127,11 +135,72 @@ class Settings(tkb.Frame):
         ok_btn = tkb.Button(
             master=self,
             text='OK',
-            command=None,
+            command=self.save_settings,
             width=10,
         )
 
         ok_btn.grid(row=4, pady=(10, 0))
+
+    def _check_always_on_top(self):
+        """Check always on top setting from settings.json. (Used by CardPayment)"""
+        if self.current_settings['always_on_top'] == 'yes':
+            self.always_top_int_var.set(1)
+        else:
+            self.always_top_int_var.set(0)
+
+    def _get_program_path(self) -> str:
+        """Return the path to the running executable or script."""
+        if getattr(sys, 'frozen', False):
+            path = os.path.dirname(sys.executable)
+        else:
+            path = os.path.dirname(os.path.abspath(__file__))
+
+        return path
+
+    def _get_abs_path_to_data_directory(self) -> str:
+        """Return the absolute path to the '.data' directory."""
+        program_path = self._get_program_path()
+        directory_path = '.data'
+        directory_abs_path = os.path.join(program_path, directory_path)
+        return directory_abs_path
+
+    def _get_settings_json_path(self) -> str:
+        """Return the absolute path to 'settings.json' file."""
+        directory_abs_path = self._get_abs_path_to_data_directory()
+        file_name = 'settings.json'
+        file_path = os.path.join(directory_abs_path, file_name)
+        return file_path
+
+    def _read_settings_json_file(self) -> dict:
+        """Read the 'settings.json' file."""
+        settings_json_path = self._get_settings_json_path()
+        with open(settings_json_path, 'r') as f:
+            data = json.load(f)
+
+        return data
+
+    def _set_user_settings(self):
+        """Set user settings from settings.json file."""
+        self.cardpayment._set_always_on_top_setting(self.current_settings)
+
+    # Button commands
+
+    def save_settings(self):
+        """Save current user settings to json file."""
+        settings_json_path = self._get_settings_json_path()
+        with open(settings_json_path, 'w') as f:
+            data = json.dumps(self.current_settings, indent=4)
+            f.write(data)
+
+        self._set_user_settings()
+        self.cardpayment.toggle_settings_window(e=None)
+
+    def set_always_on_top(self):
+        """Set always on top setting attribute"""
+        if self.always_top_int_var.get() == 0:
+            self.current_settings['always_on_top'] = 'no'
+        else:
+            self.current_settings['always_on_top'] = 'yes'
 
     def check_mode(self):
         """Check if changing mode conditions are satisfied."""
@@ -185,11 +254,12 @@ class Settings(tkb.Frame):
 
         return label
 
-    def create_toggle_btn(self, master, text: str, variable: tkb.IntVar):
+    def create_toggle_btn(self, master, text: str, command, variable: tkb.IntVar):
         """Create a toggle button ."""
         toggle_btn = tkb.Checkbutton(
             master=master,
             text=text,
+            command=command,
             bootstyle='round-toggle',
             variable=variable,
         )
