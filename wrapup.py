@@ -17,7 +17,7 @@ class WrapUp(tkb.Frame):
         super().__init__(master, padding=20)
         self.pack(side=LEFT, fill=BOTH, expand=YES)
         style = Style()
-        style.configure('TButton', font=('', 10, ''))
+        style.configure('TButton', font=('', 9, ''))
         self.next_wrap_up_date = ''
 
         # GUI
@@ -31,7 +31,7 @@ class WrapUp(tkb.Frame):
         self.dispense_date_entry = tkb.DateEntry(
             master=row_1,
         )
-        self.dispense_date_entry.entry.config(font=('', 10, ''), width=11)
+        self.dispense_date_entry.entry.config(font=('', 9, ''), width=11)
         self.dispense_date_entry.entry.delete(0, END)
         self.dispense_date_entry.pack(side=LEFT, fill=BOTH, padx=10)
 
@@ -193,7 +193,7 @@ class WrapUp(tkb.Frame):
             text=text,
             width=width,
             anchor=anchor,
-            font=('', 10, '')
+            font=('', 9, '')
         )
         if not grid:
             label.pack(side=LEFT, fill=BOTH, expand=YES, padx=(3, 0))
@@ -209,7 +209,7 @@ class WrapUp(tkb.Frame):
             width=width,
             textvariable=text_var,
             state=state,
-            font=('', 10, ''),
+            font=('', 9, ''),
             justify=justify,
         )
         if not grid:

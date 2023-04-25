@@ -240,7 +240,7 @@ class Settings(tkb.Frame):
             }
             self.current_settings['mode'] = 'Refill'
             self.mode_str_var.set('Refill')
-            self.save_settings(False)
+            self.save_settings(toggle_settings_after_save=False)
             self.cardpayment.settings_window.attributes('-disabled', 0)
             self.change_user_btn.config(state='normal')
             self.setup_window.destroy()
@@ -260,6 +260,11 @@ class Settings(tkb.Frame):
         with open(settings_json_path, 'w') as f:
             data = json.dumps(self.current_settings, indent=4)
             f.write(data)
+
+        if self.current_settings['mode'] == 'Payment':
+            self.cardpayment.set_payment_mode()
+        elif self.current_settings['mode'] == 'Refill':
+            self.cardpayment.set_refill_mode(self.cardpayment.root)
 
         self._set_user_settings()
         if toggle_settings_after_save:

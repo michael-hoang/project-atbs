@@ -17,17 +17,18 @@ from settings import Settings
 from dateutil.relativedelta import relativedelta
 
 from refill import Refill
+from wrapup import WrapUp
 
-class CardPayment(tkb.Frame):
+class CardPayment(tkb.Labelframe):
     """
     Card Payment Form interface to automate printing of filled credit card forms.
     """
 
     def __init__(self,root, master):
-        super().__init__(master, padding=(12, 10))
-        self.pack(side=LEFT, fill=X, expand=YES, padx=(0, 5))
+        super().__init__(master, text='', padding=15)
+        
         style = Style()
-        style.configure('TButton', font=('', 10, ''))
+        style.configure('TButton', font=('', 9, ''))
         self.root = root
 
         self.check_user_settings_json()
@@ -110,6 +111,13 @@ class CardPayment(tkb.Frame):
         # Notes window
         self.create_notes_window()
 
+        self.refill_mode_instantiated = False
+        if self.settings.current_settings['mode'] == 'Payment':
+            self.grid(padx=5, pady=(0, 5))
+        elif self.settings.current_settings['mode'] == 'Refill':
+            self.set_refill_mode(self.root)
+            self.refill_mode_instantiated = True
+
         # After method
         self.remove_files()
         self.after(ms=3_600_000, func=self.remove_files) # after 1 hour
@@ -117,18 +125,18 @@ class CardPayment(tkb.Frame):
     def create_long_form_entry(self, master, label, variable):
         """Create a single long form entry."""
         container = tkb.Frame(master)
-        lbl = tkb.Label(container, text=label, width=25, font=('', 10, ''))
+        lbl = tkb.Label(container, text=label, width=25, font=('', 9, ''))
         lbl.pack(side=TOP, anchor='w')
-        ent = tkb.Entry(container, textvariable=variable, width=25, font=('', 10, ''))
+        ent = tkb.Entry(container, textvariable=variable, width=25, font=('', 9, ''))
         ent.pack(side=LEFT, fill=X, expand=YES)
         return container
 
     def create_short_form_entry(self, master, label, variable):
         """Create a single short form entry."""
         container = tkb.Frame(master)
-        lbl = tkb.Label(container, text=label, width=13, font=('', 10, ''))
+        lbl = tkb.Label(container, text=label, width=13, font=('', 9, ''))
         lbl.pack(side=TOP, anchor='w')
-        ent = tkb.Entry(container, textvariable=variable, width=8, font=('', 10, ''))
+        ent = tkb.Entry(container, textvariable=variable, width=8, font=('', 9, ''))
         ent.pack(side=LEFT, fill=X, expand=YES)
         return container
 
@@ -158,13 +166,13 @@ class CardPayment(tkb.Frame):
         """Create a single item form entry."""
         container = tkb.Frame(master)
         container.pack(fill=X, expand=YES)
-        item_lbl = tkb.Label(container, text=item_label, width=2, anchor='e', font=('', 10, ''))
+        item_lbl = tkb.Label(container, text=item_label, width=2, anchor='e', font=('', 9, ''))
         item_lbl.pack(side=LEFT, padx=(0,3))
-        item_ent = tkb.Entry(container, textvariable=item_var, width=25)
+        item_ent = tkb.Entry(container, textvariable=item_var, width=25, font=('', 9, ''))
         item_ent.pack(side=LEFT, fill=X, expand=YES)
-        price_lbl = tkb.Label(container, text='$', width=2, anchor='e', font=('', 10, ''))
+        price_lbl = tkb.Label(container, text='$', width=2, anchor='e', font=('', 9, ''))
         price_lbl.pack(side=LEFT, padx=(0,3))
-        price_ent = tkb.Entry(container, textvariable=price_var, width=10)
+        price_ent = tkb.Entry(container, textvariable=price_var, width=10, font=('', 9, ''))
         price_ent.pack(side=LEFT, fill=X, expand=YES)
 
     def create_entries_column(self):
@@ -182,9 +190,9 @@ class CardPayment(tkb.Frame):
         """Create labels for the list header."""
         container = tkb.Frame(master)
         container.pack(fill=X, expand=YES)
-        item_col_lbl = tkb.Label(container, text='Medication', font=('', 10, ''))
+        item_col_lbl = tkb.Label(container, text='Medication', font=('', 9, ''))
         item_col_lbl.pack(side=LEFT, padx=(70,0))
-        price_col_lbl = tkb.Label(container, text='Price', font=('', 10, ''))
+        price_col_lbl = tkb.Label(container, text='Price', font=('', 9, ''))
         price_col_lbl.pack(side=RIGHT, padx=(0,25))
 
     def create_card_image(self, master):
@@ -197,7 +205,7 @@ class CardPayment(tkb.Frame):
     def create_buttonbox(self):
         """Create the application buttonbox."""
         container = tkb.Frame(self)
-        self.total_lbl = tkb.Label(container, text='$0.00', width=12, anchor='center', font=('', 10, ''))
+        self.total_lbl = tkb.Label(container, text='$0.00', width=12, anchor='center', font=('', 9, ''))
         self.total_lbl.pack(side=TOP)
 
         self.sub_btn = tkb.Button(
@@ -739,6 +747,40 @@ class CardPayment(tkb.Frame):
         user_settings = self._read_settings_json_file()
         self._set_always_on_top_setting(user_settings)
         self._set_mode_setting(user_settings)
+
+    # Mode methods
+
+    def set_payment_mode(self):
+        """Set the mode to Payment."""
+        self.refill_frame.grid_remove()
+        self.wrapup_frame.grid_remove()
+
+        self.root.config(padx=0, pady=0)
+        self.config(text='')
+        self.grid_configure(padx=5, pady=(0, 5))
+
+    def set_refill_mode(self, root):
+        """Set the mode to Refill."""
+        if not self.refill_mode_instantiated:
+            self.refill_frame = tkb.Labelframe(root, text='Refill Coordination')
+            self.refill_frame.grid(column=0, row=0, rowspan=2, sticky='')
+            self.refill = Refill(root, self.refill_frame)
+
+            self.wrapup_frame = tkb.Labelframe(text='Wrap Up')
+            self.wrapup_frame.grid(row=0, column=1, sticky='ew', padx=(20, 0))
+            wrapup_inner_frame = tkb.Frame(self.wrapup_frame)
+            wrapup_inner_frame.pack()
+            self.wrapup = WrapUp(wrapup_inner_frame)
+
+            self.refill_mode_instantiated = True
+        else:
+            self.refill_frame.grid()
+            self.wrapup_frame.grid()
+
+        self.config(text='Card Payment')
+        self.grid_configure(row=1, column=1, padx=(20, 0), pady=(20, 0))
+
+        root.config(padx=20, pady=20)
         
 
 
