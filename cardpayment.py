@@ -30,6 +30,8 @@ class CardPayment(tkb.Frame):
         style.configure('TButton', font=('', 10, ''))
         self.root = root
 
+        self.check_user_settings_json()
+
         # Form variables
         self.card_no = tkb.StringVar(value='')
         self.exp = tkb.StringVar(value='')
@@ -103,7 +105,6 @@ class CardPayment(tkb.Frame):
         self.settings = self.create_settings_window()
         self.settings._check_always_on_top()
 
-        self.check_user_settings_json()
         self.set_user_settings()
 
         # Notes window
@@ -690,7 +691,7 @@ class CardPayment(tkb.Frame):
         """Create settings.json."""
         default_settings = {
             'always_on_top': 'no',
-            'user': 'none',
+            'user': '',
             'mode': 'Payment',
             'theme': 'superhero',
         }

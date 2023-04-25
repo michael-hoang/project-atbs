@@ -85,7 +85,7 @@ class Settings(tkb.Frame):
         payment_mode = self.create_radio_btn(
             master=mode_labelframe,
             text='Payment',
-            command=None,
+            command=self.check_mode,
             variable=self.mode_str_var,
             value='Payment'
         )
@@ -93,7 +93,7 @@ class Settings(tkb.Frame):
         refill_mode = self.create_radio_btn(
             master=mode_labelframe,
             text='Refill',
-            command=None,
+            command=self.check_mode,
             variable=self.mode_str_var,
             value='Refill'
         )
@@ -216,27 +216,32 @@ class Settings(tkb.Frame):
         )
         ok_btn.pack_configure(side=BOTTOM, pady=(15, 0))
 
-        self.cardpayment.root.attributes('-disabled', 1)
+        self.cardpayment.settings_window.attributes('-disabled', 1)
         self.setup_window.wm_transient(self)
         self.setup_window.deiconify()
         self.first_name_entry.focus()
 
+        # self.setup_window.protocol(
+        #     'WM_DELETE_WINDOW', lambda: self.on_closing_user_setup_window(setup_window)
+        # )
+
     # Button commands
 
     def user_setup_ok_btn_command(self):
-        """Confirm user setup."""
+        """Confirm user setup and save data to json file."""
         first_name = self.first_name_entry.get().strip()
         last_name = self.last_name_entry.get().strip()
         if first_name and last_name:
             first_name_title = first_name.title()
             last_name_title = last_name.title()
-            self.current_settings['users'] = {
+            self.current_settings['user'] = {
                 'first_name': first_name_title,
                 'last_name': last_name_title,
             }
-            self.save_settings()
-            self.cardpayment.root.attributes('-disabled', 0)
-            self.cardpayment.root.deiconify()
+            self.current_settings['mode'] = 'Refill'
+            self.mode_str_var.set('Refill')
+            self.save_settings(False)
+            self.cardpayment.settings_window.attributes('-disabled', 0)
             self.setup_window.destroy()
         elif first_name and not last_name:
             self.first_name_entry.config(style='TEntry')
@@ -247,9 +252,8 @@ class Settings(tkb.Frame):
         else:
             self.first_name_entry.config(style='danger.TEntry')
             self.last_name_entry.config(style='danger.TEntry')
-            
 
-    def save_settings(self):
+    def save_settings(self, toggle_settings_after_save=True):
         """Save current user settings to json file."""
         settings_json_path = self._get_settings_json_path()
         with open(settings_json_path, 'w') as f:
@@ -257,7 +261,8 @@ class Settings(tkb.Frame):
             f.write(data)
 
         self._set_user_settings()
-        self.cardpayment.toggle_settings_window(e=None)
+        if toggle_settings_after_save:
+            self.cardpayment.toggle_settings_window(e=None)
 
     def set_always_on_top(self):
         """Set always on top setting attribute"""
@@ -269,16 +274,15 @@ class Settings(tkb.Frame):
     def check_mode(self):
         """Check if changing mode conditions are satisfied."""
         selected_mode = self.mode_str_var.get()
-        if selected_mode == 'Refill':
+        if selected_mode == 'Payment':
+            self.current_settings['mode'] = 'Payment'
+        elif selected_mode == 'Refill':
             if self.current_settings['user']:
-                pass
-
+                self.current_settings['mode'] = 'Refill'
             else:
                 self._user_setup_window()
-                #   if still no user
-                #       select Payment mode
 
-                # Widget creation methods
+    # Widget creation methods
 
     def create_labelframe(self, master, text, row, col=0, sticky='we', padding=True):
         """Create a label frame grid."""
@@ -389,5 +393,4 @@ if __name__ == '__main__':
     app = tkb.Window("Settings", "superhero")
     cardpayment = CardPayment(app, app)
     a = Settings(app, cardpayment)
-    a._user_setup_window()
     app.mainloop()
