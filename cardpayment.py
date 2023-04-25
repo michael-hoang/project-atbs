@@ -729,8 +729,10 @@ class CardPayment(tkb.Frame):
         """Configure mode setting."""
         if user_settings['mode'] == 'Payment':
             self.settings.mode_str_var.set('Payment')
+            self.settings.change_user_btn.config(state='disabled')
         elif user_settings['mode'] == 'Refill':
             self.settings.mode_str_var.set('Refill')
+            self.settings.change_user_btn.config(state='normal')
         
     def set_user_settings(self):
         """Set user settings from settings.json file."""

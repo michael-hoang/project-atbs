@@ -63,14 +63,14 @@ class Settings(tkb.Frame):
             text='Change user'
         )
 
-        change_user_btn = self.create_solid_btn(
+        self.change_user_btn = self.create_solid_btn(
             master=settings_row_3,
             text='Edit',
             command=None,
             width=7,
             state='disabled'
         )
-        change_user_btn.pack_configure(side=RIGHT, padx=(10, 0))
+        self.change_user_btn.pack_configure(side=RIGHT, padx=(10, 0))
 
         # Mode
 
@@ -242,6 +242,7 @@ class Settings(tkb.Frame):
             self.mode_str_var.set('Refill')
             self.save_settings(False)
             self.cardpayment.settings_window.attributes('-disabled', 0)
+            self.change_user_btn.config(state='normal')
             self.setup_window.destroy()
         elif first_name and not last_name:
             self.first_name_entry.config(style='TEntry')
@@ -276,9 +277,11 @@ class Settings(tkb.Frame):
         selected_mode = self.mode_str_var.get()
         if selected_mode == 'Payment':
             self.current_settings['mode'] = 'Payment'
+            self.change_user_btn.config(state='disabled')
         elif selected_mode == 'Refill':
             if self.current_settings['user']:
                 self.current_settings['mode'] = 'Refill'
+                self.change_user_btn.config(state='normal')
             else:
                 self._user_setup_window()
 
