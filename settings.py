@@ -238,6 +238,16 @@ class Settings(tkb.Frame):
             self.cardpayment.root.attributes('-disabled', 0)
             self.cardpayment.root.deiconify()
             self.setup_window.destroy()
+        elif first_name and not last_name:
+            self.first_name_entry.config(style='TEntry')
+            self.last_name_entry.config(style='danger.TEntry')
+        elif not first_name and last_name:
+            self.first_name_entry.config(style='danger.TEntry')
+            self.last_name_entry.config(style='TEntry')
+        else:
+            self.first_name_entry.config(style='danger.TEntry')
+            self.last_name_entry.config(style='danger.TEntry')
+            
 
     def save_settings(self):
         """Save current user settings to json file."""
