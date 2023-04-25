@@ -66,7 +66,7 @@ class Settings(tkb.Frame):
         self.change_user_btn = self.create_solid_btn(
             master=settings_row_3,
             text='Edit',
-            command=None,
+            command=self.change_user,
             width=7,
             state='disabled'
         )
@@ -284,6 +284,10 @@ class Settings(tkb.Frame):
                 self.change_user_btn.config(state='normal')
             else:
                 self._user_setup_window()
+
+    def change_user(self):
+        """Change the current user and save to json file."""
+        self._user_setup_window()
 
     # Widget creation methods
 
