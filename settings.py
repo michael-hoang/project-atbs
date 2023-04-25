@@ -230,11 +230,11 @@ class Settings(tkb.Frame):
         if first_name and last_name:
             first_name_title = first_name.title()
             last_name_title = last_name.title()
-            user_data = {
+            self.current_settings['users'] = {
                 'first_name': first_name_title,
                 'last_name': last_name_title,
             }
-            self.current_settings['user'] = user_data
+            self.save_settings()
             self.cardpayment.root.attributes('-disabled', 0)
             self.cardpayment.root.deiconify()
             self.setup_window.destroy()

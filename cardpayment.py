@@ -30,10 +30,6 @@ class CardPayment(tkb.Frame):
         style.configure('TButton', font=('', 10, ''))
         self.root = root
 
-        self.check_user_settings_json()
-        self.set_user_settings()
-        
-        
         # Form variables
         self.card_no = tkb.StringVar(value='')
         self.exp = tkb.StringVar(value='')
@@ -106,6 +102,9 @@ class CardPayment(tkb.Frame):
         # Initialize Settings window
         self.settings = self.create_settings_window()
         self.settings._check_always_on_top()
+
+        self.check_user_settings_json()
+        self.set_user_settings()
 
         # Notes window
         self.create_notes_window()
@@ -719,17 +718,24 @@ class CardPayment(tkb.Frame):
         return data
 
     def _set_always_on_top_setting(self, user_settings: dict):
-        """Read always on top setting."""
+        """Configure always on top setting."""
         if user_settings['always_on_top'] == 'yes':
             self.root.attributes('-topmost', 1)
         else:
             self.root.attributes('-topmost', 0)
-        
+
+    def _set_mode_setting(self, user_settings: dict):
+        """Configure mode setting."""
+        if user_settings['mode'] == 'Payment':
+            self.settings.mode_str_var.set('Payment')
+        elif user_settings['mode'] == 'Refill':
+            self.settings.mode_str_var.set('Refill')
         
     def set_user_settings(self):
         """Set user settings from settings.json file."""
         user_settings = self._read_settings_json_file()
         self._set_always_on_top_setting(user_settings)
+        self._set_mode_setting(user_settings)
         
 
 
