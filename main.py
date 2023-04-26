@@ -16,12 +16,14 @@ HOVER_BUTTON_COLOR = '#424553'
 ACTIVE_BG_COLOR = '#424553'
 ACTIVE_FG_COLOR = 'white'
 
-CURRENT_VERSION = 'v5.1.0'
+CURRENT_VERSION = 'v6.0.0'
 
 class MainApp(tkb.Window):
     def __init__(self):
         super().__init__('Card Payment Form', 'superhero', resizable=(False, False))
+        self.current_version = CURRENT_VERSION
         CardPayment(self, self)
+        
        
         self.after(ms=86_400_000, func=self._check_for_updates_loop) # every 24 hours
 

@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import ttkbootstrap as tkb
+import webbrowser
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox
 from tkinter.ttk import Style
@@ -131,12 +132,28 @@ class Settings(tkb.Frame):
 
         # Row 1
 
-        info_row_1 = self.create_inner_frame(info_labelframe)
-
         title_label = self.create_label(
-            master=info_row_1,
+            master=info_labelframe,
             text='Card Payment App'
         )
+
+        title_label.pack_configure(side=TOP)
+
+        version_label = self.create_label(
+            master=info_labelframe,
+            text= f'{self.cardpayment.root.current_version}'
+        )
+
+        version_label.pack_configure(side=TOP)
+
+        link_btn = tkb.Button(
+            master=info_labelframe,
+            text='michael-hoang.github.io/project-atbs-work/',
+            bootstyle='success-link',
+            command=self.open_link_btn
+        )
+
+        link_btn.pack(side=TOP)
 
         # Ok button
         ok_btn = tkb.Button(
@@ -258,6 +275,11 @@ class Settings(tkb.Frame):
         self.setup_window.destroy()
 
     # Button commands
+
+    def open_link_btn(self):
+        """Open link to GitHub page."""
+        link = 'https://michael-hoang.github.io/project-atbs-work/'
+        webbrowser.open(url=link, new=2, autoraise=True)
 
     def user_setup_ok_btn_command(self, e=None):
         """Confirm user setup and save data to json file."""
