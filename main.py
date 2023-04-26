@@ -1,4 +1,3 @@
-import tkinter as tk
 import ttkbootstrap as tkb
 from tkinter import messagebox
 from cardpayment import CardPayment
