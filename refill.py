@@ -16,7 +16,7 @@ from ttkbootstrap.tooltip import ToolTip
 class Refill(tkb.Frame):
     """Refill Coordination form template."""
 
-    def __init__(self, root, master):
+    def __init__(self, root, master, wrapup):
         """Initialize string variables, style, radio button states, and widgets."""
         super().__init__(master)
         self.pack(side=LEFT, fill=BOTH, expand=YES)
@@ -25,6 +25,9 @@ class Refill(tkb.Frame):
         style.configure('TButton', font=('', 11, ''))
         style.configure('Roundtoggle.Toolbutton', font=('', 11, ''))  # broken
         style.configure('TNotebook.Tab', font=('', 9, ''))
+
+        # Wrap Up object
+        self.wrapup = wrapup
 
         # Initialize win32clipboard
         self.cf_rtf = win32clipboard.RegisterClipboardFormat('Rich Text Format')
@@ -340,7 +343,10 @@ class Refill(tkb.Frame):
             text='Select dispense date',
             delay=500
         )
-        self.dispense_date_calendar.button.config(state='disabled')
+        self.dispense_date_calendar.button.config(
+            state='disabled',
+            command=self.custom_calendar_entry_btn_method
+        )
         ToolTip(
             widget=self.dispense_date_calendar.button,
             text='Select dispense date',
@@ -1034,6 +1040,13 @@ class Refill(tkb.Frame):
                 widget.config(state='normal')
             else:
                 widget.config(state='disabled')
+
+    def custom_calendar_entry_btn_method(self):
+        """Custom method to update Wrap Up date entry with the selected date."""
+        self.dispense_date_calendar._on_date_ask()
+        self.wrapup.dispense_date_entry.entry.delete(0, END)
+        self.wrapup.dispense_date_entry.entry.insert(END, self.dispense_date_calendar.entry.get())
+
 
     # Event bind callbacks
 

@@ -751,7 +751,7 @@ class CardPayment(tkb.Labelframe):
     # Mode methods
 
     def set_payment_mode(self):
-        """Set the mode to Payment."""
+        """Set the mode to Payment. Used by Settings."""
         self.refill_frame.grid_remove()
         self.wrapup_frame.grid_remove()
 
@@ -762,15 +762,15 @@ class CardPayment(tkb.Labelframe):
     def set_refill_mode(self, root):
         """Set the mode to Refill."""
         if not self.refill_mode_instantiated:
-            self.refill_frame = tkb.Labelframe(root, text='Refill Coordination')
-            self.refill_frame.grid(column=0, row=0, rowspan=2, sticky='')
-            self.refill = Refill(root, self.refill_frame)
-
             self.wrapup_frame = tkb.Labelframe(text='Wrap Up')
             self.wrapup_frame.grid(row=0, column=1, sticky='ew', padx=(20, 0))
             wrapup_inner_frame = tkb.Frame(self.wrapup_frame)
             wrapup_inner_frame.pack()
             self.wrapup = WrapUp(wrapup_inner_frame)
+            
+            self.refill_frame = tkb.Labelframe(root, text='Refill Coordination')
+            self.refill_frame.grid(column=0, row=0, rowspan=2, sticky='')
+            self.refill = Refill(root, self.refill_frame, self.wrapup)
 
             self.refill_mode_instantiated = True
         else:
@@ -792,21 +792,5 @@ if __name__ == '__main__':
     cardpayment = CardPayment(app, app)
     app.place_window_center()
 
+    # app._style.instance.theme_use('litera')
     app.mainloop()
-
-    # app = tkb.Window(
-    #     'Card Payment Form', 'superhero', resizable=(False, False)
-    # )
-    # app.config(padx=25, pady=25)
-
-    # refill_frame = tkb.Labelframe(app, text='Refill Coordination')
-    # refill_frame.pack(side=LEFT)
-    # refill = Refill(app, refill_frame)
-
-    # cardpayment_frame = tkb.Labelframe(app, text='Card Payment')
-    # cardpayment_frame.pack(side=LEFT, padx=(25, 0))
-    # cardpayment = CardPayment(app, cardpayment_frame)
-
-    # app.place_window_center()
-
-    # app.mainloop()

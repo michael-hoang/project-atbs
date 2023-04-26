@@ -101,7 +101,7 @@ class Settings(tkb.Frame):
         refill_mode.pack_configure(padx=(20, 0))
 
         # Theme menu
-        themes = ['superhero', 'solar', 'darkly', 'cyborg', 'vapor'
+        themes = ['superhero', 'solar', 'darkly', 'cyborg', 'vapor',
                   'cosmo', 'flatly', 'journal', 'litera', 'lumen',
                   'minty', 'pulse', 'sandstone', 'united', 'yeti',
                   'morph', 'simplex', 'cerculean']
