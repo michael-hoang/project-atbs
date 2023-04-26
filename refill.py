@@ -16,7 +16,7 @@ from ttkbootstrap.tooltip import ToolTip
 class Refill(tkb.Frame):
     """Refill Coordination form template."""
 
-    def __init__(self, root, master, wrapup):
+    def __init__(self, root, master, wrapup, settings):
         """Initialize string variables, style, radio button states, and widgets."""
         super().__init__(master)
         self.pack(side=LEFT, fill=BOTH, expand=YES, pady=(10, 0))
@@ -28,6 +28,8 @@ class Refill(tkb.Frame):
 
         # Wrap Up object
         self.wrapup = wrapup
+        # Settings object
+        self.settings = settings
 
         # Initialize win32clipboard
         self.cf_rtf = win32clipboard.RegisterClipboardFormat('Rich Text Format')
@@ -1262,7 +1264,11 @@ Confirmed with {spoke_with}'
         continuation_therapy = 'Yes'
         med_working = self.refill_str_vars['medication_efficacy_btn'].get()
         goal = 'Yes' 
-        user = 'USERNAME' # need to change
+
+        first = self.settings.current_settings['user']['first_name']
+        last = self.settings.current_settings['user']['last_name']
+        user = f'{first} {last}'
+
         # Intervention variables
         changes = 'None' 
         new_allergies = 'No' 

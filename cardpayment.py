@@ -568,12 +568,14 @@ class CardPayment(tkb.Labelframe):
         parent_y = parent.winfo_y()
         parent_width = parent.winfo_reqwidth()
         parent_height = parent.winfo_reqheight()
+        child_width = child.winfo_reqwidth()
+        child_height = child.winfo_reqwidth()
         if window_name == 'notes':
             dx = int((parent_width / 2)) - 120
             dy = int((parent_height / 2)) - 75
         elif window_name == 'settings':
-            dx = int((parent_width / 2)) - 600
-            dy = int((parent_height / 2)) - 300
+            dx = int((parent_width / 2)) - child_width / 2
+            dy = int((parent_height / 2)) - child_height / 2
         child.geometry('+%d+%d' % (parent_x + dx, parent_y + dy))
 
     def create_notes_window(self):
@@ -758,6 +760,7 @@ class CardPayment(tkb.Labelframe):
         self.root.config(padx=0, pady=0)
         self.config(text='')
         self.grid_configure(padx=5, pady=(0, 5))
+        self.root.title('Card Payment Form')
 
     def set_refill_mode(self, root):
         """Set the mode to Refill."""
@@ -770,7 +773,7 @@ class CardPayment(tkb.Labelframe):
             
             self.refill_frame = tkb.Labelframe(root, text='Refill Coordination')
             self.refill_frame.grid(column=0, row=0, rowspan=2, sticky='')
-            self.refill = Refill(root, self.refill_frame, self.wrapup)
+            self.refill = Refill(root, self.refill_frame, self.wrapup, self.settings)
 
             self.refill_mode_instantiated = True
         else:
@@ -781,6 +784,10 @@ class CardPayment(tkb.Labelframe):
         self.grid_configure(row=1, column=1, padx=(20, 0), pady=(20, 0))
 
         root.config(padx=20, pady=20)
+        first = self.settings.current_settings['user']['first_name']
+        last = self.settings.current_settings['user']['last_name']
+        full = f'{first} {last}'
+        root.title(f'Refill Coordination - {full}')
         
 
 
@@ -791,6 +798,6 @@ if __name__ == '__main__':
 
     cardpayment = CardPayment(app, app)
     app.place_window_center()
-
+    
     # app._style.instance.theme_use('litera')
     app.mainloop()
