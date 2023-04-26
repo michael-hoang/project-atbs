@@ -216,6 +216,7 @@ class Settings(tkb.Frame):
         )
         ok_btn.pack_configure(side=BOTTOM, pady=(15, 0))
 
+        self.center_child_to_parent(self.setup_window, self.cardpayment.root)
         self.cardpayment.settings_window.attributes('-disabled', 1)
         self.setup_window.wm_transient(self)
         self.setup_window.deiconify()
@@ -224,6 +225,18 @@ class Settings(tkb.Frame):
         # self.setup_window.protocol(
         #     'WM_DELETE_WINDOW', lambda: self.on_closing_user_setup_window(setup_window)
         # )
+
+    def center_child_to_parent(self, child, parent):
+        """Center child window to parent window."""
+        parent_x = parent.winfo_x()
+        parent_y = parent.winfo_y()
+        parent_width = parent.winfo_reqwidth()
+        parent_height = parent.winfo_reqheight()
+        child_width = child.winfo_reqwidth()
+        child_height = child.winfo_reqwidth()
+        dx = int((parent_width / 2)) - child_width / 2
+        dy = int((parent_height / 2)) - child_height / 2
+        child.geometry('+%d+%d' % (parent_x + dx, parent_y + dy))
 
     # Button commands
 
