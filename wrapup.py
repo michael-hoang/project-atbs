@@ -222,7 +222,6 @@ class WrapUp(tkb.Frame):
             if not padding:
                 entry.pack_configure(padx=0)
 
-        ToolTip(widget=entry, text=tooltip, delay=500)
         return entry
 
 

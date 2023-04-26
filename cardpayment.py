@@ -743,19 +743,29 @@ class CardPayment(tkb.Labelframe):
         elif user_settings['mode'] == 'Refill':
             self.settings.mode_str_var.set('Refill')
             self.settings.change_user_btn.config(state='normal')
+
+    def _set_theme_setting(self, user_settings: dict):
+        """Configure theme setting."""
+        theme = user_settings['theme']
+        self.root._style.instance.theme_use(theme)
+        self.settings.themes_combobox.set(theme)
         
     def set_user_settings(self):
         """Set user settings from settings.json file."""
         user_settings = self._read_settings_json_file()
         self._set_always_on_top_setting(user_settings)
         self._set_mode_setting(user_settings)
+        self._set_theme_setting(user_settings)
 
     # Mode methods
 
     def set_payment_mode(self):
         """Set the mode to Payment. Used by Settings."""
-        self.refill_frame.grid_remove()
-        self.wrapup_frame.grid_remove()
+        try:
+            self.refill_frame.grid_remove()
+            self.wrapup_frame.grid_remove()
+        except:
+            pass
 
         self.root.config(padx=0, pady=0)
         self.config(text='')

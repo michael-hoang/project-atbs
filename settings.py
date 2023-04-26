@@ -19,6 +19,7 @@ class Settings(tkb.Frame):
 
         # Settings
         self.current_settings = self._read_settings_json_file()
+        self.current_theme = tkb.StringVar()
 
         self.settings_labelframe = self.create_labelframe(
             master=self,
@@ -49,7 +50,8 @@ class Settings(tkb.Frame):
             master=settings_row_2,
             text='Print',
             command=None,
-            width=7
+            width=7,
+            state='disabled'
         )
         print_blank_form_btn.pack_configure(side=RIGHT, padx=(10, 0))
 
@@ -112,7 +114,12 @@ class Settings(tkb.Frame):
             row=2,
         )
 
-        self.create_combobox(theme_labelframe, themes, 0)
+        self.themes_combobox = self.create_combobox(
+            master=theme_labelframe,
+            options=themes,
+            default_index=0,
+            variable=self.current_theme
+        )
 
         # Info
 
@@ -182,6 +189,7 @@ class Settings(tkb.Frame):
     def _set_user_settings(self):
         """Set user settings from settings.json file."""
         self.cardpayment._set_always_on_top_setting(self.current_settings)
+        self.cardpayment._set_theme_setting(self.current_settings)
 
     def _user_setup_window(self):
         """Create user setup window."""
@@ -222,9 +230,11 @@ class Settings(tkb.Frame):
         self.setup_window.deiconify()
         self.first_name_entry.focus()
 
-        # self.setup_window.protocol(
-        #     'WM_DELETE_WINDOW', lambda: self.on_closing_user_setup_window(setup_window)
-        # )
+        self.setup_window.protocol(
+            'WM_DELETE_WINDOW', lambda: self.on_closing_user_setup_window(self.setup_window)
+        )
+        self.setup_window.bind('<Return>', lambda e: self.user_setup_ok_btn_command(e))
+        self.setup_window.bind('<Escape>', lambda e: self.on_closing_user_setup_window(self.setup_window, e))
 
     def center_child_to_parent(self, child, parent):
         """Center child window to parent window."""
@@ -238,9 +248,18 @@ class Settings(tkb.Frame):
         dy = int((parent_height / 2)) - child_height / 2
         child.geometry('+%d+%d' % (parent_x + dx, parent_y + dy))
 
+    def on_closing_user_setup_window(self, setup_window, e=None):
+        """Enable root window on closing user setup window."""
+        self.cardpayment.settings_window.attributes('-disabled', 0)
+
+        if not self.current_settings['user']:
+            self.mode_str_var.set('Payment')
+        
+        self.setup_window.destroy()
+
     # Button commands
 
-    def user_setup_ok_btn_command(self):
+    def user_setup_ok_btn_command(self, e=None):
         """Confirm user setup and save data to json file."""
         first_name = self.first_name_entry.get().strip()
         last_name = self.last_name_entry.get().strip()
@@ -269,6 +288,7 @@ class Settings(tkb.Frame):
 
     def save_settings(self, toggle_settings_after_save=True):
         """Save current user settings to json file."""
+        self.current_settings['theme'] = self.current_theme.get()
         settings_json_path = self._get_settings_json_path()
         with open(settings_json_path, 'w') as f:
             data = json.dumps(self.current_settings, indent=4)
@@ -386,15 +406,18 @@ class Settings(tkb.Frame):
         radiobutton.pack(side=LEFT)
         return radiobutton
 
-    def create_combobox(self, master, options: list, default_index: int):
+    def create_combobox(self, master, options: list, default_index: int, variable: tkb.StringVar):
         """Create a combobox drop down menu."""
         combobox = tkb.Combobox(
             master=master,
             values=options,
+            textvariable=variable
         )
 
         combobox.current(default_index)
         combobox.pack(fill=X)
+
+        return combobox
 
     def create_short_entry(self, master, width=15, padding=True, text_var=None, state='normal'):
         """Create an entry field."""
