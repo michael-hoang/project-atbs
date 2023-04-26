@@ -19,10 +19,10 @@ class Refill(tkb.Frame):
     def __init__(self, root, master, wrapup):
         """Initialize string variables, style, radio button states, and widgets."""
         super().__init__(master)
-        self.pack(side=LEFT, fill=BOTH, expand=YES)
+        self.pack(side=LEFT, fill=BOTH, expand=YES, pady=(10, 0))
         style = Style()
         style.configure('TLabelframe.Label', font=('', 11, 'bold'))
-        style.configure('TButton', font=('', 11, ''))
+        style.configure('TButton', font=('', 10, ''))
         style.configure('Roundtoggle.Toolbutton', font=('', 11, ''))  # broken
         style.configure('TNotebook.Tab', font=('', 9, ''))
 
@@ -124,7 +124,7 @@ class Refill(tkb.Frame):
             text='Clear',
             command=self.clear_entries,
             style='TButton',
-            width=6
+            width=7
         )
         clear_btn.grid(
             row=0, column=1, rowspan=2, padx=(235, 0), pady=(0, 655)

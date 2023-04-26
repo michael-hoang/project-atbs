@@ -96,9 +96,14 @@ class WrapUp(tkb.Frame):
 
         self.after(ms=50, func=self.calculate_wrap_up_date)
 
-        self.days_entry.bind('<FocusIn>', self.highlight_text)
+        self.day_supply_entry.bind('<FocusIn>', self.highlight_day_supply_entry_text)
+        self.days_entry.bind('<FocusIn>', self.highlight_days_entry_text)
 
-    def highlight_text(self, event):
+    def highlight_day_supply_entry_text(self, event):
+        """Highlight custom wrap up Entry box when clicked."""
+        self.day_supply_entry.selection_range(0, END)
+
+    def highlight_days_entry_text(self, event):
         """Highlight custom wrap up Entry box when clicked."""
         self.days_entry.selection_range(0, END)
 
