@@ -21,7 +21,7 @@ CURRENT_VERSION = 'v5.1.0'
 class MainApp(tkb.Window):
     def __init__(self):
         super().__init__('Card Payment Form', 'superhero', resizable=(False, False))
-        cardpayment = CardPayment(self, self)
+        CardPayment(self, self)
        
         self.after(ms=86_400_000, func=self._check_for_updates_loop) # every 24 hours
 
@@ -107,6 +107,9 @@ if __name__ == '__main__':
         if MainApp.check_for_main_app_update(None):
             MainApp.open_Updater(None)
         else:
-            MainApp().mainloop()
+            app = MainApp()
     except:
-        MainApp().mainloop()
+        app = MainApp()
+
+    app.place_window_center()
+    app.mainloop()
