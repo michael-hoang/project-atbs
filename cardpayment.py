@@ -27,8 +27,8 @@ class CardPayment(tkb.Labelframe):
     def __init__(self,root, master):
         super().__init__(master, text='', padding=15)
         
-        style = Style()
-        style.configure('TButton', font=('', 9, ''))
+        self.style = Style()
+        self.style.configure('TButton', font=('', 9, ''))
         self.root = root
 
         self.check_user_settings_json()
@@ -575,7 +575,7 @@ class CardPayment(tkb.Labelframe):
             dy = int((parent_height / 2)) - 75
         elif window_name == 'settings':
             dx = int((parent_width / 2)) - child_width / 2
-            dy = int((parent_height / 2)) - child_height / 2
+            dy = int((parent_height / 2)) - child_height / 2 - 160
         child.geometry('+%d+%d' % (parent_x + dx, parent_y + dy))
 
     def create_notes_window(self):
@@ -762,6 +762,16 @@ class CardPayment(tkb.Labelframe):
         self.root._style.instance.theme_use(theme)
         self.settings.current_settings['theme'] = theme
         self.settings.themes_combobox.set(theme)
+        self.style.configure('TLabelframe.Label', font=('', 11, 'bold'))
+        self.style.configure('TRadiobutton', font=('', 10, ''))
+        self.style.configure('TButton', font=('', 9, ''))
+        self.style.configure('Roundtoggle.Toolbutton', font=('', 11, ''))  # broken
+        self.style.configure('TNotebook.Tab', font=('', 9, ''))
+
+    def _set_change_user_btn(self, user_settings: dict):
+        """Configure Change user button."""
+        if self.settings.current_settings['user']:
+            self.settings.change_user_btn.config(state='normal')
         
     def set_user_settings(self):
         """Set user settings from settings.json file."""
@@ -769,6 +779,7 @@ class CardPayment(tkb.Labelframe):
         self._set_always_on_top_setting(user_settings)
         self._set_mode_setting(user_settings)
         self._set_theme_setting(user_settings)
+        self._set_change_user_btn(user_settings)
 
     # Mode methods
 

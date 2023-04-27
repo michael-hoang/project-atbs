@@ -18,7 +18,7 @@ class Refill(tkb.Frame):
         self.pack(side=LEFT, fill=BOTH, expand=YES, pady=(10, 0))
         style = Style()
         style.configure('TLabelframe.Label', font=('', 11, 'bold'))
-        style.configure('TButton', font=('', 10, ''))
+        style.configure('TButton', font=('', 9, ''))
         style.configure('Roundtoggle.Toolbutton', font=('', 11, ''))  # broken
         style.configure('TNotebook.Tab', font=('', 9, ''))
 
@@ -125,7 +125,7 @@ class Refill(tkb.Frame):
             width=7
         )
         clear_btn.grid(
-            row=0, column=1, rowspan=2, padx=(235, 0), pady=(0, 655)
+            row=0, column=1, rowspan=2, padx=(200, 0), pady=(0, 655)
         )
         ToolTip(clear_btn, 'Clear entries and clipboard', delay=500)
 
@@ -150,7 +150,7 @@ class Refill(tkb.Frame):
 
         # Labelframes
         refill_questions_frame = tkb.Frame(self.refill_display_frame)
-        refill_questions_frame.pack(side=LEFT)
+        refill_questions_frame.pack(side=TOP)
 
         medication_labelframe = self.create_labelframe(
             refill_questions_frame, 'Medication', 0
@@ -1041,9 +1041,12 @@ class Refill(tkb.Frame):
 
     def custom_calendar_entry_btn_method(self):
         """Custom method to update Wrap Up date entry with the selected date."""
-        self.dispense_date_calendar._on_date_ask()
-        self.wrapup.dispense_date_entry.entry.delete(0, END)
-        self.wrapup.dispense_date_entry.entry.insert(END, self.dispense_date_calendar.entry.get())
+        if self.wrapup:
+            self.dispense_date_calendar._on_date_ask()
+            self.wrapup.dispense_date_entry.entry.delete(0, END)
+            self.wrapup.dispense_date_entry.entry.insert(END, self.dispense_date_calendar.entry.get())
+        else:
+            self.dispense_date_calendar._on_date_ask()
 
 
     # Event bind callbacks

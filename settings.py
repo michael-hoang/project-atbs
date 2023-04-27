@@ -7,6 +7,8 @@ from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox
 from tkinter.ttk import Style
 
+from refill import Refill
+
 
 class Settings(tkb.Frame):
 
@@ -14,7 +16,9 @@ class Settings(tkb.Frame):
         super().__init__(master, padding=12)
         self.pack(fill=BOTH, expand=YES)
         style = Style()
+        style.configure('TLabelframe.Label', font=('', 11, 'bold'))
         style.configure('TRadiobutton', font=('', 10, ''))
+        style.configure('TButton', font=('', 9, ''))
 
         self.cardpayment = cardpayment
 
@@ -101,6 +105,20 @@ class Settings(tkb.Frame):
             value='Refill'
         )
 
+        # Other apps
+
+        other_apps = self.create_labelframe(
+            master=self,
+            text='Other Apps',
+            row=2
+        )
+
+        refill = self.create_solid_btn(
+            master=other_apps,
+            text='Refill',
+            command=self.open_refill_app
+        )
+
         refill_mode.pack_configure(padx=(20, 0))
 
         # Theme menu
@@ -112,7 +130,7 @@ class Settings(tkb.Frame):
         theme_labelframe = self.create_labelframe(
             master=self,
             text='Theme',
-            row=2,
+            row=3,
         )
 
         self.themes_combobox = self.create_combobox(
@@ -127,7 +145,7 @@ class Settings(tkb.Frame):
         info_labelframe = self.create_labelframe(
             master=self,
             text='Info',
-            row=3,
+            row=4,
         )
 
         # Row 1
@@ -150,7 +168,7 @@ class Settings(tkb.Frame):
             master=info_labelframe,
             text='michael-hoang.github.io/project-atbs-work/',
             bootstyle='success-link',
-            command=self.open_link_btn
+            command=self.open_link_btn,
         )
 
         link_btn.pack(side=TOP)
@@ -161,9 +179,10 @@ class Settings(tkb.Frame):
             text='OK',
             command=self.save_settings,
             width=10,
+            style='TButton'
         )
 
-        ok_btn.grid(row=4, pady=(10, 0))
+        ok_btn.grid(row=5, pady=(10, 0))
 
     def _check_always_on_top(self):
         """Check always on top setting from settings.json. (Used by CardPayment)"""
@@ -208,7 +227,7 @@ class Settings(tkb.Frame):
         self.cardpayment._set_always_on_top_setting(self.current_settings)
         self.cardpayment._set_theme_setting(self.current_settings)
 
-    def _user_setup_window(self):
+    def _user_setup_window(self, changing_mode=True):
         """Create user setup window."""
         self.setup_window = tkb.Toplevel(self)
         self.setup_window.title('User Setup')
@@ -236,7 +255,7 @@ class Settings(tkb.Frame):
         ok_btn = self.create_solid_btn(
             master=self.setup_window,
             text='OK',
-            command=self.user_setup_ok_btn_command,
+            command=lambda: self.user_setup_ok_btn_command(changing_mode=changing_mode),
             width=7
         )
         ok_btn.pack_configure(side=BOTTOM, pady=(15, 0))
@@ -250,7 +269,7 @@ class Settings(tkb.Frame):
         self.setup_window.protocol(
             'WM_DELETE_WINDOW', lambda: self.on_closing_user_setup_window(self.setup_window)
         )
-        self.setup_window.bind('<Return>', lambda e: self.user_setup_ok_btn_command(e))
+        self.setup_window.bind('<Return>', lambda e: self.user_setup_ok_btn_command(changing_mode=changing_mode, e=e))
         self.setup_window.bind('<Escape>', lambda e: self.on_closing_user_setup_window(self.setup_window, e))
 
     def center_child_to_parent(self, child, parent):
@@ -276,12 +295,25 @@ class Settings(tkb.Frame):
 
     # Button commands
 
+    def open_refill_app(self):
+        """Instantiate Refill Coordination form app if a user is registered."""
+        user = self.current_settings['user']
+        if user:
+            first = user['first_name']
+            last = user['last_name']
+            full = f'{first} {last}'
+            refill_window = tkb.Toplevel(title=f'Refill Coordination - {full}', resizable=(False, False))
+            refill = Refill(self.cardpayment.root, refill_window, wrapup=None, settings=self)
+            refill_window.place_window_center()
+        else:
+            self._user_setup_window(changing_mode=False)
+
     def open_link_btn(self):
         """Open link to GitHub page."""
         link = 'https://michael-hoang.github.io/project-atbs-work/'
         webbrowser.open(url=link, new=2, autoraise=True)
 
-    def user_setup_ok_btn_command(self, e=None):
+    def user_setup_ok_btn_command(self, changing_mode=True, e=None):
         """Confirm user setup and save data to json file."""
         first_name = self.first_name_entry.get().strip()
         last_name = self.last_name_entry.get().strip()
@@ -292,9 +324,14 @@ class Settings(tkb.Frame):
                 'first_name': first_name_title,
                 'last_name': last_name_title,
             }
-            self.current_settings['mode'] = 'Refill'
-            self.mode_str_var.set('Refill')
             self.save_settings(toggle_settings_after_save=False)
+            if changing_mode:
+                mode = self.current_settings['mode']
+                self.mode_str_var.set(mode)
+            else:
+                self.open_refill_app()
+                self.change_user_btn.config(state='normal')
+
             self.cardpayment.settings_window.attributes('-disabled', 0)
             self.change_user_btn.config(state='normal')
             self.setup_window.destroy()
@@ -356,7 +393,7 @@ class Settings(tkb.Frame):
         labelframe = tkb.Labelframe(
             master=master,
             text=text,
-            # style='TLabelframe.Label',
+            style='TLabelframe.Label',
             padding=15,
         )
 
@@ -408,7 +445,8 @@ class Settings(tkb.Frame):
             text=text,
             command=command,
             width=width,
-            state=state
+            state=state,
+            style='TButton'
         )
 
         solid_btn.pack(side=LEFT)
