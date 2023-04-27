@@ -631,6 +631,12 @@ class CardPayment(tkb.Labelframe):
             self.root.attributes('-disabled', 0)
             self.focus()
             self.settings_window.withdraw()
+            # Revert any unsaved changes to settings
+            try:
+                self.set_user_settings()
+            except AttributeError:
+                pass
+
         else:
             # self.settings_window.place_window_center()
             self.center_child_to_parent(self.settings_window, self.root, 'settings')
@@ -732,22 +738,29 @@ class CardPayment(tkb.Labelframe):
         """Configure always on top setting."""
         if user_settings['always_on_top'] == 'yes':
             self.root.attributes('-topmost', 1)
+            self.settings.always_top_int_var.set(1)
+            self.settings.current_settings['always_on_top'] = 'yes'
         else:
             self.root.attributes('-topmost', 0)
+            self.settings.always_top_int_var.set(0)
+            self.settings.current_settings['always_on_top'] = 'no'
 
     def _set_mode_setting(self, user_settings: dict):
         """Configure mode setting."""
         if user_settings['mode'] == 'Payment':
             self.settings.mode_str_var.set('Payment')
             self.settings.change_user_btn.config(state='disabled')
+            self.settings.current_settings['mode'] = 'Payment'
         elif user_settings['mode'] == 'Refill':
             self.settings.mode_str_var.set('Refill')
             self.settings.change_user_btn.config(state='normal')
+            self.settings.current_settings['mode'] = 'Refill'
 
     def _set_theme_setting(self, user_settings: dict):
         """Configure theme setting."""
         theme = user_settings['theme']
         self.root._style.instance.theme_use(theme)
+        self.settings.current_settings['theme'] = theme
         self.settings.themes_combobox.set(theme)
         
     def set_user_settings(self):
