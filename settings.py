@@ -9,6 +9,7 @@ from ttkbootstrap.constants import *
 from tkinter.ttk import Style
 
 from refill import Refill
+from wrapup import WrapUp
 
 
 class Settings(tkb.Frame):
@@ -104,6 +105,7 @@ class Settings(tkb.Frame):
             variable=self.mode_str_var,
             value='Refill'
         )
+        refill_mode.pack_configure(padx=(20, 0))
 
         # Other apps
 
@@ -119,7 +121,12 @@ class Settings(tkb.Frame):
             command=self.open_refill_app
         )
 
-        refill_mode.pack_configure(padx=(20, 0))
+        wrapup = self.create_solid_btn(
+            master=other_apps,
+            text='Wrap Up',
+            command=self.open_wrapup_app
+        )
+        wrapup.pack_configure(padx=(10, 0))
 
         # Theme menu
         themes = ['superhero', 'solar', 'darkly', 'cyborg', 'vapor',
@@ -395,12 +402,21 @@ class Settings(tkb.Frame):
             refill_window = tkb.Toplevel(
                 title=f'Refill Coordination - {full}', resizable=(False, False)
             )
-            refill = Refill(
+            Refill(
                 self.cardpayment.root, refill_window, wrapup=None, settings=self
             )
             refill_window.place_window_center()
         else:
             self._user_setup_window(changing_mode=False)
+
+    def open_wrapup_app(self):
+        """Instantiate Wrap Up app."""
+        wrapup_window = tkb.Toplevel(
+            title='Wrap Up Calculator', resizable=(False, False)
+        )
+        wrapup_window.config(padx=10)
+        WrapUp(wrapup_window)
+        wrapup_window.place_window_center()
 
     def open_link_btn(self):
         """Open link to GitHub page."""
