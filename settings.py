@@ -1,10 +1,11 @@
 import json
 import os
+import PyPDF2
 import sys
 import ttkbootstrap as tkb
 import webbrowser
+
 from ttkbootstrap.constants import *
-from ttkbootstrap.dialogs import Messagebox
 from tkinter.ttk import Style
 
 from refill import Refill
@@ -54,9 +55,8 @@ class Settings(tkb.Frame):
         print_blank_form_btn = self.create_solid_btn(
             master=settings_row_2,
             text='Print',
-            command=None,
+            command=self.open_print_blank_form_window,
             width=7,
-            state='disabled'
         )
         print_blank_form_btn.pack_configure(side=RIGHT, padx=(10, 0))
 
@@ -159,7 +159,7 @@ class Settings(tkb.Frame):
 
         version_label = self.create_label(
             master=info_labelframe,
-            text= f'{self.cardpayment.root.current_version}'
+            text=f'{self.cardpayment.root.current_version}'
         )
 
         version_label.pack_configure(side=TOP)
@@ -255,7 +255,9 @@ class Settings(tkb.Frame):
         ok_btn = self.create_solid_btn(
             master=self.setup_window,
             text='OK',
-            command=lambda: self.user_setup_ok_btn_command(changing_mode=changing_mode),
+            command=lambda: self.user_setup_ok_btn_command(
+                changing_mode=changing_mode
+            ),
             width=7
         )
         ok_btn.pack_configure(side=BOTTOM, pady=(15, 0))
@@ -267,10 +269,20 @@ class Settings(tkb.Frame):
         self.first_name_entry.focus()
 
         self.setup_window.protocol(
-            'WM_DELETE_WINDOW', lambda: self.on_closing_user_setup_window(self.setup_window)
+            'WM_DELETE_WINDOW', lambda: self.on_closing_user_setup_window(
+                self.setup_window
+            )
         )
-        self.setup_window.bind('<Return>', lambda e: self.user_setup_ok_btn_command(changing_mode=changing_mode, e=e))
-        self.setup_window.bind('<Escape>', lambda e: self.on_closing_user_setup_window(self.setup_window, e))
+        self.setup_window.bind(
+            '<Return>', lambda e: self.user_setup_ok_btn_command(
+                changing_mode=changing_mode, e=e
+            )
+        )
+        self.setup_window.bind(
+            '<Escape>', lambda e: self.on_closing_user_setup_window(
+                self.setup_window, e
+            )
+        )
 
     def center_child_to_parent(self, child, parent):
         """Center child window to parent window."""
@@ -290,10 +302,88 @@ class Settings(tkb.Frame):
 
         if not self.current_settings['user']:
             self.mode_str_var.set('Payment')
-        
+
         self.setup_window.destroy()
 
+    def on_closing_print_window(self, e):
+        """Enable root window on closing the print window."""
+        self.cardpayment.settings_window.attributes('-disabled', 0)
+        self.print_window.destroy()
+        self.cardpayment.settings_window.focus()
+
+    def highlight_print_pages(self, e):
+        """Highlight number of pages entry box when clicked."""
+        self.num_page_entry.selection_range(0, END)
+
+    def print_blank_forms(self):
+        """Print blank payment forms."""
+        num_copies = self.num_page_entry.get()
+        if not num_copies.isdigit():
+            return
+        
+        program_path = self._get_program_path()
+        pdf_file_path = os.path.join(
+            program_path, 'assets', 'form', 'cardpayment-blank.pdf'
+        )
+
+        pdf_reader = PyPDF2.PdfReader(open(pdf_file_path, 'rb'))
+        num_pages = len(pdf_reader.pages)
+        pdf_writer = PyPDF2.PdfWriter()
+        # Add each page to the writer object num_copies times
+        for i in range(int(num_copies)):
+            for page_num in range(num_pages):
+                pdf_writer.add_page(pdf_reader.pages[page_num])
+
+        # Create a temporary file to write the output to
+        temp_output_path = os.path.join(program_path, '.files', 'blank_form.pdf')
+        with open(temp_output_path, 'wb') as out_file:
+            pdf_writer.write(out_file)
+
+        # Print the file using the OS print command
+        os.startfile(temp_output_path, 'print')
+        self.cardpayment.settings_window.attributes('-disabled', 0)
+        self.print_window.destroy()
+
     # Button commands
+
+    def open_print_blank_form_window(self):
+        """Open a window to print blank card payment forms."""
+        self.print_window = tkb.Toplevel(
+            title='Print', resizable=(False, False)
+        )
+        self.print_window.config(padx=50, pady=20)
+
+        inquiry_label = self.create_label(
+            master=self.print_window,
+            text='How many pages?'
+        )
+        inquiry_label.pack_configure(side=TOP)
+
+        self.num_page_entry = self.create_short_entry(
+            master=self.print_window,
+            width=3,
+        )
+        self.num_page_entry.pack_configure(side=TOP, pady=(10, 0))
+        self.num_page_entry.insert(0, '1')
+
+        print_btn = self.create_solid_btn(
+            master=self.print_window,
+            text='Print',
+            command=self.print_blank_forms,
+            width=7
+        )
+        print_btn.pack_configure(side=TOP, pady=(15, 0))
+
+        self.center_child_to_parent(self.print_window, self.cardpayment.root)
+        self.cardpayment.settings_window.attributes('-disabled', 1)
+        self.print_window.attributes('-topmost', 1)
+        self.num_page_entry.focus()
+
+        self.print_window.bind('<Escape>', self.on_closing_print_window)
+        self.num_page_entry.bind('<FocusIn>', self.highlight_print_pages)
+        self.print_window.protocol(
+            'WM_DELETE_WINDOW', lambda: self.on_closing_print_window(e=None)
+        )
 
     def open_refill_app(self):
         """Instantiate Refill Coordination form app if a user is registered."""
@@ -302,8 +392,12 @@ class Settings(tkb.Frame):
             first = user['first_name']
             last = user['last_name']
             full = f'{first} {last}'
-            refill_window = tkb.Toplevel(title=f'Refill Coordination - {full}', resizable=(False, False))
-            refill = Refill(self.cardpayment.root, refill_window, wrapup=None, settings=self)
+            refill_window = tkb.Toplevel(
+                title=f'Refill Coordination - {full}', resizable=(False, False)
+            )
+            refill = Refill(
+                self.cardpayment.root, refill_window, wrapup=None, settings=self
+            )
             refill_window.place_window_center()
         else:
             self._user_setup_window(changing_mode=False)
