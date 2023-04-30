@@ -488,7 +488,6 @@ class Settings(tkb.Frame):
         selected_mode = self.mode_str_var.get()
         if selected_mode == 'Payment':
             self.current_settings['mode'] = 'Payment'
-            self.change_user_btn.config(state='disabled')
         elif selected_mode == 'Refill':
             if self.current_settings['user']:
                 self.current_settings['mode'] = 'Refill'
