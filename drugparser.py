@@ -14,7 +14,16 @@ class DrugParser:
     A class for parsing drung information from AmerisourceBergen's ABC ordering platform.
     """
 
-    def __init__(self, driver_path, mode='default'):
+    def __init__(
+            self,
+            username,
+            password,
+            driver_path,
+            website_url,
+            in_file,
+            out_file,
+            mode='default'
+    ):
         self.service = Service(driver_path)
         self.options = Options()
         if mode == 'headless':
@@ -25,7 +34,16 @@ class DrugParser:
         self.driver = webdriver.Edge(
             service=self.service, options=self.options
         )
-        self.load_drug_spreadsheet()
+
+        self.load_drug_spreadsheet(in_file)
+        self.open_website(website_url)
+        time.sleep(3)
+        self.sign_in(username, password)
+        time.sleep(3)
+        self.go_to_abc_order()
+        time.sleep(3)
+        self.parse_dropship_data()
+        self.export_dropship_data(out_file)
 
     def load_drug_spreadsheet(self, in_file):
         data = pd.read_excel(in_file)
@@ -44,7 +62,7 @@ class DrugParser:
                 self.unique_drugs['Item'].append(item)
                 self.search_ndc(formatted_ndc)
                 time.sleep(3)
-                isDropShip = str(dp.check_if_dropship())
+                isDropShip = str(self.check_if_dropship())
                 self.unique_drugs['Drop Ship'].append(isDropShip)
 
     def export_dropship_data(self, out_file):
@@ -98,18 +116,16 @@ if __name__ == '__main__':
     PASSWORD = os.environ.get('PASSWORD')
 
     # Paths
-    webdriver_path = r'C:\Users\Mike\OneDrive\Desktop\edgedriver_win64\msedgedriver.exe'
-    website_url = 'https://abcorderhs.amerisourcebergen.com/'
-    in_file = './assets/data/drugs.xlsx'
-    out_file = './assets/data/output.xlsx'
+    WEBDRIVER_PATH = r'C:\Users\Mike\OneDrive\Desktop\edgedriver_win64\msedgedriver.exe'
+    WEBSITE_URL = 'https://abcorderhs.amerisourcebergen.com/'
+    IN_FILE = './assets/data/drugs.xlsx'
+    OUT_FILE = './assets/data/output.xlsx'
 
-    dp = DrugParser(webdriver_path)
-    dp.load_drug_spreadsheet(in_file)
-    dp.open_website(website_url)
-    time.sleep(3)
-    dp.sign_in(USER, PASSWORD)
-    time.sleep(4)
-    dp.go_to_abc_order()
-    time.sleep(3)
-    dp.parse_dropship_data()
-    dp.export_dropship_data(out_file)
+    DrugParser(
+        username=USER,
+        password=PASSWORD,
+        driver_path=WEBDRIVER_PATH,
+        website_url=WEBSITE_URL,
+        in_file=IN_FILE,
+        out_file=OUT_FILE
+    )
