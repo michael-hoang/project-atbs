@@ -25,10 +25,39 @@ class DrugParser:
         self.driver = webdriver.Edge(
             service=self.service, options=self.options
         )
-        self.website_url = 'https://abcorderhs.amerisourcebergen.com/'
+        self.load_drug_spreadsheet()
 
-    def open_website(self):
-        self.driver.get(self.website_url)
+    def load_drug_spreadsheet(self, in_file):
+        data = pd.read_excel(in_file)
+        self.drug_df = pd.DataFrame(data, columns=['NDC', 'Item'])
+        self.unique_drugs = {
+            'NDC': [],
+            'Item': [],
+            'Drop Ship': []
+        }
+
+    def parse_dropship_data(self):
+        for ndc, item in zip(self.drug_df['NDC'], self.drug_df['Item']):
+            formatted_ndc = str(ndc).zfill(11)
+            if formatted_ndc not in self.unique_drugs['NDC']:
+                self.unique_drugs['NDC'].append(formatted_ndc)
+                self.unique_drugs['Item'].append(item)
+                self.search_ndc(formatted_ndc)
+                time.sleep(3)
+                isDropShip = str(dp.check_if_dropship())
+                self.unique_drugs['Drop Ship'].append(isDropShip)
+
+    def export_dropship_data(self, out_file):
+        df = pd.DataFrame(self.unique_drugs)
+        writer = pd.ExcelWriter(
+            out_file, engine='xlsxwriter')
+        df.to_excel(
+            writer, sheet_name='Drugs', startrow=0, startcol=0, index=False
+        )
+        writer.save()
+
+    def open_website(self, website_url):
+        self.driver.get(website_url)
 
     def sign_in(self, username: str, password: str):
         username_input = self.driver.find_element(By.ID, 'logonuidfield')
@@ -50,6 +79,15 @@ class DrugParser:
         )
         search_btn.click()
 
+    def check_if_dropship(self) -> bool:
+        try:
+            dropship = self.driver.find_element(
+                By.XPATH, '//*[contains(text(), "Ships separately")]')
+            if dropship.text:
+                return True
+        except:
+            return False
+
 
 if __name__ == '__main__':
     # Load environment variables from .env file
@@ -59,29 +97,19 @@ if __name__ == '__main__':
     USER = os.environ.get('USER')
     PASSWORD = os.environ.get('PASSWORD')
 
+    # Paths
     webdriver_path = r'C:\Users\Mike\OneDrive\Desktop\edgedriver_win64\msedgedriver.exe'
+    website_url = 'https://abcorderhs.amerisourcebergen.com/'
+    in_file = './assets/data/drugs.xlsx'
+    out_file = './assets/data/output.xlsx'
+
     dp = DrugParser(webdriver_path)
-    dp.open_website()
+    dp.load_drug_spreadsheet(in_file)
+    dp.open_website(website_url)
     time.sleep(3)
     dp.sign_in(USER, PASSWORD)
     time.sleep(4)
     dp.go_to_abc_order()
     time.sleep(3)
-    dp.search_ndc('metformin')
-
-    # data = pd.read_excel('./assets/data/drugs.xlsx')
-    # item_df = pd.DataFrame(data, columns=['Item'])
-    # ndc_df = pd.DataFrame(data, columns=['NDC'])
-
-    # unique_ndcs = []
-    # unique_drugs = []
-
-    # for ndc in ndc_df['NDC']:
-    #     formatted_ndc = str(ndc).zfill(11)
-    #     if formatted_ndc not in unique_ndcs:
-    #         unique_ndcs.append(formatted_ndc)
-
-    # for item in item_df['Item']:
-    #     print(item)
-
-    # print(len(unique_ndcs))
+    dp.parse_dropship_data()
+    dp.export_dropship_data(out_file)
