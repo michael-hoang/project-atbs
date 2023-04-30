@@ -91,6 +91,7 @@ class DrugParser:
 
     def search_ndc(self, ndc):
         search_box = self.driver.find_element(By.CLASS_NAME, 'text-input')
+        search_box.clear()
         search_box.send_keys(ndc)
         search_btn = self.driver.find_element(
             By.XPATH, '//*[@id="styled-nav-container"]/div[2]/div/div/div[2]/button'
