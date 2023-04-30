@@ -109,8 +109,11 @@ if __name__ == '__main__':
             MainApp.open_Updater(None)
         else:
             app = MainApp()
+            app.withdraw()
     except:
         app = MainApp()
+        app.withdraw()
 
     app.place_window_center()
+    app.deiconify()
     app.mainloop()
