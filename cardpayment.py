@@ -642,7 +642,7 @@ class CardPayment(tkb.Labelframe):
             self.center_child_to_parent(self.settings_window, self.root, 'settings')
             self.settings_isHidden = True
             self.root.attributes('-disabled', 1)
-            # self.settings_window.attributes('-topmost', 1)
+            self.settings_window.attributes('-topmost', 1)
             self.settings_window.deiconify()
             self.settings_window.focus()
 
