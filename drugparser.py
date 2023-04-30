@@ -38,6 +38,18 @@ class DrugParser:
         sign_in_btn = self.driver.find_element(By.NAME, 'uidPasswordLogon')
         sign_in_btn.click()
 
+    def go_to_abc_order(self):
+        abc_order = self.driver.find_element(By.LINK_TEXT, 'ABC ORDER')
+        abc_order.click()
+
+    def search_ndc(self, ndc):
+        search_box = self.driver.find_element(By.CLASS_NAME, 'text-input')
+        search_box.send_keys(ndc)
+        search_btn = self.driver.find_element(
+            By.XPATH, '//*[@id="styled-nav-container"]/div[2]/div/div/div[2]/button'
+        )
+        search_btn.click()
+
 
 if __name__ == '__main__':
     # Load environment variables from .env file
@@ -53,7 +65,9 @@ if __name__ == '__main__':
     time.sleep(3)
     dp.sign_in(USER, PASSWORD)
     time.sleep(4)
-    
+    dp.go_to_abc_order()
+    time.sleep(3)
+    dp.search_ndc('metformin')
 
     # data = pd.read_excel('./assets/data/drugs.xlsx')
     # item_df = pd.DataFrame(data, columns=['Item'])
