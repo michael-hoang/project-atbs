@@ -8,13 +8,6 @@ import requests
 from program_files_manager import ProgramFileManager
 
 
-FONT = ('Bahnschrift Light', 17, 'normal')
-BG_COLOR = '#30323D'
-FG_COLOR = 'white'
-HOVER_BUTTON_COLOR = '#424553'
-ACTIVE_BG_COLOR = '#424553'
-ACTIVE_FG_COLOR = 'white'
-
 CURRENT_VERSION = 'v6.0.0'
 
 class MainApp(tkb.Window):
@@ -115,3 +108,4 @@ if __name__ == '__main__':
     app.place_window_center()
     app.deiconify()
     app.mainloop()
+    
