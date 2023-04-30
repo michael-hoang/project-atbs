@@ -11,7 +11,7 @@ from selenium.webdriver.edge.options import Options
 
 class DrugParser:
     """
-    A class for parsing drung information from AmerisourceBergen's ABC ordering platform.
+    A class for parsing drug information from AmerisourceBergen's ABC ordering platform.
     """
 
     def __init__(
