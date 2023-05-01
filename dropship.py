@@ -44,9 +44,10 @@ class DropShipLookUp(tkb.Frame):
 
         self.ndc_entry = tkb.Entry(
             master=ndc_input_container,
-            width=12,
+            width=16,
             font=FONT,
-            textvariable=self.ndc_str_var
+            textvariable=self.ndc_str_var,
+            justify=CENTER
         )
         self.ndc_entry.pack(side=LEFT, padx=(10, 0))
 
