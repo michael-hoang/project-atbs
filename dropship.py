@@ -12,11 +12,14 @@ EXCEL_PATH = './assets/data/dropship.xlsx'
 class DropShipLookUp(tkb.Frame):
     """GUI for searching if a drug is ordered through drop ship."""
 
-    def __init__(self, master):
+    def __init__(self, root):
         super().__init__(padding=25)
         self.pack()
+        self.root = root
         style = Style()
         style.configure('TButton', font=FONT)
+
+        self.ndc_str_var = tkb.StringVar()
 
         # Load Excel
         self.excel_data_df = self.load_excel_data(EXCEL_PATH)
@@ -43,16 +46,19 @@ class DropShipLookUp(tkb.Frame):
             master=ndc_input_container,
             width=12,
             font=FONT,
+            textvariable=self.ndc_str_var
         )
         self.ndc_entry.pack(side=LEFT, padx=(10, 0))
 
-        check_btn = tkb.Button(
+        self.check_btn = tkb.Button(
             master=ndc_input_container,
             text='Check',
             style='TButton',
             command=self.check_if_dropship,
+            width=7,
+            state='disabled'
         )
-        check_btn.pack(side=LEFT, padx=(15, 0))
+        self.check_btn.pack(side=LEFT, padx=(15, 0))
 
         drug_name_container = tkb.Frame(master=self)
         drug_name_container.pack(side=TOP, fill=BOTH, pady=(15, 0))
@@ -91,15 +97,43 @@ class DropShipLookUp(tkb.Frame):
         self.status.pack(side=LEFT, padx=(10, 0))
 
         # Key binds
-        self.ndc_entry.bind('<FocusIn>', self.on_click_select)
-        master.bind('<Return>', self.on_enter_check_if_dropship)
+        self.ndc_entry.bind('<FocusIn>', self._on_click_select)
+        self.root.bind('<Return>', self._on_enter_check_if_dropship)
 
-    def on_click_select(self, event):
-        event.widget.select_range(0, END)
+        # Register validation callback
+        digit_func = self.root.register(self._validate_digit)
 
-    def on_enter_check_if_dropship(self, event):
-        if len(self.ndc_entry.get().strip()) == 11:
+        # Validate 11 digits entry
+        self.ndc_entry.config(
+            validate='key', validatecommand=(digit_func, '%P')
+        )
+
+        # After recursion
+        self.after(50, self._check_length)
+
+    def _on_click_select(self, event):
+        self.ndc_entry.select_range(0, END)
+
+    def _on_enter_check_if_dropship(self, event):
+        if len(self.ndc_str_var.get()) == 11:
             self.check_if_dropship()
+            self._on_click_select(event=None)
+
+    def _validate_digit(self, ndc) -> bool:
+        if ndc.isdigit():
+            return True
+        elif ndc == '':
+            return True
+        else:
+            return False
+
+    def _check_length(self):
+        if len(self.ndc_str_var.get()) == 11:
+            self.check_btn.config(state='normal')
+        else:
+            self.check_btn.config(state='disabled')
+
+        self.after(50, self._check_length)
 
     def load_excel_data(self, excel_path) -> pd:
         df = pd.read_excel(excel_path, dtype={'NDC': str})
@@ -125,7 +159,7 @@ class DropShipLookUp(tkb.Frame):
         return (None, None)
 
     def check_if_dropship(self):
-        ndc = self.ndc_entry.get().strip()
+        ndc = self.ndc_str_var.get()
         item, dropship = self.iterate_excel_data(ndc)
         self.drug_name.config(state='normal')
         self.drug_name.delete(1.0, END)
@@ -138,7 +172,7 @@ class DropShipLookUp(tkb.Frame):
         else:
             self.drug_name.insert(1.0, 'NDC not in database')
             self.status.config(text='N/A', foreground='')
-        
+
         self.drug_name.config(state='disabled')
         self.ndc_entry.focus()
 
