@@ -1,3 +1,4 @@
+import pandas as pd
 import ttkbootstrap as tkb
 
 from ttkbootstrap.constants import *
@@ -5,6 +6,7 @@ from tkinter.ttk import Style
 
 
 FONT = ('', 10, '')
+EXCEL_PATH = './assets/data/dropship.xlsx'
 
 
 class DropShipLookUp(tkb.Frame):
@@ -16,6 +18,10 @@ class DropShipLookUp(tkb.Frame):
         style = Style()
         style.configure('TButton', font=FONT)
 
+        # Load Excel
+        self.excel_data = self.load_excel_data(EXCEL_PATH)
+
+        # GUI
         ndc_format_label = tkb.Label(
             master=self,
             text='Enter 11-digit raw NDC',
@@ -81,6 +87,10 @@ class DropShipLookUp(tkb.Frame):
             font=FONT
         )
         status.pack(side=LEFT, padx=(10, 0))
+
+    def load_excel_data(self, excel_path) -> pd:
+        df = pd.read_excel(excel_path)
+        return df
 
 
 if __name__ == '__main__':
