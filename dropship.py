@@ -19,7 +19,7 @@ class DropShipLookUp(tkb.Frame):
         style.configure('TButton', font=FONT)
 
         # Load Excel
-        self.excel_data = self.load_excel_data(EXCEL_PATH)
+        self.excel_data_df = self.load_excel_data(EXCEL_PATH)
 
         # GUI
         ndc_format_label = tkb.Label(
@@ -89,8 +89,27 @@ class DropShipLookUp(tkb.Frame):
         status.pack(side=LEFT, padx=(10, 0))
 
     def load_excel_data(self, excel_path) -> pd:
-        df = pd.read_excel(excel_path)
+        df = pd.read_excel(excel_path, dtype={'NDC': str})
         return df
+
+    def check_if_dropship(self, ndc) -> tuple:
+        item = ''
+        for index, row in self.excel_data_df.iterrows():
+            for column_name, value in row.items():
+                if column_name == 'NDC':
+                    if value == ndc:
+                        continue
+                    else:
+                        break
+                elif column_name == 'Item':
+                    item = value
+                elif column_name == 'Drop Ship':
+                    if value == True:
+                        return (item, True)
+                    else:
+                        return (item, False)
+
+        return (None, None)
 
 
 if __name__ == '__main__':
@@ -101,7 +120,8 @@ if __name__ == '__main__':
     )
     app.withdraw()
 
-    DropShipLookUp()
+    ds = DropShipLookUp()
+    print(ds.check_if_dropship('00597013730'))
     app.place_window_center()
     app.deiconify()
 
