@@ -12,7 +12,7 @@ EXCEL_PATH = './assets/data/dropship.xlsx'
 class DropShipLookUp(tkb.Frame):
     """GUI for searching if a drug is ordered through drop ship."""
 
-    def __init__(self):
+    def __init__(self, master):
         super().__init__(padding=25)
         self.pack()
         style = Style()
@@ -90,10 +90,16 @@ class DropShipLookUp(tkb.Frame):
         )
         self.status.pack(side=LEFT, padx=(10, 0))
 
+        # Key binds
         self.ndc_entry.bind('<FocusIn>', self.on_click_select)
+        master.bind('<Return>', self.on_enter_check_if_dropship)
 
     def on_click_select(self, event):
         event.widget.select_range(0, END)
+
+    def on_enter_check_if_dropship(self, event):
+        if len(self.ndc_entry.get().strip()) == 11:
+            self.check_if_dropship()
 
     def load_excel_data(self, excel_path) -> pd:
         df = pd.read_excel(excel_path, dtype={'NDC': str})
@@ -134,6 +140,7 @@ class DropShipLookUp(tkb.Frame):
             self.status.config(text='N/A', foreground='')
         
         self.drug_name.config(state='disabled')
+        self.ndc_entry.focus()
 
 
 if __name__ == '__main__':
@@ -143,8 +150,9 @@ if __name__ == '__main__':
         resizable=(False, False)
     )
     app.withdraw()
-    DropShipLookUp()
+    ds = DropShipLookUp(app)
     app.place_window_center()
     app.deiconify()
+    ds.ndc_entry.focus()
 
     app.mainloop()
