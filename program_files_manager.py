@@ -64,6 +64,7 @@ class ProgramFileManager:
         Create all the necessary directories that contain essential files for
         the Main app. The paths are stored in a Python dictionary as an attribute.
         """
+        self.create_hidden_data_directory()
         directories = {
             'assets': os.path.join(self.root_path, 'assets'),
             'form': os.path.join(self.root_path, 'assets', 'form'),
