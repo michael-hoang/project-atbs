@@ -3,6 +3,7 @@
 import json
 import os
 import requests
+import subprocess
 import sys
 import urllib.request
 
@@ -24,7 +25,7 @@ class ProgramFileManager:
         self.assets = AssetManager()
         self.latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
         self.update_exe_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/update.exe'
-        self.directories = None
+        self.directories = None  # dictionary
 
     def get_latest_version_number(self) -> str:
         """Return the latest version number for the Main app."""
@@ -47,6 +48,16 @@ class ProgramFileManager:
         else:
             path = os.path.dirname(os.path.abspath(__file__))
         self.root_path = path
+
+    def create_hidden_data_directory(self):
+        """
+        Create a hidden directory called '.data'.
+        """
+        root_path = self.get_program_directory_path()
+        hdata_dir_path = os.path.join(root_path, '.data')
+        if not os.path.isdir(hdata_dir_path):
+            os.makedirs(hdata_dir_path)
+            subprocess.call(['attrib', '+h', hdata_dir_path])  # hidden
 
     def create_required_directories(self):
         """
