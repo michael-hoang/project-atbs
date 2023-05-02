@@ -6,7 +6,7 @@ from tkinter.ttk import Style
 
 
 FONT = ('', 10, '')
-EXCEL_PATH = './assets/data/dropship.xlsx'
+EXCEL_PATH = './.data/drug_db.xlsx'
 
 
 class DropShipLookUp(tkb.Frame):
