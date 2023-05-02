@@ -56,6 +56,9 @@ class MainApp(tkb.Window):
             with open(current_updater_version_path, 'wb') as f:
                 for data in latest_updater_version_response.iter_content(block_size):
                     f.write(data)
+
+    def check_for_new_drug_db_version(self):
+        """Check for new version of drug_db.xlsx file."""
         
     def _check_for_updates_loop(self):
         """Run with Tkinter after method to check for updates periodically."""

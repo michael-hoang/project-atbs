@@ -25,6 +25,8 @@ class ProgramFileManager:
         self.assets = AssetManager()
         self.latest_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
         self.update_exe_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/update.exe'
+        self.drug_db_xlsx_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/latest_version/drug_db.xlsx'
+        self.latest_drug_db_ver_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/drug_db_ver.txt'
         self.directories = None  # dictionary
 
     def get_latest_version_number(self) -> str:
@@ -53,11 +55,10 @@ class ProgramFileManager:
         """
         Create a hidden directory called '.data'.
         """
-        root_path = self.get_program_directory_path()
-        hdata_dir_path = os.path.join(root_path, '.data')
-        if not os.path.isdir(hdata_dir_path):
-            os.makedirs(hdata_dir_path)
-            subprocess.call(['attrib', '+h', hdata_dir_path])  # hidden
+        self.hdata_dir_path = os.path.join(self.root_path, '.data')
+        if not os.path.isdir(self.hdata_dir_path):
+            os.makedirs(self.hdata_dir_path)
+            subprocess.call(['attrib', '+h', self.hdata_dir_path])  # hidden
 
     def create_required_directories(self):
         """
@@ -126,6 +127,51 @@ class ProgramFileManager:
             except:
                 pass
 
+    def download_drug_db_xlsx(self):
+        """Download the latest version of drug_db.xlsx."""
+        hdata_path = self.hdata_dir_path
+        drug_db_xlsx_path = os.path.join(hdata_path, 'drug_db.xlsx')
+        drug_db_ver_path = os.path.join(hdata_path, 'drug_db_ver.txt')
+        # download drug_db.xlsx
+        if not os.path.exists(drug_db_xlsx_path):
+            block_size = 1024
+            try:
+                response = requests.get(self.drug_db_xlsx_url, stream=True)
+                with open (drug_db_xlsx_path, 'wb') as f:
+                    for data in response.iter_content(block_size):
+                        f.write(data)
+            except:
+                pass
+        # download drug_db_ver.txt
+        if not os.path.exists(drug_db_ver_path):
+            block_size = 1
+            try:
+                response = requests.get(self.latest_drug_db_ver_url, stream=True)
+                with open (drug_db_ver_path, 'wb') as f:
+                    for data in response.iter_content(block_size):
+                        f.write(data)
+            except:
+                pass
+        # Get latest version
+        response = requests.get(self.latest_drug_db_ver_url)
+        if response.status_code == 200:
+            content = response.content
+            latest_version = content.decode('utf-8')
+        # Get current version
+        with open(drug_db_ver_path, 'r') as f:
+            current_version = f.read()
+        # Compare versions and update if needed
+        if current_version != latest_version:
+            block_size = 1
+            try:
+                response = requests.get(self.latest_drug_db_ver_url, stream=True)
+                with open (drug_db_ver_path, 'wb') as f:
+                    for data in response.iter_content(block_size):
+                        f.write(data)
+            except:
+                pass
+        
+
     def download_essential_files(self, current_version_number):
         """
         Download all essential files required for the Main app to run properly.
@@ -137,3 +183,4 @@ class ProgramFileManager:
         self.download_img_files()
         self.download_form_files()
         self.download_update_exe()
+        self.download_drug_db_xlsx()
