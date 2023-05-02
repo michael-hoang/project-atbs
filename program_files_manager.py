@@ -157,19 +157,19 @@ class ProgramFileManager:
         if response.status_code == 200:
             content = response.content
             latest_version = content.decode('utf-8')
-        # Get current version
-        with open(drug_db_ver_path, 'r') as f:
-            current_version = f.read()
-        # Compare versions and update if needed
-        if current_version != latest_version:
-            block_size = 1
-            try:
-                response = requests.get(self.latest_drug_db_ver_url, stream=True)
-                with open (drug_db_ver_path, 'wb') as f:
-                    for data in response.iter_content(block_size):
-                        f.write(data)
-            except:
-                pass
+            # Get current version
+            with open(drug_db_ver_path, 'r') as f:
+                current_version = f.read()
+            # Compare versions and update if needed
+            if current_version != latest_version:
+                block_size = 1
+                try:
+                    response = requests.get(self.latest_drug_db_ver_url, stream=True)
+                    with open (drug_db_ver_path, 'wb') as f:
+                        for data in response.iter_content(block_size):
+                            f.write(data)
+                except:
+                    pass
         
 
     def download_essential_files(self, current_version_number):
