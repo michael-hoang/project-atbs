@@ -5,15 +5,15 @@ from ttkbootstrap.constants import *
 from tkinter.ttk import Style
 
 
-FONT = ('', 10, '')
+FONT = ('', 9, '')
 EXCEL_PATH = './.data/drug_db.xlsx'
 
 
 class DropShipLookUp(tkb.Frame):
     """GUI for searching if a drug is ordered through drop ship."""
 
-    def __init__(self, root):
-        super().__init__(padding=25)
+    def __init__(self, master, root):
+        super().__init__(master=master, padding=25)
         self.pack()
         self.root = root
         style = Style()
@@ -190,7 +190,7 @@ if __name__ == '__main__':
         resizable=(False, False)
     )
     app.withdraw()
-    ds = DropShipLookUp(app)
+    ds = DropShipLookUp(app, app)
     app.place_window_center()
     app.deiconify()
     ds.ndc_entry.focus()

@@ -10,6 +10,7 @@ from tkinter.ttk import Style
 
 from refill import Refill
 from wrapup import WrapUp
+from dropship import DropShipLookUp
 
 
 class Settings(tkb.Frame):
@@ -127,6 +128,13 @@ class Settings(tkb.Frame):
             command=self.open_wrapup_app
         )
         wrapup.pack_configure(padx=(10, 0))
+
+        dropship = self.create_solid_btn(
+            master=other_apps,
+            text='Drop Ship',
+            command=self.open_dropship_app
+        )
+        dropship.pack_configure(padx=(10, 0))
 
         # Theme menu
         themes = ['superhero', 'solar', 'darkly', 'cyborg', 'vapor',
@@ -421,6 +429,16 @@ class Settings(tkb.Frame):
         WrapUp(wrapup_window)
         wrapup_window.place_window_center()
         wrapup_window.deiconify()
+
+    def open_dropship_app(self):
+        """Instantiate Drop Ship app."""
+        dropship_window = tkb.Toplevel(
+            title='Drop Ship Look Up', resizable=(False, False)
+        )
+        dropship_window.withdraw()
+        DropShipLookUp(master=dropship_window, root=dropship_window)
+        dropship_window.place_window_center()
+        dropship_window.deiconify()
 
     def open_link_btn(self):
         """Open link to GitHub page."""
