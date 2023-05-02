@@ -75,7 +75,7 @@ class DropShipLookUp(tkb.Frame):
             master=drug_name_container,
             font=FONT,
             height=3,
-            width=30,
+            width=28,
             state='disabled'
         )
         self.drug_name.pack(side=LEFT, padx=(10, 0))
@@ -100,6 +100,7 @@ class DropShipLookUp(tkb.Frame):
         # Key binds
         self.ndc_entry.bind('<FocusIn>', self._on_click_select)
         self.root.bind('<Return>', self._on_enter_check_if_dropship)
+        self.root.bind('<Delete>', self._on_delete_clear)
 
         # Register validation callback
         digit_func = self.root.register(self._validate_digit)
@@ -119,6 +120,10 @@ class DropShipLookUp(tkb.Frame):
         if len(self.ndc_str_var.get()) == 11:
             self.check_if_dropship()
             self._on_click_select(event=None)
+
+    def _on_delete_clear(self, event):
+        self.ndc_entry.delete(0, END)
+        self.ndc_entry.focus()
 
     def _validate_digit(self, ndc) -> bool:
         if ndc.isdigit():

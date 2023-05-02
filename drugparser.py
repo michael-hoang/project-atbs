@@ -128,5 +128,6 @@ if __name__ == '__main__':
         driver_path=WEBDRIVER_PATH,
         website_url=WEBSITE_URL,
         in_file=IN_FILE,
-        out_file=OUT_FILE
+        out_file=OUT_FILE,
+        mode='headless'
     )
