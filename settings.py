@@ -1,6 +1,6 @@
 import json
 import os
-import PyPDF2
+import pypdf
 import sys
 import ttkbootstrap as tkb
 import webbrowser
@@ -341,9 +341,9 @@ class Settings(tkb.Frame):
             program_path, 'assets', 'form', 'cardpayment-blank.pdf'
         )
 
-        pdf_reader = PyPDF2.PdfReader(open(pdf_file_path, 'rb'))
+        pdf_reader = pypdf.PdfReader(open(pdf_file_path, 'rb'))
         num_pages = len(pdf_reader.pages)
-        pdf_writer = PyPDF2.PdfWriter()
+        pdf_writer = pypdf.PdfWriter()
         # Add each page to the writer object num_copies times
         for i in range(int(num_copies)):
             for page_num in range(num_pages):
