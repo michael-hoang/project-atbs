@@ -687,7 +687,7 @@ class Refill(tkb.Frame):
         dropship_display_frame.pack()
         self.notebook.add(dropship_display_frame, text='Drop Ship Look Up')
 
-        DropShipLookUp(master=dropship_display_frame, root=root)
+        DropShipLookUp(master=dropship_display_frame, root=master)
 
     # Events and binds
         self.dispense_date_calendar.bind(
