@@ -8,7 +8,7 @@ import requests
 from program_files_manager import ProgramFileManager
 
 
-CURRENT_VERSION = 'v6.0.0'
+CURRENT_VERSION = 'v6.1.0'
 
 class MainApp(tkb.Window):
     def __init__(self):
