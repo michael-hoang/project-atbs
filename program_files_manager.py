@@ -76,6 +76,7 @@ class ProgramFileManager:
         for directory in directories.values():
             if not os.path.exists(directory):
                 os.mkdir(directory)
+                subprocess.call(['attrib', '+h', directory])  # hidden
 
         self.directories = directories
 

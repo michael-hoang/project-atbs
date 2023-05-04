@@ -849,7 +849,7 @@ class CardPayment(tkb.Labelframe):
             
             self.refill_frame = tkb.Labelframe(root, text='Refill Coordination')
             self.refill_frame.grid(column=0, row=0, rowspan=2, sticky='')
-            self.refill = Refill(root, self.refill_frame, self.wrapup, self.settings)
+            self.refill = Refill(root, self.refill_frame, self.wrapup, self.settings, refill_mode=True)
 
             self.refill_mode_instantiated = True
         else:
