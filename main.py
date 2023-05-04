@@ -102,6 +102,7 @@ if __name__ == '__main__':
         app.check_for_new_updater_version()
         if app.check_for_main_app_update():
             app.open_Updater()
+            app.quit()
     except:
         pass
 
