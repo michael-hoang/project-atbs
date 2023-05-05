@@ -20,11 +20,15 @@ class Reprint(tkb.Frame):
     def create_treeview(self, master):
         """Create ttkbootstrap Treeview object."""
 
+        # Tree container (Treeview + Scrollbar)
+        tree_container = tkb.Frame(master)
+        tree_container.pack(padx=20, pady=20)
+
         # Define columns
         columns = ('#', 'reference', 'date_created', 'expiration')
 
         my_tree = tkb.Treeview(
-            master=master,
+            master=tree_container,
             bootstyle='primary',
             columns=columns,
             show='headings'
@@ -42,6 +46,9 @@ class Reprint(tkb.Frame):
         my_tree.heading('date_created', text='Date Created', anchor=W)
         my_tree.heading('expiration', text='Expiration', anchor=W)
 
+        # Scrollbar
+        tree_scroll = tkb.Scrollbar()
+
         # Add Data
         my_tree.insert(
             parent='',
@@ -51,7 +58,7 @@ class Reprint(tkb.Frame):
             values=('1', 'Mike_123456', '5/4/2023 9:57 AM', '6d 22h 34m')
         )
 
-        my_tree.pack(padx=20, pady=20)
+        my_tree.pack()
 
     def create_solid_button(self, master, text, command) -> tkb.Button:
         """Create ttkbootstrap Solid Button object."""
