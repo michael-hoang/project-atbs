@@ -16,7 +16,6 @@ class Reprint(tkb.Frame):
         self.create_treeview(master)
         self.create_solid_button(master, 'Print', None)
 
-
     def create_treeview(self, master):
         """Create ttkbootstrap Treeview object."""
 
@@ -24,15 +23,30 @@ class Reprint(tkb.Frame):
         tree_container = tkb.Frame(master)
         tree_container.pack(padx=20, pady=20)
 
+        # Scrollbar
+        tree_scroll = tkb.Scrollbar(
+            master=tree_container,
+            bootstyle=''
+        )
+        tree_scroll.pack(side=RIGHT, fill=Y)
+
         # Define columns
         columns = ('#', 'reference', 'date_created', 'expiration')
 
+        # Create Treeview
         my_tree = tkb.Treeview(
             master=tree_container,
-            bootstyle='primary',
+            bootstyle='',
             columns=columns,
-            show='headings'
+            show='headings',
+            yscrollcommand=tree_scroll.set,
+            selectmode='browse',
+            height=10
         )
+        my_tree.pack()
+
+        # Configure scrollbar
+        tree_scroll.config(command=my_tree.yview)
 
         # Format columns
         my_tree.column('#', anchor=W, width=5)
@@ -46,19 +60,17 @@ class Reprint(tkb.Frame):
         my_tree.heading('date_created', text='Date Created', anchor=W)
         my_tree.heading('expiration', text='Expiration', anchor=W)
 
-        # Scrollbar
-        tree_scroll = tkb.Scrollbar()
-
         # Add Data
-        my_tree.insert(
-            parent='',
-            index=END,
-            iid=0,
-            text='Parent',
-            values=('1', 'Mike_123456', '5/4/2023 9:57 AM', '6d 22h 34m')
-        )
-
-        my_tree.pack()
+        iid = 0
+        for _ in range(100):
+            my_tree.insert(
+                parent='',
+                index=END,
+                iid=iid,
+                text='Parent',
+                values=('1', 'Mike_123456', '5/4/2023 9:57 AM', '6d 22h 34m')
+            )
+            iid += 1
 
     def create_solid_button(self, master, text, command) -> tkb.Button:
         """Create ttkbootstrap Solid Button object."""
