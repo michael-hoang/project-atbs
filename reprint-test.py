@@ -10,6 +10,11 @@ SECONDS_PER_MINUTE = 60
 FILES_PATH = '.files/'
 
 
+def get_epoch_creation_time() -> int:
+    epoch_current_time = int(time.time())
+    return epoch_current_time
+
+
 def get_epoch_exp_time(epoch_ctime: str, days_expiration=7) -> int:
     epoch_exp_time = int(epoch_ctime) + (days_expiration * SECONDS_PER_DAY)
     return epoch_exp_time

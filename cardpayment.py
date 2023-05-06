@@ -270,7 +270,7 @@ class CardPayment(tkb.Labelframe):
         """Update the total string variable."""
         self.total_lbl['text'] = "${:,.2f}".format(self.get_total())
     
-    def get_dict_fields(self) -> dict:
+    def _get_dict_fields(self) -> dict:
         """Get a Python dictionary of field names and text values for PdfWriter."""
         dict_fields = {
             'Date': dt.datetime.today().strftime('%m-%d-%Y'),
@@ -315,12 +315,66 @@ class CardPayment(tkb.Labelframe):
             message='Are you sure you want to submit?'
         )
         if answer == 'Yes':
-            self.export_pdf()
+            self.print_pdf()
             self.clear_all_entries()
             self.sub_btn.config(text='Printing...')
             self.sub_btn.after(5000, lambda: self.sub_btn.config(text='Submit'))
             self.focus_force()
+
+    def _get_epoch_creation_time(self) -> int:
+        """Return the current epoch time."""
+        epoch_current_time = int(time.time())
+        return epoch_current_time
     
+    def _format_epoch_time(self, epoch_time: int) -> str:
+        """Format epoch time into 24H format without colons."""
+        dt_obj = dt.datetime.fromtimestamp(epoch_time)
+        time_str = dt_obj.strftime('%H%M%S')
+        return time_str
+
+    def _generate_reference_id(self, ctime, cardholder, mrn ) -> str:
+        """Generate a reference ID for the card payment information."""
+        fmt_ctime = self._format_epoch_time(ctime)
+        cardholder_split = cardholder.split()
+        try:
+            reference_id = f'{fmt_ctime}_{cardholder_split[0].lower()}_{mrn}'
+        except:
+            reference_id = f'{fmt_ctime}_{mrn}'
+
+        return reference_id
+
+    def _create_data_structure(self):
+        """Create data structure to store information."""
+        ctime = self._get_epoch_creation_time()
+        fields = self._get_dict_fields()
+        cardholder = fields['Cardholder Name']
+        mrn = fields['MRN']
+        reference_id = self._generate_reference_id(ctime, cardholder, mrn)
+
+        data = {
+            reference_id: {
+                'epoch_ctime': ctime,
+                'fields': fields
+            }
+        }
+
+    def _export_to_json(self, new_data):
+        """Export data to json file."""
+        data_dir_path = self._get_abs_path_to_data_directory()
+        json_file_path = os.path.join(data_dir_path, 'data.json')
+        # If json file exists
+        if os.path.isfile(json_file_path):
+            with open(json_file_path, 'r') as f:
+                data = json.load(f)
+            
+            data.append(new_data)
+            with open(json_file_path, 'w') as f:
+                json.dump(data, f, indent=4)
+        else:
+            with open(json_file_path, 'w') as f:
+                json.dump(data, f, indent=4)
+            
+        
     def _set_need_appearances_writer(self, writer: PdfWriter):
         """
         Enables PDF filled form values to be visible on the final PDF results
@@ -344,21 +398,15 @@ class CardPayment(tkb.Labelframe):
             print('set_need_appearances_writer() catch : ', repr(e))
             return writer
 
-    def export_pdf(self):
-        """Export payment information into a PDF form."""
-        cardholder = self.cardholder.get().split()
-        try:
-            file_name = f'{cardholder[0]}_{self.mrn.get()}.pdf'
-        except IndexError:
-            file_name = f'{self.mrn.get()}.pdf'
-            
-        fields = self.get_dict_fields()
+    def print_pdf(self, reference_id, fields):
+        """Export payment information into a temporary PDF form and then print."""
+        file_name = f'{reference_id}.pdf'
         if getattr(sys, 'frozen', False):
             app_path = os.path.dirname(sys.executable)
         else:
             app_path = os.path.dirname(os.path.abspath(__file__))
 
-        abs_path = f"{app_path}\.files"
+        abs_path = f"{app_path}\.temp"
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
             os.makedirs(abs_path)
@@ -387,10 +435,10 @@ class CardPayment(tkb.Labelframe):
             writer_annot = writer_page["/Annots"][annotation_index].get_object()
             writer_annot.update({NameObject("/Ff"): NumberObject(1)})
             
-        with open(f".files\{file_name}", "wb") as output_stream:
+        with open(f".temp\{file_name}", "wb") as output_stream:
             writer.write(output_stream)
 
-        os.startfile(f"{app_path}\.files\{file_name}", "print")
+        os.startfile(f"{app_path}\.temp\{file_name}", "print")
 
     def get_credit_card_network(self, numbers: str) -> str or bool:
         """Return AMEX, Discover, MasterCard, Visa, or False."""
