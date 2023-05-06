@@ -49,18 +49,19 @@ class Reprint(tkb.Frame):
         tree_scroll.config(command=my_tree.yview)
 
         # Format columns
-        my_tree.column('#', anchor=W, width=5)
-        my_tree.column('reference', anchor=W, width=80)
+        my_tree.column('#', anchor=CENTER, width=50)
+        my_tree.column('reference', anchor=W, width=100)
         my_tree.column('date_created', anchor=W, width=120)
         my_tree.column('expiration', anchor=W, width=100)
 
         # Headings
-        my_tree.heading('#', text='#', anchor=W)
+        my_tree.heading('#', text='#', anchor=CENTER)
         my_tree.heading('reference', text='Reference', anchor=W)
         my_tree.heading('date_created', text='Date Created', anchor=W)
         my_tree.heading('expiration', text='Expiration', anchor=W)
 
         # Add Data
+        index = 1
         iid = 0
         for _ in range(100):
             my_tree.insert(
@@ -68,8 +69,9 @@ class Reprint(tkb.Frame):
                 index=END,
                 iid=iid,
                 text='Parent',
-                values=('1', 'Mike_123456', '5/4/2023 9:57 AM', '6d 22h 34m')
+                values=(f'{index}', 'Mike_123456', '5/4/2023 9:57 AM', '6d 22h 34m')
             )
+            index += 1
             iid += 1
 
     def create_solid_button(self, master, text, command) -> tkb.Button:

@@ -24,7 +24,7 @@ from pprint import pprint
 # pprint(KEY)
 
 
-class EnDeCrypt:
+class MyEncryption:
     """Encryption/decryption algorithm by M.H. 11/22/2022"""
 
     def __init__(self):
@@ -199,4 +199,4 @@ class EnDeCrypt:
 
 
 if __name__ == '__main__':
-    edc = EnDeCrypt()
+    edc = MyEncryption()

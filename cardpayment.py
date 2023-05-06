@@ -19,6 +19,8 @@ from dateutil.relativedelta import relativedelta
 
 from refill import Refill
 from wrapup import WrapUp
+from encryption import MyEncryption
+
 
 class CardPayment(tkb.Labelframe):
     """
@@ -31,6 +33,7 @@ class CardPayment(tkb.Labelframe):
         self.style = Style()
         self.style.configure('TButton', font=('', 9, ''))
         self.root = root
+        self.encryption = MyEncryption()
 
         self.check_user_settings_json()
 
