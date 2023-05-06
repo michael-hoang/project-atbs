@@ -315,7 +315,11 @@ class CardPayment(tkb.Labelframe):
             message='Are you sure you want to submit?'
         )
         if answer == 'Yes':
-            self.print_pdf()
+            data = self._create_data_structure()
+            reference_id = list(data.keys())[0]
+            fields = data[reference_id]['fields']
+            self._export_to_json(data)
+            self.print_pdf(reference_id, fields)
             self.clear_all_entries()
             self.sub_btn.config(text='Printing...')
             self.sub_btn.after(5000, lambda: self.sub_btn.config(text='Submit'))
@@ -332,7 +336,7 @@ class CardPayment(tkb.Labelframe):
         time_str = dt_obj.strftime('%H%M%S')
         return time_str
 
-    def _generate_reference_id(self, ctime, cardholder, mrn ) -> str:
+    def _generate_reference_id(self, cardholder, mrn, ctime ) -> str:
         """Generate a reference ID for the card payment information."""
         fmt_ctime = self._format_epoch_time(ctime)
         cardholder_split = cardholder.split()
@@ -343,13 +347,13 @@ class CardPayment(tkb.Labelframe):
 
         return reference_id
 
-    def _create_data_structure(self):
+    def _create_data_structure(self) -> dict:
         """Create data structure to store information."""
-        ctime = self._get_epoch_creation_time()
         fields = self._get_dict_fields()
         cardholder = fields['Cardholder Name']
         mrn = fields['MRN']
-        reference_id = self._generate_reference_id(ctime, cardholder, mrn)
+        ctime = self._get_epoch_creation_time()
+        reference_id = self._generate_reference_id(cardholder, mrn, ctime)
 
         data = {
             reference_id: {
@@ -357,6 +361,8 @@ class CardPayment(tkb.Labelframe):
                 'fields': fields
             }
         }
+
+        return data
 
     def _export_to_json(self, new_data):
         """Export data to json file."""
@@ -372,7 +378,7 @@ class CardPayment(tkb.Labelframe):
                 json.dump(data, f, indent=4)
         else:
             with open(json_file_path, 'w') as f:
-                json.dump(data, f, indent=4)
+                json.dump(new_data, f, indent=4)
             
         
     def _set_need_appearances_writer(self, writer: PdfWriter):
