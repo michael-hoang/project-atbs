@@ -341,9 +341,9 @@ class CardPayment(tkb.Labelframe):
         fmt_ctime = self._format_epoch_time(ctime)
         cardholder_split = cardholder.split()
         try:
-            reference_id = f'{fmt_ctime}_{cardholder_split[0].lower()}_{mrn}'
+            reference_id = f'{fmt_ctime}-{mrn}-{cardholder_split[0].lower()}'
         except:
-            reference_id = f'{fmt_ctime}_{mrn}'
+            reference_id = f'{fmt_ctime}-{mrn}'
 
         return reference_id
 
@@ -364,16 +364,16 @@ class CardPayment(tkb.Labelframe):
 
         return data
 
-    def _export_to_json(self, new_data):
+    def _export_to_json(self, new_data, ):
         """Export data to json file."""
         data_dir_path = self._get_abs_path_to_data_directory()
         json_file_path = os.path.join(data_dir_path, 'data.json')
         # If json file exists
         if os.path.isfile(json_file_path):
             with open(json_file_path, 'r') as f:
-                data = json.load(f)
-            
-            data.append(new_data)
+                data = json.load(f) 
+        
+            data.update(new_data)
             with open(json_file_path, 'w') as f:
                 json.dump(data, f, indent=4)
         else:
