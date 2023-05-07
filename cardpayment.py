@@ -673,6 +673,7 @@ class CardPayment(tkb.Labelframe):
             self.focus()
             self.reprint_window.withdraw()
         else:
+            self.reprint._refresh_treeview()
             self.center_child_to_parent(self.reprint_window, self.root, 'reprint')
             self.reprint_isHidden = True
             self.root.attributes('-disabled', 1)
