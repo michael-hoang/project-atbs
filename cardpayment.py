@@ -20,6 +20,7 @@ from dateutil.relativedelta import relativedelta
 from refill import Refill
 from wrapup import WrapUp
 from encryption import MyEncryption
+from reprint import Reprint
 
 
 class CardPayment(tkb.Labelframe):
@@ -123,8 +124,8 @@ class CardPayment(tkb.Labelframe):
             self.refill_mode_instantiated = True
 
         # After method
-        self.remove_files()
-        self.after(ms=3_600_000, func=self.remove_files) # after 1 hour
+        self._remove_files()
+        self.after(ms=300_000, func=self._remove_files) # after 5 minutes
 
     def create_long_form_entry(self, master, label, variable):
         """Create a single long form entry."""
@@ -235,7 +236,7 @@ class CardPayment(tkb.Labelframe):
         self.files_btn = tkb.Button(
             master=container,
             text="Files",
-            command=self.open_file_folder,
+            command=self.open_reprint_win,
             bootstyle=DARK,
             width=9,
             style='TButton.dark'
@@ -412,7 +413,7 @@ class CardPayment(tkb.Labelframe):
         else:
             app_path = os.path.dirname(os.path.abspath(__file__))
 
-        abs_path = f"{app_path}\.temp"
+        abs_path = f"{app_path}\.tmp"
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
             os.makedirs(abs_path)
@@ -441,10 +442,10 @@ class CardPayment(tkb.Labelframe):
             writer_annot = writer_page["/Annots"][annotation_index].get_object()
             writer_annot.update({NameObject("/Ff"): NumberObject(1)})
             
-        with open(f".temp\{file_name}", "wb") as output_stream:
+        with open(f".tmp\{file_name}", "wb") as output_stream:
             writer.write(output_stream)
 
-        os.startfile(f"{app_path}\.temp\{file_name}", "print")
+        os.startfile(f"{app_path}\.tmp\{file_name}", "print")
 
     def get_credit_card_network(self, numbers: str) -> str or bool:
         """Return AMEX, Discover, MasterCard, Visa, or False."""
@@ -628,22 +629,26 @@ class CardPayment(tkb.Labelframe):
         except:
             pass
 
-    def open_file_folder(self):
-        """Opens directory containing the exported card payment forms."""
-        self.files_btn.config(text='Opening...')
-        self.files_btn.after(2000, lambda: self.files_btn.config(text='Files'))
-        if getattr(sys, 'frozen', False):
-            app_path = os.path.dirname(sys.executable)
-        else:
-            app_path = os.path.dirname(os.path.abspath(__file__))
+    def _on_closing_reprint_win(self):
+        """Exit Reprint window and enable Card Payment root window."""
+        self.root.attributes('-disabled', 0)
+        self.lift()
+        self.focus()
 
-        abs_path = f"{app_path}\.files"
-        check_folder = os.path.isdir(abs_path)
-        if not check_folder:
-            os.makedirs(abs_path)
-            subprocess.call(["attrib", "+h", abs_path]) # hidden directory
+    def open_reprint_win(self):
+        """Open Treeview window for reprinting."""
+        reprint_window = tkb.Toplevel(
+            title='Reprint',
+            resizable=(False, False)
+        )
 
-        subprocess.Popen(f'explorer "{abs_path}"')
+        self.center_child_to_parent(reprint_window, self.root, 'notes')
+        reprint_window.lift()
+        self.root.attributes('-disabled', 1)
+        reprint_window.focus()
+
+        reprint_window.protocol('WM_DELETE_WINDOW', self._on_closing_reprint_win)
+
 
     def clear_all_entries(self):
         """Clear all entries on the form."""
@@ -745,17 +750,14 @@ class CardPayment(tkb.Labelframe):
             self.settings_window.deiconify()
             self.settings_window.focus()
 
-    def remove_files(self):
+    def _remove_files(self):
         """Remove files in .files older than 7 days."""
-        
-        current_time = time.time()
-
         if getattr(sys, 'frozen', False):
             app_path = os.path.dirname(sys.executable)
         else:
             app_path = os.path.dirname(os.path.abspath(__file__))
 
-        abs_path = f"{app_path}\.files"
+        abs_path = f"{app_path}\.tmp"
         check_folder = os.path.isdir(abs_path)
         if not check_folder:
             os.makedirs(abs_path)
@@ -763,11 +765,9 @@ class CardPayment(tkb.Labelframe):
 
         for f in os.listdir(path=abs_path):
             file_path = os.path.join(abs_path, f)
-            creation_time = os.path.getctime(file_path)
-            if (current_time - creation_time) // (24 * 3600) >= 7:
-                os.unlink(file_path)
+            os.unlink(file_path)
 
-        self.after(ms=3_600_000, func=self.remove_files) # after 1 hour
+        self.after(ms=300_000, func=self._remove_files) # after 5 minutes
     
     # Settings methods
 
