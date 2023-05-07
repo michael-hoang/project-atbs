@@ -9,7 +9,7 @@ import time
 from ttkbootstrap.constants import *
 
 
-DAYS_UNTIL_EXPIRATION = 7
+DAYS_EXPIRATION = 0.00069
 SECONDS_PER_DAY = 86400
 SECONDS_PER_HOUR = 3600
 SECONDS_PER_MINUTE = 60
@@ -109,8 +109,8 @@ class Reprint(tkb.Frame):
         time_str = dt_obj.strftime('%m/%d/%Y %I:%M %p')
         return time_str
 
-    def _get_epoch_exp_time(self, epoch_ctime: str, days_expiration=7) -> int:
-        epoch_exp_time = int(epoch_ctime) + (days_expiration * SECONDS_PER_DAY)
+    def _get_epoch_exp_time(self, epoch_ctime: str) -> int:
+        epoch_exp_time = int(epoch_ctime) + (DAYS_EXPIRATION * SECONDS_PER_DAY)
         return epoch_exp_time
 
     def _get_formatted_exp_time(self, epoch_exp_time: int) -> str:
@@ -141,16 +141,29 @@ class Reprint(tkb.Frame):
                 parent='',
                 index=END,
                 iid=iid,
-                values=(iid, ref_id, fmt_ctime, fmt_exp_time)
+                values=(iid, ref_id, fmt_ctime, fmt_exp_time),
+                text=epoch_ctime
             )
             iid += 1
 
     def _refresh_treeview(self):
         """Refresh items in Treeview window."""
+        try:
+            current_selection = self.my_tree.focus()
+        except:
+            pass
+
         for child in self.my_tree.get_children():
             self.my_tree.delete(child)
 
         self._populate_data()
+
+        try:
+            self.my_tree.selection_set(current_selection)
+            self.my_tree.focus(current_selection)
+        except:
+            pass
+      
 
     def _get_reference_id(self) -> str:
         """

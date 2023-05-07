@@ -23,6 +23,10 @@ from encryption import MyEncryption
 from reprint import Reprint
 
 
+DAYS_EXPIRATION = 0.00069
+SECONDS_PER_DAY = 86400
+
+
 class CardPayment(tkb.Labelframe):
     """
     Card Payment Form interface to automate printing of filled credit card forms.
@@ -641,13 +645,43 @@ class CardPayment(tkb.Labelframe):
 
         fields = data[reference_id]['fields']
         return fields
+    
+    def _delete_expired_items(self):
+        """Delete expired items from data.json."""
+        if not self.reprint_isHidden:
+            data_dir_path = self._get_abs_path_to_data_directory()
+            json_file_path = os.path.join(data_dir_path, 'data.json')
+            try:
+                with open(json_file_path, 'r') as f:
+                    data = json.load(f)
+
+                current_epoch_time = time.time()
+                to_be_deleted = []
+                for ref_id in data:
+                    epoch_ctime = data[ref_id]['epoch_ctime']
+                    if (current_epoch_time - epoch_ctime) / SECONDS_PER_DAY >= DAYS_EXPIRATION:
+                        to_be_deleted.append(ref_id)
+
+                for ref_id in to_be_deleted:
+                    del data[ref_id]
+
+                # Write updated data to json file
+                with open(json_file_path, 'w') as f:
+                    json.dump(data, f, indent=4)
+            except:
+                pass
+            self.reprint._refresh_treeview()
+            self.reprint_window.after(1000, self._delete_expired_items)
 
     def reprint_command(self):
         """Reprint the selected item from Treeview window."""
-        reference_id = self.reprint._get_reference_id()
-        if reference_id:
-            fields = self._get_fields_from_json(reference_id)
-            self.print_pdf(reference_id, fields)
+        try:
+            reference_id = self.reprint._get_reference_id()
+            if reference_id:
+                fields = self._get_fields_from_json(reference_id)
+                self.print_pdf(reference_id, fields)
+        except:
+            pass
 
     def create_reprint_window(self):
         """Open Treeview window for reprinting."""
@@ -658,7 +692,6 @@ class CardPayment(tkb.Labelframe):
         self.reprint_window.withdraw()
         self.reprint = Reprint(self.reprint_window, self.reprint_command)
         self.reprint_isHidden = True
-        self.toggle_reprint_window(e=None)
         self.reprint_window.protocol(
             'WM_DELETE_WINDOW', lambda: self.toggle_reprint_window(e=None)
         )
@@ -666,21 +699,20 @@ class CardPayment(tkb.Labelframe):
 
     def toggle_reprint_window(self, e):
         """Toggle Reprint window."""
-        if self.reprint_isHidden:
-            self.reprint_isHidden = False
+        if not self.reprint_isHidden:
+            self.reprint_isHidden = True
             self.lift()
             self.root.attributes('-disabled', 0)
             self.focus()
             self.reprint_window.withdraw()
         else:
-            self.reprint._refresh_treeview()
+            self.reprint_isHidden = False
+            self._delete_expired_items()
             self.center_child_to_parent(self.reprint_window, self.root, 'reprint')
-            self.reprint_isHidden = True
             self.root.attributes('-disabled', 1)
             self.reprint_window.attributes('-topmost', 1)
             self.reprint_window.deiconify()
             self.reprint_window.focus()
-
 
     def clear_all_entries(self):
         """Clear all entries on the form."""
