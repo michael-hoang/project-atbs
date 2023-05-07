@@ -23,7 +23,7 @@ from encryption import MyEncryption
 from reprint import Reprint
 
 
-DAYS_EXPIRATION = 0.00069
+DAYS_EXPIRATION = 0.00069 * 1.2
 SECONDS_PER_DAY = 86400
 
 
@@ -647,7 +647,7 @@ class CardPayment(tkb.Labelframe):
         return fields
     
     def _delete_expired_items(self):
-        """Delete expired items from data.json."""
+        """Recursively delete expired items from data.json."""
         if not self.reprint_isHidden:
             data_dir_path = self._get_abs_path_to_data_directory()
             json_file_path = os.path.join(data_dir_path, 'data.json')

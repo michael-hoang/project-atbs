@@ -9,7 +9,7 @@ import time
 from ttkbootstrap.constants import *
 
 
-DAYS_EXPIRATION = 0.00069
+DAYS_EXPIRATION = 0.00069 * 1.2
 SECONDS_PER_DAY = 86400
 SECONDS_PER_HOUR = 3600
 SECONDS_PER_MINUTE = 60
@@ -121,7 +121,8 @@ class Reprint(tkb.Frame):
         hours = int(remaining_epoch_sec // SECONDS_PER_HOUR)
         remaining_epoch_sec %= SECONDS_PER_HOUR
         minutes = int(remaining_epoch_sec // SECONDS_PER_MINUTE)
-        formatted_exp_time = f'{days}d {hours}h {minutes}m'
+        remaining_epoch_sec %= SECONDS_PER_MINUTE
+        formatted_exp_time = f'{days}d {hours}h {minutes}m {int(remaining_epoch_sec)}s'
         return formatted_exp_time
 
     def _populate_data(self):
@@ -163,7 +164,6 @@ class Reprint(tkb.Frame):
             self.my_tree.focus(current_selection)
         except:
             pass
-      
 
     def _get_reference_id(self) -> str:
         """
