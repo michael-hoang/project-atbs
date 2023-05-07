@@ -116,6 +116,9 @@ class CardPayment(tkb.Labelframe):
         # Notes window
         self.create_notes_window()
 
+        # Reprint window
+        self.create_reprint_window()
+
         self.refill_mode_instantiated = False
         if self.settings.current_settings['mode'] == 'Payment':
             self.grid(padx=5, pady=(0, 5))
@@ -235,8 +238,8 @@ class CardPayment(tkb.Labelframe):
 
         self.files_btn = tkb.Button(
             master=container,
-            text="Files",
-            command=self.open_reprint_win,
+            text="Reprint",
+            command=lambda: self.toggle_reprint_window(e=None),
             bootstyle=DARK,
             width=9,
             style='TButton.dark'
@@ -629,33 +632,36 @@ class CardPayment(tkb.Labelframe):
         except:
             pass
 
-    def _on_closing_reprint_win(self, e, window):
-        """Exit Reprint window and enable Card Payment root window."""
-        self.root.attributes('-disabled', 0)
-        self.lift()
-        self.focus()
-        window.destroy()
-
-    def open_reprint_win(self):
+    def create_reprint_window(self):
         """Open Treeview window for reprinting."""
-        reprint_window = tkb.Toplevel(
+        self.reprint_window = tkb.Toplevel(
             title='Reprint',
             resizable=(False, False)
         )
-
-        self.center_child_to_parent(reprint_window, self.root, 'notes')
-        reprint_window.lift()
-        self.root.attributes('-disabled', 1)
-        reprint_window.focus()
-
-        reprint_window.protocol(
-            'WM_DELETE_WINDOW', lambda: self._on_closing_reprint_win(
-                e=None, window=reprint_window
-            )
+        self.reprint_window.withdraw()
+        Reprint(self.reprint_window)
+        self.reprint_isHidden = True
+        self.toggle_reprint_window(e=None)
+        self.reprint_window.protocol(
+            'WM_DELETE_WINDOW', lambda: self.toggle_reprint_window(e=None)
         )
-        reprint_window.bind(
-            '<Escape>', lambda e: self._on_closing_reprint_win(e, window=reprint_window)
-        )
+        self.reprint_window.bind('<Escape>', self.toggle_reprint_window)
+
+    def toggle_reprint_window(self, e):
+        """Toggle Reprint window."""
+        if self.reprint_isHidden:
+            self.reprint_isHidden = False
+            self.lift()
+            self.root.attributes('-disabled', 0)
+            self.focus()
+            self.reprint_window.withdraw()
+        else:
+            self.center_child_to_parent(self.reprint_window, self.root, 'reprint')
+            self.reprint_isHidden = True
+            self.root.attributes('-disabled', 1)
+            self.reprint_window.attributes('-topmost', 1)
+            self.reprint_window.deiconify()
+            self.reprint_window.focus()
 
 
     def clear_all_entries(self):
@@ -688,6 +694,9 @@ class CardPayment(tkb.Labelframe):
         elif window_name == 'settings':
             dx = int((parent_width / 2)) - child_width / 2
             dy = int((parent_height / 2)) - child_height / 2 - 160
+        elif window_name == 'reprint':
+            dx = int((parent_width / 2)) - child_width / 2
+            dy = int((parent_height / 2)) - child_height / 2 + 100
         child.geometry('+%d+%d' % (parent_x + dx, parent_y + dy))
 
     def create_notes_window(self):
@@ -701,7 +710,7 @@ class CardPayment(tkb.Labelframe):
         self.notes_text_box.pack(expand=YES)
         self.notes_isHidden = True
         self.toggle_notes_window(e=None)
-        self.notes_window.protocol('WM_DELETE_WINDOW', func=lambda: self.toggle_notes_window(e=None))
+        self.notes_window.protocol('WM_DELETE_WINDOW', lambda: self.toggle_notes_window(e=None))
         self.notes_window.bind('<Escape>', self.toggle_notes_window)
         
 
