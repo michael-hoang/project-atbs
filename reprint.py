@@ -26,7 +26,7 @@ class Reprint(tkb.Frame):
         self.reprint_command = reprint_command
 
         self.create_treeview(master)
-        self.create_solid_button(master, 'Print', self.reprint)
+        self.create_solid_button(master, 'Print', self.reprint_command)
 
     def create_treeview(self, master):
         """Create ttkbootstrap Treeview object."""
@@ -164,8 +164,8 @@ class Reprint(tkb.Frame):
 if __name__ == '__main__':
     reprint_window = tkb.Window(
         title='Reprint',
-        themename='superhero',
+        themename='litera',
     )
-    rp = Reprint(master=reprint_window)
+    Reprint(reprint_window, None)
 
     reprint_window.mainloop()

@@ -632,6 +632,23 @@ class CardPayment(tkb.Labelframe):
         except:
             pass
 
+    def _get_fields_from_json(self, reference_id) -> dict:
+        """Return saved fields data from data.json."""
+        data_dir_path = self._get_abs_path_to_data_directory()
+        json_file_path = os.path.join(data_dir_path, 'data.json')
+        with open(json_file_path, 'r') as f:
+            data = json.load(f)
+
+        fields = data[reference_id]['fields']
+        return fields
+
+    def reprint_command(self):
+        """Reprint the selected item from Treeview window."""
+        reference_id = self.reprint._get_reference_id()
+        if reference_id:
+            fields = self._get_fields_from_json(reference_id)
+            self.print_pdf(reference_id, fields)
+
     def create_reprint_window(self):
         """Open Treeview window for reprinting."""
         self.reprint_window = tkb.Toplevel(
@@ -639,7 +656,7 @@ class CardPayment(tkb.Labelframe):
             resizable=(False, False)
         )
         self.reprint_window.withdraw()
-        Reprint(self.reprint_window)
+        self.reprint = Reprint(self.reprint_window, self.reprint_command)
         self.reprint_isHidden = True
         self.toggle_reprint_window(e=None)
         self.reprint_window.protocol(
