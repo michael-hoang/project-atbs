@@ -64,7 +64,7 @@ class Reprint(tkb.Frame):
         self.my_tree.column('#', anchor=CENTER, width=50)
         self.my_tree.column('reference', anchor=W, width=150)
         self.my_tree.column('date_created', anchor=W, width=150)
-        self.my_tree.column('expiration', anchor=W, width=80)
+        self.my_tree.column('expiration', anchor=W, width=100)
 
         # Headings
         self.my_tree.heading('#', text='#', anchor=CENTER)
