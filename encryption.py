@@ -123,8 +123,10 @@ class MyEncryption:
                       ' ': '.e',
                       '=': 'qL',
                       '<': 'i#',
-                      '>': '(?', }
-        self.key_s = 'O2H\m{)M\'h,u(?GyaT;B34i:f8gEvzRq[V/ZPr0}1-Q6%K5Xx&^!tJ]U*@+sCp#n|Y$_b7Aw9c.eNDj~dlkIW"`SoLF =<>'
+                      '>': '(?',
+                      '\t': '=t',
+                      '\n': '>`', }
+        self.key_s = 'O2H\m{)M\'h,u\n(?GyaT;B3\t4i:f8gEvzRq[V/ZPr0}1-Q6%K5Xx&^!tJ]U*@+sCp#n|Y$_b7Aw9c.eNDj~dlkIW"`SoLF =<>'
 
     def mirror(self, message: str) -> str:
         """Returns a mirror of a string."""
