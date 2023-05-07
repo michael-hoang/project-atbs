@@ -62,9 +62,9 @@ class ProgramFileManager:
     
     def create_hidden_temp_directory(self):
         """
-        Create a hidden directory called '.temp'.
+        Create a hidden directory called '.tmp'.
         """
-        self.htemp_dir_path = os.path.join(self.root_path, '.temp')
+        self.htemp_dir_path = os.path.join(self.root_path, '.tmp')
         if not os.path.isdir(self.htemp_dir_path):
             os.makedirs(self.htemp_dir_path)
             subprocess.call(['attrib', '+h', self.htemp_dir_path])  # hidden
