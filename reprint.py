@@ -20,12 +20,13 @@ class Reprint(tkb.Frame):
     Interface to reprint filled card payment forms.
     """
 
-    def __init__(self, master):
+    def __init__(self, master, reprint_command):
         super().__init__(master)
         self.pack()
+        self.reprint_command = reprint_command
 
         self.create_treeview(master)
-        self.create_solid_button(master, 'Print', None)
+        self.create_solid_button(master, 'Print', self.reprint)
 
     def create_treeview(self, master):
         """Create ttkbootstrap Treeview object."""
@@ -79,7 +80,7 @@ class Reprint(tkb.Frame):
         button = tkb.Button(
             master=master,
             text=text,
-            command=command,
+            command=self.reprint_command,
             width=8
         )
         button.pack(pady=(0, 20))
@@ -130,8 +131,7 @@ class Reprint(tkb.Frame):
         with open(json_file_path, 'r') as f:
             data = json.load(f)
 
-        index = 1
-        iid = 0
+        iid = 1
         for ref_id in data:
             epoch_ctime = data[ref_id]['epoch_ctime']
             fmt_ctime = self._get_formatted_creation_time(epoch_ctime)
@@ -141,11 +141,24 @@ class Reprint(tkb.Frame):
                 parent='',
                 index=END,
                 iid=iid,
-                text='Parent',
-                values=(index, ref_id, fmt_ctime, fmt_exp_time)
+                values=(iid, ref_id, fmt_ctime, fmt_exp_time)
             )
-            index += 1
             iid += 1
+
+    def _refresh_treeview(self):
+        """Refresh items in Treeview window."""
+        for child in self.my_tree.get_children():
+            self.my_tree.delete(child)
+
+        self._populate_data()
+
+    def _get_reference_id(self) -> str:
+        """
+        Return the reference id of selected item from Treeview window.
+        """
+        iid = self.my_tree.focus()
+        reference_id = self.my_tree.item(iid)['values'][1]
+        return reference_id
 
 
 if __name__ == '__main__':
