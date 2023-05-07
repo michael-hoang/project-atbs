@@ -162,14 +162,22 @@ class Reprint(tkb.Frame):
                 fmt_ctime = self._get_formatted_creation_time(epoch_ctime)
                 epoch_exp_time = self._get_epoch_exp_time(epoch_ctime)
                 fmt_exp_time = self._get_formatted_exp_time(epoch_exp_time)
+                if fmt_exp_time[:2] == '0d':
+                    tag = 'almost_expired'
+                else:
+                    tag = ''
+
                 self.my_tree.insert(
                     parent='',
                     index=END,
                     iid=iid,
                     values=(iid, ref_id, fmt_ctime, fmt_exp_time),
-                    text=epoch_ctime
+                    text=epoch_ctime,
+                    tags=tag
                 )
                 iid += 1
+
+            self.my_tree.tag_configure('almost_expired', foreground='red')
         except:
             pass
 
