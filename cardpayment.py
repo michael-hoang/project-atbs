@@ -629,11 +629,12 @@ class CardPayment(tkb.Labelframe):
         except:
             pass
 
-    def _on_closing_reprint_win(self):
+    def _on_closing_reprint_win(self, e, window):
         """Exit Reprint window and enable Card Payment root window."""
         self.root.attributes('-disabled', 0)
         self.lift()
         self.focus()
+        window.destroy()
 
     def open_reprint_win(self):
         """Open Treeview window for reprinting."""
@@ -647,7 +648,14 @@ class CardPayment(tkb.Labelframe):
         self.root.attributes('-disabled', 1)
         reprint_window.focus()
 
-        reprint_window.protocol('WM_DELETE_WINDOW', self._on_closing_reprint_win)
+        reprint_window.protocol(
+            'WM_DELETE_WINDOW', lambda: self._on_closing_reprint_win(
+                e=None, window=reprint_window
+            )
+        )
+        reprint_window.bind(
+            '<Escape>', lambda e: self._on_closing_reprint_win(e, window=reprint_window)
+        )
 
 
     def clear_all_entries(self):
