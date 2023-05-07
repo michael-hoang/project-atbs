@@ -371,22 +371,59 @@ class CardPayment(tkb.Labelframe):
         }
 
         return data
+    
+    def _encrypt_data(self, data) -> dict:
+        """Encrypt data using MyEncryption."""
+        encrypted_data = {}
+        for ref_id in data:
+            encrypted_ref_id = self.encryption.encrypt(ref_id)
+            epoch_ctime = data[ref_id]['epoch_ctime']
+            encrypted_data[encrypted_ref_id] = {
+                'epoch_ctime': epoch_ctime,
+                'fields': {}
+            }
+            fields = data[ref_id]['fields']
+            for k, v in fields.items():
+                encrypted_k = self.encryption.encrypt(k)
+                encrypted_v = self.encryption.encrypt(v)
+                encrypted_data[encrypted_ref_id]['fields'][encrypted_k] = encrypted_v
 
-    def _export_to_json(self, new_data, ):
+        return encrypted_data
+              
+    def _decrypt_data(self, data) -> dict:
+        """Decrypt data using MyEncryption."""
+        decrypted_data = {}
+        for ref_id in data:
+            decrypted_ref_id = self.encryption.decrypt(ref_id)
+            epoch_ctime = data[ref_id]['epoch_ctime']
+            decrypted_data[decrypted_ref_id] = {
+                'epoch_ctime': epoch_ctime,
+                'fields': {}
+            }
+            fields = data[ref_id]['fields']
+            for k, v in fields.items():
+                decrypted_k = self.encryption.decrypt(k)
+                decrypted_v = self.encryption.decrypt(v)
+                decrypted_data[decrypted_ref_id]['fields'][decrypted_k] = decrypted_v
+
+        return decrypted_data
+
+    def _export_to_json(self, new_data):
         """Export data to json file."""
         data_dir_path = self._get_abs_path_to_data_directory()
         json_file_path = os.path.join(data_dir_path, 'data.json')
+        encrypted_data = self._encrypt_data(new_data)
         # If json file exists
         if os.path.isfile(json_file_path):
             with open(json_file_path, 'r') as f:
                 data = json.load(f) 
         
-            data.update(new_data)
+            data.update(encrypted_data)
             with open(json_file_path, 'w') as f:
                 json.dump(data, f, indent=4)
         else:
             with open(json_file_path, 'w') as f:
-                json.dump(new_data, f, indent=4)
+                json.dump(encrypted_data, f, indent=4)
             
         
     def _set_need_appearances_writer(self, writer: PdfWriter):
@@ -643,7 +680,8 @@ class CardPayment(tkb.Labelframe):
         with open(json_file_path, 'r') as f:
             data = json.load(f)
 
-        fields = data[reference_id]['fields']
+        decrypted_data = self._decrypt_data(data)
+        fields = decrypted_data[reference_id]['fields']
         return fields
     
     def _delete_expired_items(self):
@@ -655,19 +693,21 @@ class CardPayment(tkb.Labelframe):
                 with open(json_file_path, 'r') as f:
                     data = json.load(f)
 
+                decrypted_data = self._decrypt_data(data)
                 current_epoch_time = time.time()
                 to_be_deleted = []
-                for ref_id in data:
-                    epoch_ctime = data[ref_id]['epoch_ctime']
+                for ref_id in decrypted_data:
+                    epoch_ctime = decrypted_data[ref_id]['epoch_ctime']
                     if (current_epoch_time - epoch_ctime) / SECONDS_PER_DAY >= DAYS_EXPIRATION:
                         to_be_deleted.append(ref_id)
 
                 for ref_id in to_be_deleted:
-                    del data[ref_id]
+                    del decrypted_data[ref_id]
 
                 # Write updated data to json file
+                encrypted_data = self._encrypt_data(decrypted_data)
                 with open(json_file_path, 'w') as f:
-                    json.dump(data, f, indent=4)
+                    json.dump(encrypted_data, f, indent=4)
             except:
                 pass
             self.reprint._refresh_treeview()
@@ -682,7 +722,7 @@ class CardPayment(tkb.Labelframe):
                 self.print_pdf(reference_id, fields)
                 self.reprint.button.config(text='Printing...')
                 self.reprint.button.after(
-                    5000, lambda: self.reprint.button.config(text='Submit')
+                    5000, lambda: self.reprint.button.config(text='Print')
                 )
         except:
             pass

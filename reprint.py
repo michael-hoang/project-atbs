@@ -8,8 +8,10 @@ import time
 
 from ttkbootstrap.constants import *
 
+from encryption import MyEncryption
 
-DAYS_EXPIRATION = 5 #0.00069 * 1.2
+
+DAYS_EXPIRATION = 5  # 0.00069 * 1.2
 SECONDS_PER_DAY = 86400
 SECONDS_PER_HOUR = 3600
 SECONDS_PER_MINUTE = 60
@@ -23,6 +25,7 @@ class Reprint(tkb.Frame):
     def __init__(self, master, reprint_command):
         super().__init__(master)
         self.pack()
+        self.encryption = MyEncryption()
         self.reprint_command = reprint_command
 
         self.create_treeview(master)
@@ -127,27 +130,48 @@ class Reprint(tkb.Frame):
         formatted_exp_time = f'{days}d {hours}h {minutes}m {int(remaining_epoch_sec)}s'
         return formatted_exp_time
 
+    def _decrypt_data(self, data) -> dict:
+        """Decrypt data using MyEncryption."""
+        decrypted_data = {}
+        for ref_id in data:
+            decrypted_ref_id = self.encryption.decrypt(ref_id)
+            epoch_ctime = data[ref_id]['epoch_ctime']
+            decrypted_data[decrypted_ref_id] = {
+                'epoch_ctime': epoch_ctime,
+                'fields': {}
+            }
+            fields = data[ref_id]['fields']
+            for k, v in fields.items():
+                decrypted_k = self.encryption.decrypt(k)
+                decrypted_v = self.encryption.decrypt(v)
+                decrypted_data[decrypted_ref_id]['fields'][decrypted_k] = decrypted_v
+
+        return decrypted_data
+
     def _populate_data(self):
         """Populate data from data.json into Treeview."""
         data_dir_path = self._get_abs_path_to_data_directory()
         json_file_path = os.path.join(data_dir_path, 'data.json')
-        with open(json_file_path, 'r') as f:
-            data = json.load(f)
-
-        iid = 1
-        for ref_id in data:
-            epoch_ctime = data[ref_id]['epoch_ctime']
-            fmt_ctime = self._get_formatted_creation_time(epoch_ctime)
-            epoch_exp_time = self._get_epoch_exp_time(epoch_ctime)
-            fmt_exp_time = self._get_formatted_exp_time(epoch_exp_time)
-            self.my_tree.insert(
-                parent='',
-                index=END,
-                iid=iid,
-                values=(iid, ref_id, fmt_ctime, fmt_exp_time),
-                text=epoch_ctime
-            )
-            iid += 1
+        try:
+            with open(json_file_path, 'r') as f:
+                data = json.load(f)
+            decrypted_data = self._decrypt_data(data)
+            iid = 1
+            for ref_id in decrypted_data:
+                epoch_ctime = decrypted_data[ref_id]['epoch_ctime']
+                fmt_ctime = self._get_formatted_creation_time(epoch_ctime)
+                epoch_exp_time = self._get_epoch_exp_time(epoch_ctime)
+                fmt_exp_time = self._get_formatted_exp_time(epoch_exp_time)
+                self.my_tree.insert(
+                    parent='',
+                    index=END,
+                    iid=iid,
+                    values=(iid, ref_id, fmt_ctime, fmt_exp_time),
+                    text=epoch_ctime
+                )
+                iid += 1
+        except:
+            pass
 
     def _refresh_treeview(self):
         """Refresh items in Treeview window."""
