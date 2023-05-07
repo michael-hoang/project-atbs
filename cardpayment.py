@@ -23,7 +23,7 @@ from encryption import MyEncryption
 from reprint import Reprint
 
 
-DAYS_EXPIRATION = 0.00069 * 1.2
+DAYS_EXPIRATION = 5
 SECONDS_PER_DAY = 86400
 
 
@@ -680,6 +680,10 @@ class CardPayment(tkb.Labelframe):
             if reference_id:
                 fields = self._get_fields_from_json(reference_id)
                 self.print_pdf(reference_id, fields)
+                self.reprint.button.config(text='Printing...')
+                self.reprint.button.after(
+                    5000, lambda: self.reprint.button.config(text='Submit')
+                )
         except:
             pass
 

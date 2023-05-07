@@ -9,7 +9,7 @@ import time
 from ttkbootstrap.constants import *
 
 
-DAYS_EXPIRATION = 0.00069 * 1.2
+DAYS_EXPIRATION = 5 #0.00069 * 1.2
 SECONDS_PER_DAY = 86400
 SECONDS_PER_HOUR = 3600
 SECONDS_PER_MINUTE = 60
@@ -26,7 +26,9 @@ class Reprint(tkb.Frame):
         self.reprint_command = reprint_command
 
         self.create_treeview(master)
-        self.create_solid_button(master, 'Print', self.reprint_command)
+        self.button = self.create_solid_button(
+            master, 'Print', self.reprint_command
+        )
 
     def create_treeview(self, master):
         """Create ttkbootstrap Treeview object."""
