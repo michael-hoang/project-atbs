@@ -327,7 +327,8 @@ class CardPayment(tkb.Labelframe):
             reference_id = list(data.keys())[0]
             fields = data[reference_id]['fields']
             self._export_to_json(data)
-            self.print_pdf(reference_id, fields)
+            pdf_file_path = self.write_pdf(reference_id, fields)
+            self._print_default(pdf_file_path)
             self.clear_all_entries()
             self.sub_btn.config(text='Printing...')
             self.sub_btn.after(5000, lambda: self.sub_btn.config(text='Submit'))
@@ -449,8 +450,10 @@ class CardPayment(tkb.Labelframe):
             print('set_need_appearances_writer() catch : ', repr(e))
             return writer
 
-    def print_pdf(self, reference_id, fields):
-        """Export payment information into a temporary PDF form and then print."""
+    def write_pdf(self, reference_id, fields) -> str:
+        """
+        Export payment information into a temporary PDF file and return the file path.
+        """
         file_name = f'{reference_id}.pdf'
         if getattr(sys, 'frozen', False):
             app_path = os.path.dirname(sys.executable)
@@ -489,7 +492,11 @@ class CardPayment(tkb.Labelframe):
         with open(f".tmp\{file_name}", "wb") as output_stream:
             writer.write(output_stream)
 
-        os.startfile(f"{app_path}\.tmp\{file_name}", "print")
+        return f"{app_path}\.tmp\{file_name}"
+
+    def _print_default(self, file_path):
+        """Print to the default printer."""
+        os.startfile(file_path, "print")
 
     def get_credit_card_network(self, numbers: str) -> str or bool:
         """Return AMEX, Discover, MasterCard, Visa, or False."""
@@ -719,7 +726,8 @@ class CardPayment(tkb.Labelframe):
             reference_id = self.reprint._get_reference_id()
             if reference_id:
                 fields = self._get_fields_from_json(reference_id)
-                self.print_pdf(reference_id, fields)
+                pdf_file_path = self.write_pdf(reference_id, fields)
+                self._print_default(pdf_file_path)
                 self.reprint.button.config(text='Printing...')
                 self.reprint.button.after(
                     5000, lambda: self.reprint.button.config(text='Print')
