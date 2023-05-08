@@ -108,6 +108,7 @@ class Reprint(tkb.Frame):
             width=30
         )
         self.printer_selector.pack(side=LEFT)
+        variable.set(self._get_default_printer())
 
     def create_solid_button(self, master, text, command) -> tkb.Button:
         """Create ttkbootstrap Solid Button object."""
@@ -124,6 +125,10 @@ class Reprint(tkb.Frame):
     def _get_printer_list(self) -> list:
         """Return a list of available printers."""
         return [printer[2] for printer in win32print.EnumPrinters(2)]
+    
+    def _get_default_printer(self) -> str:
+        """Return the name of the default printer."""
+        return win32print.GetDefaultPrinter()
 
     def _get_program_path(self) -> str:
         """Return the path to the running executable or script."""
@@ -245,7 +250,11 @@ if __name__ == '__main__':
     reprint_window = tkb.Window(
         title='Reprint',
         themename='litera',
+        resizable=(False, False)
     )
+    reprint_window.withdraw()
+    reprint_window.place_window_center()
     Reprint(reprint_window, None)
+    reprint_window.deiconify()
 
     reprint_window.mainloop()
