@@ -1,6 +1,8 @@
 import datetime
 import os
 import time
+import win32api
+import win32print
 
 DAYS_UNTIL_EXPIRATION = 7
 SECONDS_PER_DAY = 86400
@@ -32,15 +34,35 @@ def get_formatted_exp_time(epoch_exp_time: int) -> str:
     return formatted_exp_time
 
 
-# Iterate through .files directory and get metadata
-for file in os.listdir(FILES_PATH):
-    file_path = os.path.join(FILES_PATH, file)
-    epoch_creation_time = os.path.getctime(file_path)
+def show_printers():
+    pdf_path = '.\\assets\\form\cardpayment-form.pdf'
 
-    epoch_exp_time = get_epoch_exp_time(epoch_creation_time)
-    exp_time = get_formatted_exp_time(epoch_exp_time)
+    all_printers = [printer[2] for printer in win32print.EnumPrinters(2)]
+    print(all_printers)
 
-    print(exp_time)
+    original_default_printer = win32print.GetDefaultPrinter()
+    selected_printer_name = all_printers[3]
+
+    print(f'Original: {original_default_printer}')
+    print(f'Selected: {selected_printer_name}')
+
+    win32print.SetDefaultPrinter(selected_printer_name)
+    print(win32print.GetDefaultPrinter())
+    os.startfile(pdf_path, 'print')
+    
+    win32print.SetDefaultPrinter(original_default_printer)
+
+
+
+# # Iterate through .files directory and get metadata
+# for file in os.listdir(FILES_PATH):
+#     file_path = os.path.join(FILES_PATH, file)
+#     epoch_creation_time = os.path.getctime(file_path)
+
+#     epoch_exp_time = get_epoch_exp_time(epoch_creation_time)
+#     exp_time = get_formatted_exp_time(epoch_exp_time)
+
+#     print(exp_time)
 
 
 data = {
@@ -74,3 +96,5 @@ data = {
         }
     }
 }
+
+show_printers()

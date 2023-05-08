@@ -5,6 +5,7 @@ import sys
 import tkinter as tk
 import ttkbootstrap as tkb
 import time
+import win32print
 
 from ttkbootstrap.constants import *
 
@@ -26,11 +27,15 @@ class Reprint(tkb.Frame):
         super().__init__(master)
         self.pack()
         self.encryption = MyEncryption()
-        self.reprint_command = reprint_command
+        self.selected_printer = tkb.StringVar()
 
         self.create_treeview(master)
+        self.create_printer_selector(
+            master, self._get_printer_list(), self.selected_printer
+        )
+
         self.button = self.create_solid_button(
-            master, 'Print', self.reprint_command
+            master, 'Print', reprint_command
         )
 
     def create_treeview(self, master):
@@ -80,17 +85,45 @@ class Reprint(tkb.Frame):
         # Populate Data
         self._populate_data()
 
+    def create_printer_selector(
+            self,
+            master,
+            printer_list: list,
+            variable: tkb.StringVar
+    ):
+        """Create printer selector drop down menu."""
+        selector_container = tkb.Frame(master)
+        selector_container.pack(side=LEFT, pady=(0, 20))
+
+        printer_selector_label = tkb.Label(
+            master=selector_container,
+            text='Select printer:'
+        )
+        printer_selector_label.pack(side=LEFT, padx=(20, 10))
+
+        self.printer_selector = tkb.Combobox(
+            master=selector_container,
+            values=printer_list,
+            textvariable=variable,
+            width=30
+        )
+        self.printer_selector.pack(side=LEFT)
+
     def create_solid_button(self, master, text, command) -> tkb.Button:
         """Create ttkbootstrap Solid Button object."""
         button = tkb.Button(
             master=master,
             text=text,
-            command=self.reprint_command,
-            width=8
+            command=command,
+            width=10
         )
         button.pack(pady=(0, 20))
 
         return button
+
+    def _get_printer_list(self) -> list:
+        """Return a list of available printers."""
+        return [printer[2] for printer in win32print.EnumPrinters(2)]
 
     def _get_program_path(self) -> str:
         """Return the path to the running executable or script."""
