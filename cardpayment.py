@@ -8,7 +8,7 @@ import time
 import datetime as dt
 import tkinter as tk
 import ttkbootstrap as tkb
-import win32print
+import win32api
 
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox
@@ -501,12 +501,13 @@ class CardPayment(tkb.Labelframe):
 
     def _print_from_selected_printer(self, file_path):
         """Print file from the selected printer."""
-        default_printer = self.reprint._get_default_printer()
+        # default_printer = self.reprint._get_default_printer()
         selected_printer = self.reprint.selected_printer.get().strip()
         if selected_printer in self.reprint._get_printer_list():
-            win32print.SetDefaultPrinter(selected_printer)
-            os.startfile(file_path, "print")
-            win32print.SetDefaultPrinter(default_printer)
+            # win32print.SetDefaultPrinter(selected_printer)
+            # os.startfile(file_path, "print")
+            win32api.ShellExecute(0, 'printto', file_path, f'"{selected_printer}"', '.', 0)
+            # win32print.SetDefaultPrinter(default_printer)
 
     def get_credit_card_network(self, numbers: str) -> str or bool:
         """Return AMEX, Discover, MasterCard, Visa, or False."""

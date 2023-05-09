@@ -221,7 +221,7 @@ class Reprint(tkb.Frame):
                 )
                 iid += 1
 
-            self.my_tree.tag_configure('almost_expired', foreground='red')
+            self.my_tree.tag_configure('almost_expired', foreground='#eb6864')
         except:
             pass
 
