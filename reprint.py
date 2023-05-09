@@ -123,21 +123,18 @@ class Reprint(tkb.Frame):
         return button
 
     def _get_printer_list(self) -> list:
-        """Return a list of available printers."""
-        return [printer[2] for printer in win32print.EnumPrinters(2)]
-    
+        """Return a list of all available printers."""
+        local_printers = [printer[2] for printer in win32print.EnumPrinters(2)]
+        network_printers = [printer[2] for printer in win32print.EnumPrinters(
+            win32print.PRINTER_ENUM_CONNECTIONS, None, 1)
+        ]
+
+        all_printers = local_printers + network_printers
+        return all_printers
+
     def _get_default_printer(self) -> str:
         """Return the name of the default printer."""
         return win32print.GetDefaultPrinter()
-    
-    # Need to move this method to cardpayment.py
-    # def _print_from_selected_printer(self, file_path):
-    #     """Print file from selected printer."""
-    #     default_printer = self._get_default_printer()
-    #     selected_printer = self.selected_printer.get().strip()
-    #     if selected_printer in self._get_printer_list():
-    #         win32print.SetDefaultPrinter(selected_printer)
-    #         os.startfile()
 
     def _get_program_path(self) -> str:
         """Return the path to the running executable or script."""

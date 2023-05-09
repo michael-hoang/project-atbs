@@ -38,19 +38,20 @@ def show_printers():
     pdf_path = '.\\assets\\form\cardpayment-form.pdf'
 
     all_printers = [printer[2] for printer in win32print.EnumPrinters(2)]
-    print(all_printers)
+    all_network_printers = [printer[2] for printer in win32print.EnumPrinters(win32print.PRINTER_ENUM_CONNECTIONS, None, 1)]
+    print(all_network_printers)
 
     original_default_printer = win32print.GetDefaultPrinter()
-    selected_printer_name = all_printers[3]
+    microsoft_print_to_pdf = all_printers[3]
 
     print(f'Original: {original_default_printer}')
-    print(f'Selected: {selected_printer_name}')
+    print(f'Selected: {microsoft_print_to_pdf}')
 
-    win32print.SetDefaultPrinter(selected_printer_name)
+    win32print.SetDefaultPrinter(microsoft_print_to_pdf)
     print(win32print.GetDefaultPrinter())
-    os.startfile(pdf_path, 'print')
+    # os.startfile(pdf_path, 'print')
     
-    win32print.SetDefaultPrinter(original_default_printer)
+    # win32print.SetDefaultPrinter(original_default_printer)
 
 
 
