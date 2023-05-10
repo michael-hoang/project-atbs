@@ -48,7 +48,7 @@ class Reprint(tkb.Frame):
         # Scrollbar
         tree_scroll = tkb.Scrollbar(
             master=tree_container,
-            bootstyle=''
+            bootstyle='primary-round'
         )
         tree_scroll.pack(side=RIGHT, fill=Y)
 
