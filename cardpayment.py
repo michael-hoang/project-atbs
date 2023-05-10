@@ -938,7 +938,7 @@ class CardPayment(tkb.Labelframe):
             'always_on_top': 'no',
             'user': '',
             'mode': 'Payment',
-            'theme': 'superhero',
+            'theme': 'litera',
         }
         with open(file_path, 'w') as f:
             data = json.dumps(default_settings, indent=4)
@@ -1056,7 +1056,7 @@ class CardPayment(tkb.Labelframe):
 
 if __name__ == '__main__':
     app = tkb.Window(
-        'Card Payment Form', 'superhero', resizable=(False, False)
+        'Card Payment Form', 'litera', resizable=(False, False)
     )
 
     cardpayment = CardPayment(app, app)
