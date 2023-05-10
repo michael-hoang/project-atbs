@@ -24,7 +24,7 @@ from encryption import MyEncryption
 from reprint import Reprint
 
 
-DAYS_EXPIRATION = 5
+DAYS_EXPIRATION = 1
 SECONDS_PER_DAY = 86400
 
 

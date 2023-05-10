@@ -12,7 +12,7 @@ from ttkbootstrap.constants import *
 from encryption import MyEncryption
 
 
-DAYS_EXPIRATION = 5  # 0.00069 * 1.2
+DAYS_EXPIRATION = 1
 SECONDS_PER_DAY = 86400
 SECONDS_PER_HOUR = 3600
 SECONDS_PER_MINUTE = 60
@@ -73,8 +73,8 @@ class Reprint(tkb.Frame):
         # Format columns
         self.my_tree.column('#', anchor=CENTER, width=50)
         self.my_tree.column('reference', anchor=W, width=150)
-        self.my_tree.column('date_created', anchor=W, width=150)
-        self.my_tree.column('expiration', anchor=W, width=100)
+        self.my_tree.column('date_created', anchor=W, width=135)
+        self.my_tree.column('expiration', anchor=W, width=90)
 
         # Headings
         self.my_tree.heading('#', text='#', anchor=CENTER)
@@ -165,14 +165,24 @@ class Reprint(tkb.Frame):
     def _get_formatted_exp_time(self, epoch_exp_time: int) -> str:
         epoch_current_time = time.time()
         remaining_epoch_time = epoch_exp_time - epoch_current_time
-        days = int(remaining_epoch_time // SECONDS_PER_DAY)
+        # days = int(remaining_epoch_time // SECONDS_PER_DAY)
         remaining_epoch_sec = remaining_epoch_time % SECONDS_PER_DAY
         hours = int(remaining_epoch_sec // SECONDS_PER_HOUR)
         remaining_epoch_sec %= SECONDS_PER_HOUR
         minutes = int(remaining_epoch_sec // SECONDS_PER_MINUTE)
         remaining_epoch_sec %= SECONDS_PER_MINUTE
-        formatted_exp_time = f'{days}d {hours}h {minutes}m {int(remaining_epoch_sec)}s'
+        formatted_exp_time = f'{hours}h {minutes}m {int(remaining_epoch_sec)}s'
         return formatted_exp_time
+
+    def _almost_expired(self, epoch_ctime: str) -> bool:
+        """Return True if card payment information is almost expired."""
+        epoch_exp_time = self._get_epoch_exp_time(int(epoch_ctime))
+        epoch_current_time = time.time()
+        remaining_time = epoch_exp_time - epoch_current_time
+        if remaining_time < 3600:
+            return True
+        else:
+            return False
 
     def _decrypt_data(self, data) -> dict:
         """Decrypt data using MyEncryption."""
@@ -206,7 +216,7 @@ class Reprint(tkb.Frame):
                 fmt_ctime = self._get_formatted_creation_time(epoch_ctime)
                 epoch_exp_time = self._get_epoch_exp_time(epoch_ctime)
                 fmt_exp_time = self._get_formatted_exp_time(epoch_exp_time)
-                if fmt_exp_time[:2] == '0d':
+                if self._almost_expired(epoch_ctime):
                     tag = 'almost_expired'
                 else:
                     tag = ''
