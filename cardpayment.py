@@ -12,6 +12,7 @@ import win32api
 
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox
+from ttkbootstrap.tooltip import ToolTip
 from tkinter.ttk import Style
 from PyPDF2 import PdfReader, PdfWriter
 from PyPDF2.generic import BooleanObject, NameObject, NumberObject, IndirectObject
@@ -98,6 +99,7 @@ class CardPayment(tkb.Labelframe):
         root.bind('<Control-Return>', self.submit_message_box)
         # root.bind('<Control-s>', self.toggle_settings_window)
         root.bind('<Control-n>', self.toggle_notes_window)
+        root.bind('<Control-s>', self.toggle_settings_window)
    
         # Register validation callbacks
         self.valid_card_func = root.register(self._validate_card_number)
@@ -230,6 +232,11 @@ class CardPayment(tkb.Labelframe):
             style='TButton',
         )
         self.sub_btn.pack(side=BOTTOM, pady=(0,4))
+        ToolTip(
+            widget=self.sub_btn,
+            text='CTRL+ENTER\nProduce a tangible copy of the payment form onto the designated or customary printing apparatus.',
+            delay=500
+        )
         
         set_btn = tkb.Button(
             master=container,
@@ -240,6 +247,10 @@ class CardPayment(tkb.Labelframe):
             style='TButton.secondary'
         )
         set_btn.pack(side=BOTTOM, pady=(0,12))
+        ToolTip(
+            widget=set_btn,
+            text='CTRL+S\nUnveil the configuration panel.'
+        )
 
         self.files_btn = tkb.Button(
             master=container,
