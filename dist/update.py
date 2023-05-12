@@ -22,7 +22,7 @@ class Updater:
 
     def __init__(self):
         """Initialize version number, Github URL, paths, and GUI."""
-        self.updater_current_version = 'v1.2.1'
+        self.updater_current_version = 'v1.3.0'
         self.latest_main_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_main_version.json'
         self.latest_updater_version_url = 'https://raw.githubusercontent.com/michael-hoang/project-atbs-work/main/dist/latest_version/latest_updater_version.json'
         self.latest_app_dl_url = 'https://github.com/michael-hoang/project-atbs-work/raw/main/dist/latest_version/main.exe'
@@ -230,6 +230,7 @@ class Updater:
 
     def update_main_app(self):
         """Update the main app"""
+        self.b_check_update.config(text='Updating...')
         self.download_latest_files()
         self.get_current_main_app_version()
         self.update_status_message('App has been updated', 'green')
