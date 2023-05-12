@@ -167,7 +167,7 @@ class Settings(tkb.Frame):
 
         title_label = self.create_label(
             master=info_labelframe,
-            text='Card Payment App'
+            text='My Pharmacy Buddy App'
         )
 
         title_label.pack_configure(side=TOP)
