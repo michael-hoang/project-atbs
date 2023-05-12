@@ -1078,7 +1078,7 @@ class CardPayment(tkb.Labelframe):
 
 if __name__ == '__main__':
     app = tkb.Window(
-        'Card Payment Form', 'litera', resizable=(False, False)
+        'Card Payment Form', 'cosmo', resizable=(False, False)
     )
 
     cardpayment = CardPayment(app, app)

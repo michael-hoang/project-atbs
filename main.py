@@ -12,7 +12,7 @@ CURRENT_VERSION = 'v6.2.0'
 
 class MainApp(tkb.Window):
     def __init__(self):
-        super().__init__('Card Payment Form', 'litera', resizable=(False, False))
+        super().__init__('Card Payment Form', 'cosmo', resizable=(False, False))
         self.current_version = CURRENT_VERSION
         CardPayment(self, self)
         
