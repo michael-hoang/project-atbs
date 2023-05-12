@@ -4,6 +4,8 @@ latest release on a repository and downloads it to the user's root directory."""
 
 import json, requests, os, sys, urllib.request
 import tkinter as tk
+import webbrowser
+
 from tkinter import END
 sys.path.append('../')
 from assets_manager import AssetManager
@@ -233,6 +235,11 @@ class Updater:
         self.update_status_message('App has been updated', 'green')
         self.reset_button()
         self.open_main_app()
+        webbrowser.open(
+            url='https://michael-hoang.github.io/project-atbs-work/#updates',
+            new=2,
+            autoraise=True
+        )
 
     def check_create_assets_dir(self):
         """Check if assets directory exists and create it if it doesn't."""
