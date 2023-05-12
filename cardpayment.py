@@ -235,9 +235,9 @@ class CardPayment(tkb.Labelframe):
             master=container,
             text="Settings",
             command=lambda: self.toggle_settings_window(e=None),
-            bootstyle=DARK,
+            bootstyle=SECONDARY,
             width=9,
-            style='TButton.dark'
+            style='TButton.secondary'
         )
         set_btn.pack(side=BOTTOM, pady=(0,12))
 
@@ -264,7 +264,7 @@ class CardPayment(tkb.Labelframe):
         clear_btn = tkb.Button(
             master=container,
             text='Clear',
-            command=None,
+            command=self.confirm_clear,
             bootstyle=DARK,
             width=9,
             style='TButton.dark'
@@ -325,6 +325,18 @@ class CardPayment(tkb.Labelframe):
             pass
 
         return dict_fields
+    
+    def confirm_clear(self):
+        """Confirmation window for clearing all entries."""
+        confirm = Messagebox.yesno(
+            parent=self,
+            title='Confirm Clear',
+            message='Select Yes to clear all entries.'
+        )
+
+        if confirm == 'Yes':
+            self.clear_all_entries()
+            self.focus_force()
     
     def submit_message_box(self, e):
         """Prompt user for confirmation when 'Submit' button is pressed."""
