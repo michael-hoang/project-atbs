@@ -265,7 +265,8 @@ class CardPayment(tkb.Labelframe):
         self.reprint_btn.pack(side=BOTTOM, pady=(0,12))
         ToolTip(
             widget=self.reprint_btn,
-            text="CTRL+R\nReproduce the card payment document onto a selected printing apparataus of thy preference."
+            text="CTRL+R\nReproduce the card payment document onto a selected printing apparataus of preference.",
+            delay=500
         )
 
         notes_btn = tkb.Button(
@@ -277,6 +278,11 @@ class CardPayment(tkb.Labelframe):
             style='TButton.dark'
         )
         notes_btn.pack(side=BOTTOM, pady=(0,12))
+        ToolTip(
+            widget=notes_btn,
+            text="CTRL+N\nUnfurl the memorandum casement to inscribe thoughts concerning the intelligence of payment.",
+            delay=500
+        )
 
         clear_btn = tkb.Button(
             master=container,
