@@ -261,6 +261,16 @@ class CardPayment(tkb.Labelframe):
         )
         notes_btn.pack(side=BOTTOM, pady=(0,12))
 
+        clear_btn = tkb.Button(
+            master=container,
+            text='Clear',
+            command=None,
+            bootstyle=DARK,
+            width=9,
+            style='TButton.dark'
+        )
+        clear_btn.pack(side=BOTTOM, pady=(0, 12))
+
         return container
     
     def get_total(self) -> float:
