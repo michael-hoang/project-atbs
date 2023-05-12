@@ -988,7 +988,7 @@ class CardPayment(tkb.Labelframe):
             'always_on_top': 'no',
             'user': '',
             'mode': 'Payment',
-            'theme': 'litera',
+            'theme': 'cosmo',
         }
         with open(file_path, 'w') as f:
             data = json.dumps(default_settings, indent=4)
