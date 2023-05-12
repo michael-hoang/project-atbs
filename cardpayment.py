@@ -100,6 +100,7 @@ class CardPayment(tkb.Labelframe):
         # root.bind('<Control-s>', self.toggle_settings_window)
         root.bind('<Control-n>', self.toggle_notes_window)
         root.bind('<Control-s>', self.toggle_settings_window)
+        root.bind('<Control-r>', self.toggle_reprint_window)
    
         # Register validation callbacks
         self.valid_card_func = root.register(self._validate_card_number)
@@ -249,10 +250,11 @@ class CardPayment(tkb.Labelframe):
         set_btn.pack(side=BOTTOM, pady=(0,12))
         ToolTip(
             widget=set_btn,
-            text='CTRL+S\nUnveil the configuration panel.'
+            text='CTRL+S\nUnveil the configuration panel.',
+            delay=500
         )
 
-        self.files_btn = tkb.Button(
+        self.reprint_btn = tkb.Button(
             master=container,
             text="Reprint",
             command=lambda: self.toggle_reprint_window(e=None),
@@ -260,7 +262,11 @@ class CardPayment(tkb.Labelframe):
             width=9,
             style='TButton.dark'
         )
-        self.files_btn.pack(side=BOTTOM, pady=(0,12))
+        self.reprint_btn.pack(side=BOTTOM, pady=(0,12))
+        ToolTip(
+            widget=self.reprint_btn,
+            text="CTRL+R\nReproduce the card payment document onto a selected printing apparataus of thy preference."
+        )
 
         notes_btn = tkb.Button(
             master=container,
