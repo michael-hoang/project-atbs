@@ -331,7 +331,7 @@ class CardPayment(tkb.Labelframe):
         confirm = Messagebox.yesno(
             parent=self,
             title='Confirm Clear',
-            message='Select Yes to clear all entries.'
+            message="Select 'Yes' to clear all entries."
         )
 
         if confirm == 'Yes':
