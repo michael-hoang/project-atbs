@@ -293,6 +293,11 @@ class CardPayment(tkb.Labelframe):
             style='TButton.dark'
         )
         clear_btn.pack(side=BOTTOM, pady=(0, 12))
+        ToolTip(
+            widget=clear_btn,
+            text="Obliterate all the inscriptions in the fields of the card payment document.",
+            delay=500
+        )
 
         return container
     
