@@ -1375,10 +1375,14 @@ Confirmed with {spoke_with}'
             template_title = 'Refill Reminder'
             ready_to_fill_question = fr'\line Is patient ready to fill? {{{ready_to_fill}}}\line'
             dur_check = ''
+            continuation_therapy_question = fr'\line \b\fs26 Is continuation of therapy appropriate: \b0\fs24 {{{continuation_therapy}}}\line'
+            therapeutic_benefit_question = ''
         else:
             template_title = 'Specialty Pharmacy - Clinical Reassessment'
             ready_to_fill_question = ''
             dur_check = r'\line Was a drug utilization review (DUR) conducted\? \{YES/NO\:12979\}\line\tab If yes, Medications can been screened for drug-drug interactions through \{micromedex, lexicomp, other\:28109\} and drug-drug interactions were \{found, not found\:28110\}\line'
+            continuation_therapy_question = ''
+            therapeutic_benefit_question = fr'\b\fs26\line Is the patient receiving therapeutic benefit from the medication:\b0\fs24  Yes\line'
 
         template = fr'\b\fs26{template_title}\b0\fs24\
 \
@@ -1404,11 +1408,9 @@ Is patient taking any new medications, OTCs, or herbal supplements? {{{new_medic
 \b\fs26 Medical Conditions Review \b0\fs24\
 Medical conditions review was performed: {{{medical_conditions_review}}}\
 Were there changes to the medical condition? {{{medical_condition_changes}}}\
-\
-\b\fs26 Is continuation of therapy appropriate: \b0\fs24 {{{continuation_therapy}}}\
-\
+{{{continuation_therapy_question}}}\
 \b\fs26 Do you feel like this medication is working for you:\b0\fs24  {{{med_working}}}\
-\
+{{{therapeutic_benefit_question}}}\
 Has the patient reported experiencing any of the following? {{{review_symptoms}}}\
 Is intervention necessary (if yes for any above): {{{intervention_necessary}}}\
 \
