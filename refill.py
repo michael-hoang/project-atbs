@@ -895,6 +895,7 @@ class Refill(tkb.Frame):
                 btn_group[btn_state] = 0
 
         self.clear_intervention_tab()
+        self.reassessment_toggle_state.set(0)
 
         win32clipboard.OpenClipboard(0)
         win32clipboard.EmptyClipboard()
