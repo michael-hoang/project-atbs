@@ -803,6 +803,7 @@ class CardPayment(tkb.Labelframe):
             resizable=(False, False)
         )
         self.reprint_window.withdraw()
+        self.reprint_window.iconbitmap('./assets/img/robot_icon_title.ico')
         self.reprint = Reprint(self.reprint_window, self.reprint_command)
         self.reprint_isHidden = True
         self.reprint_window.protocol(
@@ -865,6 +866,7 @@ class CardPayment(tkb.Labelframe):
     def create_notes_window(self):
         """Create Notes window."""
         self.notes_window = tkb.Toplevel(self)
+        self.notes_window.iconbitmap('./assets/img/robot_icon_title.ico')
         self.notes_window.title('Notes')
         self.notes_window.geometry('240x150')
         self.notes_window.resizable(False, False)
@@ -897,6 +899,7 @@ class CardPayment(tkb.Labelframe):
     def create_settings_window(self):
         """"Create the settings window."""
         self.settings_window = tkb.Toplevel(self)
+        self.settings_window.iconbitmap('./assets/img/robot_icon_title.ico')
         self.settings_window.title('Settings')
         self.settings_window.resizable(False, False)
         # self.settings_window.overrideredirect(True)

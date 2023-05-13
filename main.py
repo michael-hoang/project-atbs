@@ -14,6 +14,7 @@ CURRENT_VERSION = 'v6.3.0'
 class MainApp(tkb.Window):
     def __init__(self):
         super().__init__('Card Payment Form', 'cosmo', resizable=(False, False))
+        self.iconbitmap('./assets/img/robot_icon_title.ico')
         self.current_version = CURRENT_VERSION
         CardPayment(self, self)
         
