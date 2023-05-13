@@ -1373,12 +1373,12 @@ Confirmed with {spoke_with}'
         # Reassessment conditions
         if not self.reassessment_toggle_state.get():
             template_title = 'Refill Reminder'
-            ready_to_fill_question = fr'\
-Is patient ready to fill? {{{ready_to_fill}}}\
-'
+            ready_to_fill_question = fr'\line Is patient ready to fill? {{{ready_to_fill}}}\line'
+            dur_check = ''
         else:
             template_title = 'Specialty Pharmacy - Clinical Reassessment'
             ready_to_fill_question = ''
+            dur_check = r'\line Was a drug utilization review (DUR) conducted\? \{YES/NO\:12979\}\line\tab If yes, Medications can been screened for drug-drug interactions through \{micromedex, lexicomp, other\:28109\} and drug-drug interactions were \{found, not found\:28110\}\line'
 
         template = fr'\b\fs26{template_title}\b0\fs24\
 \
@@ -1400,7 +1400,7 @@ Were there any new allergies: {{{new_allergies}}}\
 Medication review was performed: {{{medication_review}}} through {{{medication_review_confirmation}}}\
 \
 Is patient taking any new medications, OTCs, or herbal supplements? {{{new_medications}}}\
-\
+{{{dur_check}}}\
 \b\fs26 Medical Conditions Review \b0\fs24\
 Medical conditions review was performed: {{{medical_conditions_review}}}\
 Were there changes to the medical condition? {{{medical_condition_changes}}}\
