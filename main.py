@@ -14,6 +14,7 @@ CURRENT_VERSION = 'v6.4.0'
 class MainApp(tkb.Window):
     def __init__(self):
         super().__init__('Card Payment Form', 'cosmo', resizable=(False, False))
+        self.withdraw()
         self.iconbitmap('./assets/img/robot_icon_title.ico')
         self.current_version = CURRENT_VERSION
         CardPayment(self, self)
@@ -102,7 +103,6 @@ if __name__ == '__main__':
     pfm = ProgramFileManager()
     pfm.download_essential_files(CURRENT_VERSION)
     app = MainApp()
-    app.withdraw()
     try:
         app.check_for_new_updater_version()
         if app.check_for_main_app_update():

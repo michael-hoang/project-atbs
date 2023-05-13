@@ -866,6 +866,8 @@ class CardPayment(tkb.Labelframe):
     def create_notes_window(self):
         """Create Notes window."""
         self.notes_window = tkb.Toplevel(self)
+        self.notes_isHidden = True
+        self.toggle_notes_window(e=None)
         self.notes_window.iconbitmap('./assets/img/robot_icon_title.ico')
         self.notes_window.title('Notes')
         self.notes_window.geometry('240x150')
@@ -873,8 +875,7 @@ class CardPayment(tkb.Labelframe):
         # self.notes_window.overrideredirect(True)
         self.notes_text_box = tk.Text(self.notes_window, font=('Sergoe UI', 14, 'normal'), wrap=WORD)
         self.notes_text_box.pack(expand=YES)
-        self.notes_isHidden = True
-        self.toggle_notes_window(e=None)
+        
         self.notes_window.protocol('WM_DELETE_WINDOW', lambda: self.toggle_notes_window(e=None))
         self.notes_window.bind('<Escape>', self.toggle_notes_window)
         
@@ -899,13 +900,13 @@ class CardPayment(tkb.Labelframe):
     def create_settings_window(self):
         """"Create the settings window."""
         self.settings_window = tkb.Toplevel(self)
+        self.settings_isHidden = True
+        self.toggle_settings_window(e=None)
         self.settings_window.iconbitmap('./assets/img/robot_icon_title.ico')
         self.settings_window.title('Settings')
         self.settings_window.resizable(False, False)
         # self.settings_window.overrideredirect(True)
         settings = Settings(self.settings_window, self)
-        self.settings_isHidden = True
-        self.toggle_settings_window(e=None)
         self.settings_window.protocol('WM_DELETE_WINDOW', func=lambda: self.toggle_settings_window(e=None))
         self.settings_window.bind('<Escape>', self.toggle_settings_window)
         return settings
