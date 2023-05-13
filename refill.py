@@ -110,12 +110,26 @@ class Refill(tkb.Frame):
             style='Roundtoggle.Toolbutton'
         )
         intervention_toggle_btn.grid(
-            row=0, column=0, padx=(15, 0), pady=(0, 15), sticky='w'
+            row=0, column=0, padx=(0, 0), pady=(0, 15), sticky='w'
         )
         ToolTip(
             widget=intervention_toggle_btn,
             text='Toggle Intervention',
             delay=500
+        )
+
+        # Toggle Reassessment button
+        self.reassessment_toggle_state = tkb.IntVar()
+        reassessment_toggle_btn = tkb.Checkbutton(
+            master=main_display_frame,
+            bootstyle='round-toggle',
+            text='Reassessment',
+            variable=self.reassessment_toggle_state,
+            command=None,
+            style='Roundtoggle.Toolbutton'
+        )
+        reassessment_toggle_btn.grid(
+            row=0, column=1, padx=(0, 0), pady=(0, 15), sticky='w'
         )
 
         # Clear button
