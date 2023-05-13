@@ -235,7 +235,7 @@ class CardPayment(tkb.Labelframe):
         self.sub_btn.pack(side=BOTTOM, pady=(0,4))
         ToolTip(
             widget=self.sub_btn,
-            text='CTRL+ENTER\nProduce a tangible copy of the payment form onto the designated or customary printing apparatus.',
+            text='<CTRL+ENTER>\nProduce a tangible copy of the payment form onto the designated printing apparatus.',
             delay=500
         )
         
@@ -250,7 +250,7 @@ class CardPayment(tkb.Labelframe):
         set_btn.pack(side=BOTTOM, pady=(0,12))
         ToolTip(
             widget=set_btn,
-            text='CTRL+S\nUnveil the configuration panel.',
+            text='<CTRL+S>\nUnveil the configuration panel.',
             delay=500
         )
 
@@ -265,7 +265,7 @@ class CardPayment(tkb.Labelframe):
         self.reprint_btn.pack(side=BOTTOM, pady=(0,12))
         ToolTip(
             widget=self.reprint_btn,
-            text="CTRL+R\nReproduce the card payment document onto a selected printing apparataus of preference.",
+            text="<CTRL+R>\nReproduce the card payment document onto a selected printing apparataus of preference.",
             delay=500
         )
 
@@ -280,7 +280,7 @@ class CardPayment(tkb.Labelframe):
         notes_btn.pack(side=BOTTOM, pady=(0,12))
         ToolTip(
             widget=notes_btn,
-            text="CTRL+N\nUnfurl the memorandum casement to inscribe thoughts concerning the intelligence of payment.",
+            text="<CTRL+N>\nUnfurl the memorandum casement to inscribe thoughts concerning the intelligence of payment.",
             delay=500
         )
 
@@ -295,7 +295,7 @@ class CardPayment(tkb.Labelframe):
         clear_btn.pack(side=BOTTOM, pady=(0, 12))
         ToolTip(
             widget=clear_btn,
-            text="Obliterate all the inscriptions in the fields of the card payment document.",
+            text="Obliterate all the inscriptions in the fields of the card payment application.",
             delay=500
         )
 
