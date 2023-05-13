@@ -110,7 +110,7 @@ class Refill(tkb.Frame):
             style='Roundtoggle.Toolbutton'
         )
         intervention_toggle_btn.grid(
-            row=0, column=0, padx=(0, 0), pady=(0, 15), sticky='w'
+            row=0, column=0, padx=(15, 0), pady=(0, 15), sticky='w'
         )
         ToolTip(
             widget=intervention_toggle_btn,
@@ -1370,16 +1370,24 @@ Confirmed with {spoke_with}'
                 adherence = 'NOT ADHERENT'
                 embedded_adherence_notes = fr'\line\line\tab {adherence_notes}'
 
-        template = fr'\b\fs26Refill Reminder\b0\fs24\
+        # Reassessment conditions
+        if not self.reassessment_toggle_state.get():
+            template_title = 'Refill Reminder'
+            ready_to_fill_question = fr'\
+Is patient ready to fill? {{{ready_to_fill}}}\
+'
+        else:
+            template_title = 'Specialty Pharmacy - Clinical Reassessment'
+            ready_to_fill_question = ''
+
+        template = fr'\b\fs26{template_title}\b0\fs24\
 \
 Medication: {{{medication}}}\
 \
 Methods of HIPAA Verification: {{{hipaa_verification}}}\
 \
 Changes Since Last Visit: {{{changes}}}\
-\
-Is patient ready to fill? {{{ready_to_fill}}}\
-\
+{{{ready_to_fill_question}}}\
 Patient has {{{days_supply}}} days of medication on hand.{{{next_injection_cycle_due}}}\
 Please select the following: {{{delivery_pickup}}}\
 Ready to dispense date: {{{dispense_date}}}\
@@ -1435,8 +1443,8 @@ Specialty Pharmacy'
 
 if __name__ == '__main__':
     app = tkb.Window(
-        'Refill Coordination', 'superhero', resizable=(False, False)
+        'Refill Coordination', 'cosmo', resizable=(False, False)
     )
-    Refill(app, app)
+    Refill(app, app, None, None)
     app.place_window_center()
     app.mainloop()
