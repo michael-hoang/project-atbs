@@ -1377,12 +1377,14 @@ Confirmed with {spoke_with}'
             dur_check = ''
             continuation_therapy_question = fr'\line \b\fs26 Is continuation of therapy appropriate: \b0\fs24 {{{continuation_therapy}}}\line'
             therapeutic_benefit_question = ''
+            disease_assessment = ''
         else:
             template_title = 'Specialty Pharmacy - Clinical Reassessment'
             ready_to_fill_question = ''
             dur_check = r'\line Was a drug utilization review (DUR) conducted\? \{YES/NO\:12979\}\line\tab If yes, Medications can been screened for drug-drug interactions through \{micromedex, lexicomp, other\:28109\} and drug-drug interactions were \{found, not found\:28110\}\line'
             continuation_therapy_question = ''
             therapeutic_benefit_question = fr'\b\fs26\line Is the patient receiving therapeutic benefit from the medication:\b0\fs24  Yes\line'
+            disease_assessment = fr'\b\fs26\line Complete disease assessment?\b0\fs24  No - patient does not have time\line'
 
         template = fr'\b\fs26{template_title}\b0\fs24\
 \
@@ -1419,7 +1421,7 @@ Patient is {{{adherence}}} to therapy.{{{embedded_adherence_notes}}}\
 ***\
 \
 GOAL: Is patient meeting goal? {{{goal}}}\
-\
+{{{disease_assessment}}}\
 Does patient need to speak to a pharmacist? {{{speak_to_rph}}}\
 \
 {{{user}}}\
